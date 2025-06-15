@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Result</title>
+</head>
+<body>
+    <h1>Upload Result</h1>
+
+    <h2>Upload Summary</h2>
+    <p>Total Students to Upload: {{ total_students_to_upload }}</p>
+    <p>Failed Uploads: {{ failed_no }}</p>
+    <p>Already Existing Students: {{ already_exists_no }}</p>
+    <p>Newly Added Admission Numbers: {{ new_admission_count }}</p>  <!-- Display count of newly added admission numbers -->
+
+    <h2>Successful Uploads</h2>
+    <ul>
+        {% for student in success_students %}
+        <li>{{ student.name }} - Admission Number: {{ student.admission_number }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Failed Uploads</h2>
+    <ul>
+        {% for student in failed_students %}
+            <li>
+                {{ student.name }} - Admission Number: {{ student.admission_number }} - Phone: {{ student.phone }} - Course: {{ student.course }} - Class: {{ student.class_darja }} - Branch: {{ student.branch }} - Monthly Fees: {{ student.monthly_fees }} - Student Type: {{ student.student_type }} - Reason: {{ student.reason }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% if response %}
+    <h2>Download Failed Records</h2>
+    <a href="{{ response }}" download="failed_students.xlsx">Download Failed Students</a>
+    {% endif %}
+</body>
+</html>

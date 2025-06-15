@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enter Receipt</title>
+    <style>
+        /* Style the form layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        form div {
+            flex: 1 1 45%;
+            margin-bottom: 10px;
+        }
+        form label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        form input[type="text"],
+        form input[type="date"],
+        form select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        
+        #student-details {
+            margin-top: 20px;
+        }
+        #student-details p {
+            margin-bottom: 5px;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+        .messages {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .messages .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        /* Blinking text effect */
+        .blinking {
+            animation: blink 1.5s step-start infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Receipt Entry</h1>
+
+    <!-- Display messages -->
+    <div class="messages">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Your Payment Form -->
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="id_created_by">Created By:</label>
+            <input type="text" id="created_by" name="created_by" value="{{ request.user.username }}" readonly>
+        </div>
+        <div>
+            <label for="id_admission_number">Admission Number:</label>
+            <input type="text" id="admission_number" name="admission_number">
+        </div>
+        <div id="student-details"></div>
+        <div>
+            <label for="id_date">Date:</label>
+            <input type="date" id="date" name="date" value="" required>
+        </div>
+        <div>
+            <label for="id_amount_paid">Fee Amount :</label>
+            <input type="text" id="amount_paid" name="amount_paid">
+        </div>
+        <div>
+            <label for="id_receipt_number">Receipt Number:</label>
+            <input type="text" id="receipt_number" name="receipt_number" placeholder="Enter Receipt Number" required>
+            <p class="blinking" style="color: red; font-weight: bold;">Book No / Receipt No</p>
+        </div>
+
+        <!-- Move the blinking text directly below the receipt number input -->
+        <div>
+            <label for="id_payment_method">Payment Method:</label>
+            <select id="payment_method" name="payment_method">
+                <option value="cash" selected>Cash</option>
+                <option value="online">Online</option>
+            </select>
+        </div>  
+        
+        <button type="submit">Submit Payment</button>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date for the date input
+            const currentDate = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = currentDate;
+
+            const admissionNumberInput = document.getElementById('admission_number');
+            const studentDetailsDiv = document.getElementById('student-details');
+
+            admissionNumberInput.addEventListener('input', function() {
+                const admissionNumber = this.value;
+
+                // Make AJAX request to fetch student details
+                $.ajax({
+                    url: '/get_student_details/',
+                    method: 'GET',
+                    data: { admission_number: admissionNumber },
+                    success: function (response) {
+                        if (response.success) {
+                            var student = response.student;
+                            $('#student-details').html(
+                                '<p style="color: rgb(10, 32, 175);font-weight: bold;font: 1em sans-serif">Name: ' + student.name + '</p>' +
+                                '<p style="color: rgb(234, 6, 6);font-weight: bold;">Due Amount: ' + student.total_due + '</p>' +
+                                '<p>Phone: ' + student.phone + '</p>' +
+                                '<p>Course: ' + student.course + '</p>' +
+                                '<p>Branch: ' + student.branch + '</p>' +
+                                '<p>Monthly Fees: ' + student.monthly_fees  + '</p>' +
+                                '<p>Total Fees: ' + student.total_fees + '</p>' +
+                                '<p style="color: rgb(48, 198, 93);font-weight: bold;">Total Fees Paid: ' + student.total_paid + '</p>' +
+                                '<p>Months Paid: ' + student.months_paid + '</p>'
+                            );
+                        } else {
+                            $('#student-details').html('<p class="error-message">No student found with the provided admission number.</p>');
+                        }
+                    },
+                    error: function () {
+                        $('#student-details').html('<p class="error-message">Error fetching student details.</p>');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

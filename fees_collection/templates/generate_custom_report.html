@@ -1,0 +1,16 @@
+<!-- generate_custom_report.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate Custom Report</title>
+</head>
+<body>
+    <h1>Generate Custom Report</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Generate Report</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,317 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            color: #333;
+            background-color: #f4f4f9;
+        }
+
+        h1, h2, h3, h4 {
+            color: #4a5568;
+        }
+
+        /* Tab button styles */
+        .tab-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-container button {
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .tab-container button:hover {
+            background-color: #2b6cb0;
+        }
+
+        /* Active tab button style */
+        .tab-container button.active {
+            background-color: #2c5282;
+        }
+
+        /* Hidden and visible content sections */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Table styling */
+        t/* Table styling for printing */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Ensures borders are collapsed between cells */
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd; /* Adds a border to each cell */
+}
+
+th {
+    background-color: #4a5568;
+    color: #f7fafc;
+}
+
+tr:nth-child(even) {
+    background-color: #f9fafb; /* Light background for even rows */
+}
+
+/* Optional: Styling for the header row to make it distinct */
+thead th {
+    border-bottom: 2px solid #333; /* Adds a thicker border at the bottom of the header */
+}
+
+        .top-right {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+       
+        /* Section link styling */
+        .section-tab-link {
+            display: block;
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #edf2f7;
+            text-decoration: none;
+            color: #3182ce;
+            border-radius: 5px;
+        }
+
+        .section-tab-link:hover {
+            background-color: #e2e8f0;
+        }
+
+        /* Print button style */
+        .print-button,.home-button {
+            background-color: #38a169;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .print-button:hover {
+            background-color: #2f855a;
+        }
+
+        .arrow {
+            cursor: pointer;
+            padding-left: 5px;
+        }
+
+        .sorted-asc::after {
+            content: "↑";
+        }
+
+        .sorted-desc::after {
+            content: "↓";
+        }
+    </style>
+    <script>
+        // Show courses for the selected branch
+        function loadCourses(branch) {
+            document.querySelectorAll('.course-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.section-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('course-' + branch).classList.add('active');
+            setActiveButton('branch-' + branch);
+        }
+
+        // Show sections for the selected course and branch
+        function loadSections(branch, course) {
+            document.querySelectorAll('.section-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('section-' + branch + '-' + course).classList.add('active');
+            setActiveButton('course-' + branch + '-' + course);
+        }
+
+        // Highlight active button
+        function setActiveButton(id) {
+            document.querySelectorAll('.tab-container button').forEach(button => button.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // Sort the table based on the column index (Months Paid)
+        function sortTableByMonthsPaid(n) {
+            const table = document.querySelector("table tbody");
+            const rows = Array.from(table.rows);
+            let sortedRows;
+
+            // Check if the column is already sorted in ascending order
+            const currentSort = document.querySelector(".sorted-asc, .sorted-desc");
+
+            if (currentSort && currentSort.classList.contains("sorted-asc")) {
+                // Sort in descending order
+                sortedRows = rows.sort((rowA, rowB) => {
+                    return parseFloat(rowB.cells[n].textContent) - parseFloat(rowA.cells[n].textContent);
+                });
+                currentSort.classList.remove("sorted-asc");
+                currentSort.classList.add("sorted-desc");
+            } else {
+                // Sort in ascending order
+                sortedRows = rows.sort((rowA, rowB) => {
+                    return parseFloat(rowA.cells[n].textContent) - parseFloat(rowB.cells[n].textContent);
+                });
+                if (currentSort) {
+                    currentSort.classList.remove("sorted-desc");
+                    currentSort.classList.add("sorted-asc");
+                } else {
+                    document.querySelectorAll("th")[n].classList.add("sorted-asc");
+                }
+            }
+
+            // Reorder rows in the table
+            table.innerHTML = "";
+            sortedRows.forEach(row => table.appendChild(row));
+        }
+
+        // Print the table content
+        function printReport() {
+    const content = document.querySelector("table").outerHTML;
+    const branch = "{{ selected_branch }}";  // Replace with dynamic branch
+    const course = "{{ selected_course }}";  // Replace with dynamic course
+    const section = "{{ selected_section }}";  // Replace with dynamic section
+
+    const filterInfo = `
+    <h3>Fee Details :</h3>
+    <p><strong>Branch:</strong> ${branch} | <strong>Course:</strong> ${course} | <strong>Section:</strong> ${section}</p>
+`;
+
+
+    const newWindow = window.open('', '', 'height=400,width=800');
+    newWindow.document.write('<html><head><title>Print</title>');
+    
+    // Adding styles for print
+    newWindow.document.write('<style>');
+    newWindow.document.write('table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }');
+    newWindow.document.write('th, td { padding: 10px; text-align: left; border: 1px solid #ddd; }');
+    newWindow.document.write('th { background-color: #4a5568; color: #f7fafc; }');
+    newWindow.document.write('tr:nth-child(even) { background-color: #f9fafb; }');
+    newWindow.document.write('thead th { border-bottom: 2px solid #333; }');
+    newWindow.document.write('</style>');
+
+    // Adding filter information and table content
+    newWindow.document.write('</head><body>');
+    newWindow.document.write(filterInfo);  // Adding the filter information above the table
+    newWindow.document.write(content);
+    newWindow.document.write('</body></html>');
+    newWindow.document.close();
+    newWindow.print();
+}
+
+    </script>
+</head>
+<body>
+<div class="top-right">
+        <a href="{% url 'homepage' %}">
+            <button type="button" class="home-button">Home</button>
+        </a>
+        
+    </div>
+<h1>Student Fee Reports</h1>
+
+<!-- Branch Tabs -->
+<div class="tab-container">
+    <h2>Select Branch:</h2>
+    {% for branch, courses in organized_data.items %}
+        <button id="branch-{{ branch }}" onclick="loadCourses('{{ branch }}')" class="{% if branch == selected_branch %}active{% endif %}">{{ branch }}</button>
+    {% endfor %}
+</div>
+
+<!-- Course Tabs -->
+<div id="courses-container">
+    {% for branch, courses in organized_data.items %}
+        <div class="course-tab content-section {% if branch == selected_branch %}active{% endif %}" id="course-{{ branch }}">
+            <div class="tab-container">
+                <h3>Select Course in {{ branch }}:</h3>
+                {% for course, sections in courses.items %}
+                    <button id="course-{{ branch }}-{{ course }}" onclick="loadSections('{{ branch }}', '{{ course }}')" class="{% if course == selected_course %}active{% endif %}">{{ course }}</button>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Section Tabs -->
+<div id="sections-container">
+    {% for branch, courses in organized_data.items %}
+        {% for course, sections in courses.items %}
+            <div class="section-tab content-section {% if course == selected_course and branch == selected_branch %}active{% endif %}" id="section-{{ branch }}-{{ course }}">
+                <div class="tab-container">
+                    <h4>Select Section in {{ course }} ({{ branch }}):</h4>
+                    {% for section in sections %}
+                        <a href="?branch={{ branch }}&course={{ course }}&section={{ section }}&months_due={{ selected_months_due }}" class="section-tab-link {% if section == selected_section %}active{% endif %}">{{ section }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+<!-- Print Button -->
+<button class="print-button" onclick="printReport()">Print Report</button>
+
+<!-- Filtered Report Table -->
+<table>
+    <thead>
+        <tr>
+            <th>Admission Number</th>
+            <th>Name</th>
+            <th>Father's Name</th>
+            <th>Phone</th>
+            <th>Course</th>
+            <th>Branch</th>
+            <th>Section</th>
+            <th>Monthly Fees</th>
+            <th>Total Fees</th>
+            <th>Total Paid</th>
+            <th>Total Due</th>
+            <th id="months-paid-header" onclick="sortTableByMonthsPaid(10)">Months Paid <span class="arrow"></span></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for info in additional_info %}
+        <tr>
+            <td>{{ info.student.admission_number }}</td>
+            <td>{{ info.student.name }}</td>
+            <td>{{ info.student.father_name }}</td>
+            <td>{{ info.student.phone }}</td>
+            <td>{{ info.student.course }}</td>
+            <td>{{ info.student.branch }}</td>
+            <td>{{ info.student.section }}</td>
+            <td>{{ info.monthly_fees }}</td>
+            <td>{{ info.total_fees }}</td>
+            <td>{{ info.total_paid }}</td>
+            <td>{{ info.total_due }}</td>
+            <td>{{ info.months_paid }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block sidebar %}
+    <div class="horizontal-menu" style="background-color: #007bff; padding: 10px; border-radius: 5px;">
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            {% if user.is_staff %}
+                <li><a href="{% url 'upload_file' %}" style="color: #ffffff;">Upload Students</a></li>
+                <li><a href="{% url 'upload_payments' %}" style="color: #ffffff;">Upload Receipts</a></li>
+                <li><a href="{% url 'download_payments' %}" style="color: #ffffff;">Download Receipts</a></li>
+                <li><a href="{% url 'summary' %}" style="color: #ffffff;">View Summary</a></li>
+            {% endif %}
+            <li><a href="{% url 'make_payment' %}" style="color: #ffffff;">Receipt Entry</a></li>
+            <li><a href="{% url 'student_payment_report' %}" style="color: #ffffff;">Student Payment Report</a></li>
+            <li><a href="{% url 'user_payments' %}" style="color: #ffffff;">View My Entries</a></li>
+            <li><a href="{% url 'reports' %}" style="color: #ffffff;">View Reports</a></li>
+            <li><a href="{% url 'student_receipt_list' %}" style="color: #ffffff;">List Students with Receipts</a></li>
+            <li><a href="{% url 'receipt_number_input' %}" class="print-receipt-button" style="color: #ffffff; background-color: #28a745; padding: 5px 10px; border-radius: 4px; text-decoration: none;">Print Receipt</a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin-top: 20px;">
+        <h1 style="color: #007bff;">Hi {{ user.username }}!</h1>
+        <h1 style="color: #28a745;">Welcome to the Home Page</h1>
+        <h2 style="color: #17a2b8;">Total Collected Amount By Me</h2>
+        <p style="font-size: 24px; color: #dc3545;">{{ total_collected|floatformat:2 }}</p>
+    </div>
+{% endblock %}

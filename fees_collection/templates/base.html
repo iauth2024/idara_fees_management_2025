@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+
+    {% load static %}
+
+    <!-- Favicon links -->
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
+    <link rel="mask-icon" href="{% static 'images/safari-pinned-tab.svg' %}" color="#5bbad5">
+    <meta name="theme-color" content="#ffffff">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e9ecef;
+            min-height: 100vh;
+        }
+
+        .horizontal-menu {
+            background-color: #343a40; /* Dark grey */
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .horizontal-menu ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .horizontal-menu ul li {
+            position: relative;
+            margin-right: 20px;
+        }
+
+        .horizontal-menu ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 15px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            border-radius: 4px;
+        }
+
+        .horizontal-menu ul li a:hover {
+            background-color: #495057;
+        }
+
+        .horizontal-menu ul li ul {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #495057;
+            display: none;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .horizontal-menu ul li:hover ul {
+            display: block;
+        }
+
+        .horizontal-menu ul li ul li {
+            margin: 0;
+        }
+
+        .horizontal-menu ul li ul li a {
+            padding: 10px 15px;
+            display: block;
+        }
+
+        .content {
+            margin: 20px;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        h2 {
+            color: #17a2b8;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="horizontal-menu">
+        <ul>
+            <li><a href="{% url 'homepage' %}">Home</a></li>
+
+            {% if user.is_staff %}
+                <li>
+                    <a href="#">Upload</a>
+                    <ul>
+                        <li><a href="{% url 'upload_file' %}">Upload Students</a></li>
+                        <li><a href="{% url 'upload_payments' %}">Upload Receipts</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Download</a>
+                    <ul>
+                        <li><a href="{% url 'download_payments' %}">Download Receipts</a></li>
+                        <!-- Added Download Students option here -->
+                        <li><a href="{% url 'download_students' %}">Download Students</a></li>
+                    </ul>
+                </li>
+                <li><a href="{% url 'summary' %}">Summary</a></li>
+            {% endif %}
+
+            <li><a href="{% url 'make_payment' %}">Receipt Entry</a></li>
+            <li><a href="{% url 'student_payment_report' %}">Fee Card</a></li>
+            <li><a href="{% url 'user_payments' %}">My Entries</a></li>
+            <li><a href="{% url 'reports' %}">Reports</a></li>
+            <li><a href="{% url 'receipt_number_input' %}" class="print-receipt-button">Print Receipt</a></li>
+            <li><a href="{% url 'student_list' %}">Students</a></li> <!-- Added link to student list -->
+            <!-- Button to Payment List -->
+            <li><a href="{% url 'payment_list' %}">Payment List</a></li>
+
+        </ul>
+    </div>
+
+    <div class="content">
+        <!-- Button inside content -->
+    
+
+        {% block content %}
+        <!-- Page content will be inserted here -->
+        {% endblock %}
+    </div>
+
+</body>
+</html>

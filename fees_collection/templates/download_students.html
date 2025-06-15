@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Students Report</title>
+    <style>
+        .filters-summary {
+            margin-bottom: 20px;
+        }
+        .filters-summary p {
+            font-weight: bold;
+        }
+        .filters-summary p span {
+            font-weight: normal;
+        }
+        .filters-form input, .filters-form select {
+            margin-right: 10px;
+        }
+        .filters-form button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Download Student Data</h2>
+
+    <!-- Filters form -->
+    <form action="{% url 'download_students' %}" method="GET" class="filters-form">
+        <div class="filters-summary">
+            <h3>Selected Filters:</h3>
+            <p><strong>Branch:</strong> <span>{{ branch|default:"All" }}</span> | 
+               <strong>Course:</strong> <span>{{ course|default:"All" }}</span> | 
+               <strong>Section:</strong> <span>{{ section|default:"All" }}</span></p>
+        </div>
+
+        <!-- Branch Filter -->
+        <label for="branch">Branch:</label>
+        <select name="branch" id="branch">
+            <option value="">All</option>
+            <option value="Science" {% if branch == "Science" %}selected{% endif %}>Science</option>
+            <option value="Arts" {% if branch == "Arts" %}selected{% endif %}>Arts</option>
+            <option value="Commerce" {% if branch == "Commerce" %}selected{% endif %}>Commerce</option>
+        </select>
+
+        <!-- Course Filter -->
+        <label for="course">Course:</label>
+        <select name="course" id="course">
+            <option value="">All</option>
+            <option value="Mathematics" {% if course == "Mathematics" %}selected{% endif %}>Mathematics</option>
+            <option value="Physics" {% if course == "Physics" %}selected{% endif %}>Physics</option>
+            <option value="Chemistry" {% if course == "Chemistry" %}selected{% endif %}>Chemistry</option>
+        </select>
+
+        <!-- Section Filter -->
+        <label for="section">Section:</label>
+        <select name="section" id="section">
+            <option value="">All</option>
+            <option value="A" {% if section == "A" %}selected{% endif %}>A</option>
+            <option value="B" {% if section == "B" %}selected{% endif %}>B</option>
+            <option value="C" {% if section == "C" %}selected{% endif %}>C</option>
+        </select>
+
+        <!-- Submit Button -->
+        <button type="submit">Download Filtered Report</button>
+    </form>
+
+    <hr>
+
+    <p><strong>Or download all students:</strong></p>
+    <a href="{% url 'download_students' %}" class="download-all">
+        <button>Download All Students</button>
+    </a>
+
+</body>
+</html>

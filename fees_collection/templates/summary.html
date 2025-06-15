@@ -1,0 +1,250 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Summary Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        div {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #17a2b8;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        td:first-child {
+            background-color: #f1f8ff;
+            font-weight: bold;
+        }
+
+        select {
+            padding: 10px;
+            margin-right: 20px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background-color: #ffffff;
+            color: #495057;
+        }
+
+        button {
+            background-color: #28a745;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .highlight-green {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .highlight-blue {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .highlight-orange {
+            color: #fd7e14;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <h1>Summary Page</h1>
+
+    <form method="get" action="{% url 'summary' %}">
+        <label for="organization">Organization:</label>
+        <select name="organization" id="organization">
+            <option value="">All Organizations</option>
+            {% for org in organizations %}
+                <option value="{{ org }}" {% if org == selected_organization %}selected{% endif %}>{{ org }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="year">Year:</label>
+        <select name="year" id="year">
+            <option value="">All Years</option>
+            {% for y in years %}
+                <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Filter</button>
+    </form>
+
+    <div>
+        <h2>Total Students: <span class="highlight-blue">{{ total_students }}</span></h2>
+        <h2>Total Fees: <span class="highlight-green">₹ {{ total_fees|indian_number_format }}</span></h2>
+        <h2>Amount Collected: <span class="highlight-orange">₹ {{ collected_fees|indian_number_format }}</span></h2>
+        <h2 class="highlight-red">Due Fees: ₹ {{ due_fees|indian_number_format }}</h2>
+        <h2>Fee Cleared Students: <span class="highlight-green">{{ fee_cleared_students }}</span></h2>
+    </div>
+
+    <div>
+        <h2>Amounts Grouped by Branch</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Branch</th>
+                    <th>Paid Amount</th>
+                    <th>No. of Receipts</th>
+                    <th>Total Due</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for branch in branch_wise_totals %}
+                    <tr>
+                        <td>{{ branch.student__branch }}</td>
+                        <td>₹ {{ branch.total|indian_number_format }}</td>
+                        <td>{{ branch.number_of_students }}</td>
+                        <td>₹ {{ branch.due_amount|indian_number_format }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">No data available</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
+    <h2>Amounts Grouped by Course</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Paid Amount</th>
+                <th>No. of Students</th>
+                <th>Total Due</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in course_wise_totals %}
+                <tr>
+                    <td>{{ course.student__course|default:"N/A" }}</td>
+                    <td>₹ {{ course.total|indian_number_format }}</td>
+                    <td>{{ course.number_of_students }}</td>
+                    <td>₹ {{ course.due_amount|indian_number_format }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No data available</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+    <div>
+    <h2>Amounts Grouped by User</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Entered Amount</th>
+                <th>No. of Entries</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in user_wise_totals %}
+                <tr>
+                    <td>{{ user.created_by__username|default:"N/A" }}</td>
+                    <td>₹ {{ user.total|indian_number_format }}</td>
+                    <td>{{ user.number_of_entries }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">No data available</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+    <div>
+        <h2>Amounts Grouped by Section</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Section</th>
+                    <th>Paid Amount</th>
+                    <th>No. of Receipts</th>
+                    <th>Total Due</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for class in class_wise_totals %}
+                    <tr>
+                        <td>{{ class.student__section }}</td>
+                        <td>₹ {{ class.total|indian_number_format }}</td>
+                        <td>{{ class.number_of_students }}</td>
+                        <td>₹ {{ class.due_amount|indian_number_format }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">No data available</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    
+</body>
+</html>

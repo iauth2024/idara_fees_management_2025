@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* Your existing CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4; /* Fallback color */
+            background-image: url('path_to_your_image.jpg'); /* Replace with your image path */
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .links {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .links a {
+            margin-right: 10px;
+            text-decoration: none;
+            color: #007bff;
+        }
+        .links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        {% if error_message %}
+            <p>{{ error_message }}</p>
+        {% endif %}
+        
+        <form id="login-form" method="post">
+            {% csrf_token %}
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" value="{% if remember_username %}{{ remember_username }}{% endif %}">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" {% if remember_password %} value="{{ remember_password }}" {% endif %}>
+            <label for="remember">Remember Me:</label>
+            <input type="checkbox" id="remember" name="remember" {% if remember_username or remember_password %} checked {% endif %}>
+            <button type="submit">Login</button>
+        </form>
+        <div class="links">
+            <a href="{% url 'change_password' %}">Change password</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Retrieve stored username and password from local storage
+            var storedUsername = localStorage.getItem('rememberedUsername');
+            var storedPassword = localStorage.getItem('rememberedPassword');
+            
+            // Fill the input fields if stored values exist
+            if (storedUsername) {
+                document.getElementById('username').value = storedUsername;
+            }
+            if (storedPassword) {
+                document.getElementById('password').value = storedPassword;
+            }
+
+            // Add event listener to 'Remember Me' checkbox
+            document.getElementById('remember').addEventListener('change', function() {
+                // If checked, store username and password in local storage
+                if (this.checked) {
+                    localStorage.setItem('rememberedUsername', document.getElementById('username').value);
+                    localStorage.setItem('rememberedPassword', document.getElementById('password').value);
+                } else {
+                    // If unchecked, remove stored username and password from local storage
+                    localStorage.removeItem('rememberedUsername');
+                    localStorage.removeItem('rememberedPassword');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
