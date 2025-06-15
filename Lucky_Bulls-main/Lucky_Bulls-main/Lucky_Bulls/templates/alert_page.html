@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alert Page</title>
+</head>
+<body>
+    <h1>Stocks to be Alerted</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Screener Name</th>
+                <th>Close Price</th>
+                <th>Triggered At</th>
+                <th>Alert Sent</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for alert in alerts_to_send %}
+            <tr>
+                <td>{{ alert.symbol }}</td>
+                <td>{{ alert.screener_name }}</td>
+                <td>₹{{ alert.initial_price }}</td>
+                <td>{{ alert.triggered_at }}</td>
+                <td>{% if alert.alert_sent %}Yes{% else %}No{% endif %}</td>  <!-- Show Yes/No -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

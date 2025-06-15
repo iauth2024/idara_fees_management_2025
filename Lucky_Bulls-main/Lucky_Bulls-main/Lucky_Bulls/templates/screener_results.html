@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screener Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f9fc;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .error {
+            font-size: 18px;
+            color: red;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .dropdown-container {
+            margin-top: 20px;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .btn {
+                margin-top: 10px;
+                width: 100%;
+                text-align: center;
+            }
+            table {
+                font-size: 14px;
+            }
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Screener Results</h1>
+            <script>
+                // Function to auto-refresh the page every 1 minute during market hours
+                function autoRefresh() {
+                    const now = new Date();
+                    const start = new Date();
+                    const end = new Date();
+        
+                    // Set start and end times
+                    start.setHours(9, 15, 0); // 9:15 AM
+                    end.setHours(15, 35, 0); // 3:35 PM
+        
+                    // Check if the current time is within market hours
+                    if (now >= start && now <= end) {
+                        setTimeout(() => {
+                            location.reload();
+                        }, 60000); // Refresh every 60,000ms (1 minute)
+                    }
+                }
+        
+                // Call the auto-refresh function
+                document.addEventListener("DOMContentLoaded", autoRefresh);
+            </script>
+            <a href="{% url 'combined_results' %}" class="btn">BackTest Results</a>
+            <a href="{% url 'performance_page' %}" class="btn">Performance</a>
+        </div>
+        
+        <h2>Screener Name: {{ screener_name }}</h2>
+        
+        <div class="dropdown-container">
+            <label for="screener">Choose a screener:</label>
+            <select name="screener" id="screener" onchange="location = this.value;">
+                <option value="?screener=ALL" {% if screener_name == 'ALL' %}selected{% endif %}>Show All</option>
+
+                {% for screener in screener_names %}
+                    <option value="?screener={{ screener }}" {% if screener == screener_name %}selected{% endif %}>
+                        {{ screener }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        {% if error %}
+            <div class="error">Error: {{ error }}</div>
+        {% elif stocks %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sr</th>
+                        <th>Screener Name</th>
+                        <th>NSE Code</th>
+                        <th>Name</th>
+                        <th>BSE Code</th>
+                        <th>% Change</th>
+                        <th>Close</th>
+                        <th>Volume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in stocks %}
+                        <tr>
+                            <td>{{ stock.sr }}</td>
+                            <td>{{ stock.screener_name }}</td> <!-- Add screener name here -->
+                            <td>{{ stock.nsecode }}</td>
+                            <td>{{ stock.name }}</td>
+                            <td>{{ stock.bsecode }}</td>
+                            <td>{{ stock.per_chg }}</td>
+                            <td>{{ stock.close }}</td>
+                            <td>{{ stock.volume }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="error">No stocks found.</div>
+        {% endif %}
+    </div>
+</body>
+</html>
