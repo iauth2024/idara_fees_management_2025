@@ -1,1 +1,0 @@
-"# Lucky_Bulls" 
