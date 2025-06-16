@@ -932,30 +932,32 @@ from django.db.models import Sum
 from django.shortcuts import render
 from .models import Student, Payment
 
+from django.db.models import Sum, DecimalField
+from django.db.models.functions import Coalesce
+
 def reports(request):
-    # Get all students and distinct choices for branches, courses, and sections
-    students = Student.objects.all()
+    # Pre-fetch distinct values
     branches = Student.objects.values('branch').distinct()
-    organized_data = {}
+    organized_data = {
+        branch['branch']: {
+            course['course']: [
+                section['section'] for section in
+                Student.objects.filter(branch=branch['branch'], course=course['course'])
+                .values('section').distinct()
+            ]
+            for course in Student.objects.filter(branch=branch['branch']).values('course').distinct()
+        }
+        for branch in branches
+    }
 
-    # Organize courses and sections within each branch
-    for branch in branches:
-        branch_name = branch['branch']
-        courses = Student.objects.filter(branch=branch_name).values('course').distinct()
-        organized_data[branch_name] = {}
-
-        for course in courses:
-            course_name = course['course']
-            sections = Student.objects.filter(branch=branch_name, course=course_name).values('section').distinct()
-            organized_data[branch_name][course_name] = [section['section'] for section in sections]
-
-    # Get filter parameters from the request
+    # Get filter parameters
     course = request.GET.get('course', '')
     branch = request.GET.get('branch', '')
     section = request.GET.get('section', '')
     months_due = request.GET.get('months_due', '0')
 
-    # Apply filters based on selected branch, course, and section
+    # Apply filters
+    students = Student.objects.all()
     if branch:
         students = students.filter(branch=branch)
     if course:
@@ -963,20 +965,13 @@ def reports(request):
     if section:
         students = students.filter(section=section)
 
-    # Convert months_due to integer for calculations
-    try:
-        months_due = int(months_due)
-    except ValueError:
-        months_due = 0
-
-    # Calculate financial details for each student
+    # Calculate financial details efficiently
     additional_info = []
-    for student in students:
+    for student in students.annotate(total_paid=Coalesce(Sum('payment__amount'), 0, output_field=DecimalField())):
         monthly_fees = Decimal(student.monthly_fees)
-        total_paid = Payment.objects.filter(student=student).aggregate(Sum('amount'))['amount__sum'] or Decimal(0)
+        total_paid = student.total_paid
         months_paid = total_paid / monthly_fees if monthly_fees > 0 else 0
         total_due = (monthly_fees * 12) - total_paid
-
 
         additional_info.append({
             'student': student,
@@ -987,17 +982,15 @@ def reports(request):
             'months_paid': months_paid,
         })
 
-    # Prepare the context for rendering the template
     context = {
         'additional_info': additional_info,
-        'organized_data': organized_data,  # Organized data for branches, courses, and sections
+        'organized_data': organized_data,
         'selected_branch': branch,
         'selected_course': course,
         'selected_section': section,
-        'selected_months_due': months_due,  # Include months_due in the context
+        'selected_months_due': months_due,
     }
     return render(request, 'reports.html', context)
-
 ######################################################################################################################
 
 
