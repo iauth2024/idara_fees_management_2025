@@ -3,136 +3,470 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Reports</title>
+    <title>Student Fee Reports</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* General styling */
+        :root {
+            --primary-color: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4cc9f0;
+            --warning-color: #f72585;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            color: #333;
-            background-color: #f4f4f9;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7ff;
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
         }
 
         h1, h2, h3, h4 {
-            color: #4a5568;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
         }
 
-        /* Tab button styles */
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+        }
+
+        /* Header and navigation */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Button styles */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #3ab7d8;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #e51777;
+            transform: translateY(-2px);
+        }
+
+        /* Tab styles */
         .tab-container {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
         }
 
-        .tab-container button {
-            background-color: #3182ce;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+        .tab-container h2, .tab-container h3, .tab-container h4 {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: var(--transition);
+            font-weight: 500;
         }
 
-        .tab-container button:hover {
-            background-color: #2b6cb0;
+        .tab-btn:hover {
+            background-color: #e9ecef;
         }
 
-        /* Active tab button style */
-        .tab-container button.active {
-            background-color: #2c5282;
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: var(--box-shadow);
         }
 
-        /* Hidden and visible content sections */
+        /* Content sections */
         .content-section {
             display: none;
+            padding: 1rem;
+            background-color: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--box-shadow);
         }
 
         .content-section.active {
             display: block;
+            animation: fadeIn 0.5s ease;
         }
 
-        /* Table styling */
-        t/* Table styling for printing */
-table {
-    width: 100%;
-    border-collapse: collapse; /* Ensures borders are collapsed between cells */
-    margin-top: 20px;
-    font-size: 14px;
-}
-
-th, td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd; /* Adds a border to each cell */
-}
-
-th {
-    background-color: #4a5568;
-    color: #f7fafc;
-}
-
-tr:nth-child(even) {
-    background-color: #f9fafb; /* Light background for even rows */
-}
-
-/* Optional: Styling for the header row to make it distinct */
-thead th {
-    border-bottom: 2px solid #333; /* Adds a thicker border at the bottom of the header */
-}
-
-        .top-right {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-       
-        /* Section link styling */
+        /* Section links */
         .section-tab-link {
-            display: block;
-            padding: 8px;
-            margin: 5px 0;
-            background-color: #edf2f7;
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 5px;
+            background-color: white;
+            border: 1px solid var(--accent-color);
             text-decoration: none;
-            color: #3182ce;
-            border-radius: 5px;
+            color: var(--accent-color);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
         }
 
         .section-tab-link:hover {
-            background-color: #e2e8f0;
+            background-color: #e9ecef;
+            transform: translateY(-2px);
         }
 
-        /* Print button style */
-        .print-button,.home-button {
-            background-color: #38a169;
+        .section-tab-link.active {
+            background-color: var(--accent-color);
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 20px;
+            font-weight: 500;
         }
 
-        .print-button:hover {
-            background-color: #2f855a;
+        /* Table styles */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
         }
 
-        .arrow {
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .sortable-header {
             cursor: pointer;
-            padding-left: 5px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .sortable-header:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .sortable-header::after {
+            content: "⇅";
+            margin-left: 5px;
+            font-size: 0.8rem;
+            opacity: 0.7;
         }
 
         .sorted-asc::after {
             content: "↑";
+            opacity: 1;
         }
 
         .sorted-desc::after {
             content: "↓";
+            opacity: 1;
+        }
+
+        /* Status badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .tab-container {
+                flex-direction: column;
+            }
+            
+            .tab-btn, .section-tab-link {
+                width: 100%;
+                text-align: center;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+                font-size: 12pt;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 0;
+            }
+            
+            .header, .tab-container, .content-section:not(.active), .btn {
+                display: none;
+            }
+            
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            
+            th, td {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+            
+            th {
+                background-color: #f2f2f2;
+                color: black;
+            }
+            
+            tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+            
+            .print-title {
+                display: block;
+                text-align: center;
+                font-size: 16pt;
+                margin-bottom: 20px;
+            }
         }
     </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Student Fee Reports</h1>
+            <div class="action-buttons">
+                <a href="{% url 'homepage' %}" class="btn btn-primary">
+                    🏠 Home
+                </a>
+                <button onclick="printReport()" class="btn btn-success">
+                    🖨️ Print Report
+                </button>
+            </div>
+        </div>
+
+        <!-- Branch Selection -->
+        <div class="tab-container">
+            <h2>Select Branch</h2>
+            {% for branch, courses in organized_data.items %}
+                <button id="branch-{{ branch }}" 
+                        onclick="loadCourses('{{ branch }}')" 
+                        class="tab-btn {% if branch == selected_branch %}active{% endif %}">
+                    {{ branch }}
+                </button>
+            {% endfor %}
+        </div>
+
+        <!-- Course Selection -->
+        <div id="courses-container">
+            {% for branch, courses in organized_data.items %}
+                <div class="content-section course-tab {% if branch == selected_branch %}active{% endif %}" 
+                     id="course-{{ branch }}">
+                    <div class="tab-container">
+                        <h3>Courses in {{ branch }}</h3>
+                        {% for course, sections in courses.items %}
+                            <button id="course-{{ branch }}-{{ course }}" 
+                                    onclick="loadSections('{{ branch }}', '{{ course }}')" 
+                                    class="tab-btn {% if course == selected_course %}active{% endif %}">
+                                {{ course }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Section Selection -->
+        <div id="sections-container">
+            {% for branch, courses in organized_data.items %}
+                {% for course, sections in courses.items %}
+                    <div class="content-section section-tab {% if course == selected_course and branch == selected_branch %}active{% endif %}" 
+                         id="section-{{ branch }}-{{ course }}">
+                        <div class="tab-container">
+                            <h4>Sections in {{ course }} ({{ branch }})</h4>
+                            {% for section in sections %}
+                                <a href="?branch={{ branch }}&course={{ course }}&section={{ section }}&months_due={{ selected_months_due }}" 
+                                   class="section-tab-link {% if section == selected_section %}active{% endif %}">
+                                    {{ section }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <!-- Report Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Adm No.</th>
+                        <th>Name</th>
+                        <th>Father's Name</th>
+                        <th>Phone</th>
+                        <th>Course</th>
+                        <th>Branch</th>
+                        <th>Section</th>
+                        <th>Monthly Fees</th>
+                        <th>Total Fees</th>
+                        <th>Total Paid</th>
+                        <th>Total Due</th>
+                        <th class="sortable-header" onclick="sortTableByMonthsPaid(11)">Months Paid</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for info in additional_info %}
+                    <tr>
+                        <td>{{ info.student.admission_number }}</td>
+                        <td>{{ info.student.name }}</td>
+                        <td>{{ info.student.father_name }}</td>
+                        <td>{{ info.student.phone }}</td>
+                        <td>{{ info.student.course }}</td>
+                        <td>{{ info.student.branch }}</td>
+                        <td>{{ info.student.section }}</td>
+                        <td>₹{{ info.monthly_fees }}</td>
+                        <td>₹{{ info.total_fees }}</td>
+                        <td>₹{{ info.total_paid }}</td>
+                        <td>
+                            <span class="badge {% if info.total_due == 0 %}badge-success{% else %}badge-danger{% endif %}">
+                                ₹{{ info.total_due }}
+                            </span>
+                        </td>
+                        <td>{{ info.months_paid }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
         // Show courses for the selected branch
         function loadCourses(branch) {
@@ -151,7 +485,7 @@ thead th {
 
         // Highlight active button
         function setActiveButton(id) {
-            document.querySelectorAll('.tab-container button').forEach(button => button.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(button => button.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
 
@@ -160,28 +494,29 @@ thead th {
             const table = document.querySelector("table tbody");
             const rows = Array.from(table.rows);
             let sortedRows;
+            const header = document.querySelectorAll("th")[n];
 
-            // Check if the column is already sorted in ascending order
-            const currentSort = document.querySelector(".sorted-asc, .sorted-desc");
+            // Check if the column is already sorted
+            const isSortedAsc = header.classList.contains("sorted-asc");
+            const isSortedDesc = header.classList.contains("sorted-desc");
 
-            if (currentSort && currentSort.classList.contains("sorted-asc")) {
+            // Remove all sort classes first
+            document.querySelectorAll(".sorted-asc, .sorted-desc").forEach(el => {
+                el.classList.remove("sorted-asc", "sorted-desc");
+            });
+
+            if (isSortedAsc) {
                 // Sort in descending order
                 sortedRows = rows.sort((rowA, rowB) => {
                     return parseFloat(rowB.cells[n].textContent) - parseFloat(rowA.cells[n].textContent);
                 });
-                currentSort.classList.remove("sorted-asc");
-                currentSort.classList.add("sorted-desc");
+                header.classList.add("sorted-desc");
             } else {
                 // Sort in ascending order
                 sortedRows = rows.sort((rowA, rowB) => {
                     return parseFloat(rowA.cells[n].textContent) - parseFloat(rowB.cells[n].textContent);
                 });
-                if (currentSort) {
-                    currentSort.classList.remove("sorted-desc");
-                    currentSort.classList.add("sorted-asc");
-                } else {
-                    document.querySelectorAll("th")[n].classList.add("sorted-asc");
-                }
+                header.classList.add("sorted-asc");
             }
 
             // Reorder rows in the table
@@ -189,129 +524,55 @@ thead th {
             sortedRows.forEach(row => table.appendChild(row));
         }
 
-        // Print the table content
+        // Print the report
         function printReport() {
-    const content = document.querySelector("table").outerHTML;
-    const branch = "{{ selected_branch }}";  // Replace with dynamic branch
-    const course = "{{ selected_course }}";  // Replace with dynamic course
-    const section = "{{ selected_section }}";  // Replace with dynamic section
+            const content = document.querySelector("table").outerHTML;
+            const branch = "{{ selected_branch }}";
+            const course = "{{ selected_course }}";
+            const section = "{{ selected_section }}";
+            const date = new Date().toLocaleDateString();
 
-    const filterInfo = `
-    <h3>Fee Details :</h3>
-    <p><strong>Branch:</strong> ${branch} | <strong>Course:</strong> ${course} | <strong>Section:</strong> ${section}</p>
-`;
+            const printContent = `
+                <html>
+                    <head>
+                        <title>Fee Report - ${branch} - ${course} - ${section}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h1 { color: #4361ee; text-align: center; margin-bottom: 20px; }
+                            .report-info { margin-bottom: 20px; text-align: center; }
+                            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                            th, td { padding: 10px; text-align: left; border: 1px solid #ddd; }
+                            th { background-color: #4361ee; color: white; }
+                            tr:nth-child(even) { background-color: #f2f2f2; }
+                            .badge { padding: 3px 8px; border-radius: 20px; font-size: 0.75rem; }
+                            .badge-success { background-color: #d1fae5; color: #065f46; }
+                            .badge-danger { background-color: #fee2e2; color: #991b1b; }
+                            .footer { margin-top: 20px; text-align: right; font-size: 0.8rem; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>Student Fee Report</h1>
+                        <div class="report-info">
+                            <p><strong>Branch:</strong> ${branch} | <strong>Course:</strong> ${course} | <strong>Section:</strong> ${section}</p>
+                            <p><strong>Generated on:</strong> ${date}</p>
+                        </div>
+                        ${content}
+                        <div class="footer">
+                            <p>Generated by Student Management System</p>
+                        </div>
+                    </body>
+                </html>
+            `;
 
-
-    const newWindow = window.open('', '', 'height=400,width=800');
-    newWindow.document.write('<html><head><title>Print</title>');
-    
-    // Adding styles for print
-    newWindow.document.write('<style>');
-    newWindow.document.write('table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }');
-    newWindow.document.write('th, td { padding: 10px; text-align: left; border: 1px solid #ddd; }');
-    newWindow.document.write('th { background-color: #4a5568; color: #f7fafc; }');
-    newWindow.document.write('tr:nth-child(even) { background-color: #f9fafb; }');
-    newWindow.document.write('thead th { border-bottom: 2px solid #333; }');
-    newWindow.document.write('</style>');
-
-    // Adding filter information and table content
-    newWindow.document.write('</head><body>');
-    newWindow.document.write(filterInfo);  // Adding the filter information above the table
-    newWindow.document.write(content);
-    newWindow.document.write('</body></html>');
-    newWindow.document.close();
-    newWindow.print();
-}
-
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
     </script>
-</head>
-<body>
-<div class="top-right">
-        <a href="{% url 'homepage' %}">
-            <button type="button" class="home-button">Home</button>
-        </a>
-        
-    </div>
-<h1>Student Fee Reports</h1>
-
-<!-- Branch Tabs -->
-<div class="tab-container">
-    <h2>Select Branch:</h2>
-    {% for branch, courses in organized_data.items %}
-        <button id="branch-{{ branch }}" onclick="loadCourses('{{ branch }}')" class="{% if branch == selected_branch %}active{% endif %}">{{ branch }}</button>
-    {% endfor %}
-</div>
-
-<!-- Course Tabs -->
-<div id="courses-container">
-    {% for branch, courses in organized_data.items %}
-        <div class="course-tab content-section {% if branch == selected_branch %}active{% endif %}" id="course-{{ branch }}">
-            <div class="tab-container">
-                <h3>Select Course in {{ branch }}:</h3>
-                {% for course, sections in courses.items %}
-                    <button id="course-{{ branch }}-{{ course }}" onclick="loadSections('{{ branch }}', '{{ course }}')" class="{% if course == selected_course %}active{% endif %}">{{ course }}</button>
-                {% endfor %}
-            </div>
-        </div>
-    {% endfor %}
-</div>
-
-<!-- Section Tabs -->
-<div id="sections-container">
-    {% for branch, courses in organized_data.items %}
-        {% for course, sections in courses.items %}
-            <div class="section-tab content-section {% if course == selected_course and branch == selected_branch %}active{% endif %}" id="section-{{ branch }}-{{ course }}">
-                <div class="tab-container">
-                    <h4>Select Section in {{ course }} ({{ branch }}):</h4>
-                    {% for section in sections %}
-                        <a href="?branch={{ branch }}&course={{ course }}&section={{ section }}&months_due={{ selected_months_due }}" class="section-tab-link {% if section == selected_section %}active{% endif %}">{{ section }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endfor %}
-    {% endfor %}
-</div>
-
-<!-- Print Button -->
-<button class="print-button" onclick="printReport()">Print Report</button>
-
-<!-- Filtered Report Table -->
-<table>
-    <thead>
-        <tr>
-            <th>Admission Number</th>
-            <th>Name</th>
-            <th>Father's Name</th>
-            <th>Phone</th>
-            <th>Course</th>
-            <th>Branch</th>
-            <th>Section</th>
-            <th>Monthly Fees</th>
-            <th>Total Fees</th>
-            <th>Total Paid</th>
-            <th>Total Due</th>
-            <th id="months-paid-header" onclick="sortTableByMonthsPaid(10)">Months Paid <span class="arrow"></span></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for info in additional_info %}
-        <tr>
-            <td>{{ info.student.admission_number }}</td>
-            <td>{{ info.student.name }}</td>
-            <td>{{ info.student.father_name }}</td>
-            <td>{{ info.student.phone }}</td>
-            <td>{{ info.student.course }}</td>
-            <td>{{ info.student.branch }}</td>
-            <td>{{ info.student.section }}</td>
-            <td>{{ info.monthly_fees }}</td>
-            <td>{{ info.total_fees }}</td>
-            <td>{{ info.total_paid }}</td>
-            <td>{{ info.total_due }}</td>
-            <td>{{ info.months_paid }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
 </body>
 </html>
