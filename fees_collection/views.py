@@ -337,7 +337,7 @@ def upload_file(request):
 
                 # Ensure expected columns are present
                 required_columns = [
-                    'Admission Number', 'Name', 'Father Name', 'Phone', 'Course', 'Section', 'Branch', 'Monthly Fees', 'Student Type'
+                    'Admission Number', 'Name', 'Father Name', 'Phone', 'Course', 'Section', 'Branch', 'Monthly Donation', 'Student Type'
                 ]
                 if not all(col in df.columns for col in required_columns):
                     return render(request, 'upload_result.html', {
@@ -352,14 +352,14 @@ def upload_file(request):
                     # Log or print the phone number to debug
                     print(f"Processing phone number: {phone}")
 
-                    # Ensure monthly fees are handled correctly as Decimal
+                    # Ensure monthly donations are handled correctly as Decimal
                     try:
-                        monthly_fees = Decimal(row['Monthly Fees']).quantize(Decimal('1.'))
+                        monthly_donation = Decimal(row['Monthly Donation']).quantize(Decimal('1.'))
                     except (ValueError, InvalidOperation):
                         failed_students.append({
                             'admission_number': admission_number,
                             'name': row['Name'],
-                            'reason': 'Invalid Monthly Fees'
+                            'reason': 'Invalid Monthly Donation'
                         })
                         continue  # Skip to the next row if there's an error
 
@@ -378,7 +378,7 @@ def upload_file(request):
                                 course=row['Course'],
                                 section=row['Section'],
                                 branch=row['Branch'],
-                                monthly_fees=monthly_fees,
+                                monthly_fees=monthly_donation,
                                 student_type=row['Student Type']
                         ).exists():
                             failed_students.append({
@@ -396,7 +396,7 @@ def upload_file(request):
                                 course=row['Course'],
                                 section=row['Section'],
                                 branch=row['Branch'],
-                                monthly_fees=monthly_fees,
+                                monthly_fees=monthly_donation,
                                 student_type=row['Student Type']
                             )
                             student.save()
@@ -591,7 +591,7 @@ def download_students(request):
 
     # Write the header row (including Father Name)
     headers = [
-        'Admission Number', 'Name', 'Father Name', 'Phone', 'Course', 'Section', 'Branch', 'Monthly Fees', 'Student Type'
+        'Admission Number', 'Name', 'Father Name', 'Phone', 'Course', 'Section', 'Branch', 'Monthly Donation', 'Student Type'
     ]
     sheet.append(headers)
 
@@ -605,7 +605,7 @@ def download_students(request):
             student.course,            # Course
             student.section,           # Section
             student.branch,            # Branch
-            student.monthly_fees,      # Monthly Fees
+            student.monthly_fees,      # Monthly Donation (variable name remains same)
             student.student_type       # Student Type
         ])
 

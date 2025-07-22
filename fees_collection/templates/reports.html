@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Student Fee Reports</title>
+    <title>Student Donation Reports</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -360,7 +360,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 Student Fee Reports</h1>
+            <h1>📊 Student Donation Reports</h1>
             <div class="action-buttons">
                 <a href="{% url 'homepage' %}" class="btn btn-primary">
                     🏠 Home
@@ -434,8 +434,8 @@
                         <th>Course</th>
                         <th>Branch</th>
                         <th>Section</th>
-                        <th>Monthly Fees</th>
-                        <th>Total Fees</th>
+                        <th>Monthly Donation</th>
+                        <th>Total Donation</th>
                         <th>Total Paid</th>
                         <th>Total Due</th>
                         <th class="sortable-header" onclick="sortTableByMonthsPaid(11)">Months Paid</th>
@@ -535,7 +535,7 @@
             const printContent = `
                 <html>
                     <head>
-                        <title>Fee Report - ${branch} - ${course} - ${section}</title>
+                        <title>Donation Report - ${branch} - ${course} - ${section}</title>
                         <style>
                             body { font-family: Arial, sans-serif; margin: 20px; }
                             h1 { color: #4361ee; text-align: center; margin-bottom: 20px; }
@@ -551,7 +551,7 @@
                         </style>
                     </head>
                     <body>
-                        <h1>Student Fee Report</h1>
+                        <h1>Student Donation Report</h1>
                         <div class="report-info">
                             <p><strong>Branch:</strong> ${branch} | <strong>Course:</strong> ${course} | <strong>Section:</strong> ${section}</p>
                             <p><strong>Generated on:</strong> ${date}</p>

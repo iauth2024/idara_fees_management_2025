@@ -74,7 +74,7 @@ WSGI_APPLICATION = 'idara_fees_management.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-# Database
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

@@ -132,10 +132,10 @@
 
     <div>
         <h2>Total Students: <span class="highlight-blue">{{ total_students }}</span></h2>
-        <h2>Total Fees: <span class="highlight-green">₹ {{ total_fees|indian_number_format }}</span></h2>
+        <h2>Total Donations: <span class="highlight-green">₹ {{ total_fees|indian_number_format }}</span></h2>
         <h2>Amount Collected: <span class="highlight-orange">₹ {{ collected_fees|indian_number_format }}</span></h2>
-        <h2 class="highlight-red">Due Fees: ₹ {{ due_fees|indian_number_format }}</h2>
-        <h2>Fee Cleared Students: <span class="highlight-green">{{ fee_cleared_students }}</span></h2>
+        <h2 class="highlight-red">Due Donations: ₹ {{ due_fees|indian_number_format }}</h2>
+        <h2>Donation Cleared Students: <span class="highlight-green">{{ fee_cleared_students }}</span></h2>
     </div>
 
     <div>
@@ -244,7 +244,5 @@
             </tbody>
         </table>
     </div>
-
-    
 </body>
 </html>

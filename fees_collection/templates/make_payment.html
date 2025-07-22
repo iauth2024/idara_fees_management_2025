@@ -128,7 +128,7 @@
             <input type="date" id="date" name="date" value="" required>
         </div>
         <div>
-            <label for="id_amount_paid">Fee Amount :</label>
+            <label for="id_amount_paid">Donation Amount:</label>
             <input type="text" id="amount_paid" name="amount_paid">
         </div>
         <div>
@@ -172,13 +172,13 @@
                             var student = response.student;
                             $('#student-details').html(
                                 '<p style="color: rgb(10, 32, 175);font-weight: bold;font: 1em sans-serif">Name: ' + student.name + '</p>' +
-                                '<p style="color: rgb(234, 6, 6);font-weight: bold;">Due Amount: ' + student.total_due + '</p>' +
+                                '<p style="color: rgb(234, 6, 6);font-weight: bold;">Due Donation: ' + student.total_due + '</p>' +
                                 '<p>Phone: ' + student.phone + '</p>' +
                                 '<p>Course: ' + student.course + '</p>' +
                                 '<p>Branch: ' + student.branch + '</p>' +
-                                '<p>Monthly Fees: ' + student.monthly_fees  + '</p>' +
-                                '<p>Total Fees: ' + student.total_fees + '</p>' +
-                                '<p style="color: rgb(48, 198, 93);font-weight: bold;">Total Fees Paid: ' + student.total_paid + '</p>' +
+                                '<p>Monthly Donation: ' + student.monthly_fees  + '</p>' +
+                                '<p>Total Donation: ' + student.total_fees + '</p>' +
+                                '<p style="color: rgb(48, 198, 93);font-weight: bold;">Total Donation Paid: ' + student.total_paid + '</p>' +
                                 '<p>Months Paid: ' + student.months_paid + '</p>'
                             );
                         } else {

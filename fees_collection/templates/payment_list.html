@@ -114,7 +114,7 @@
                 <th>Date</th>
                 <th>Created By</th>
                 <th>Payment Method</th>
-                <th>Receipt Type</th>
+              
             </tr>
         </thead>
         <tbody>
@@ -127,7 +127,7 @@
                 <td>{{ payment.date }}</td>
                 <td>{{ payment.created_by.username }}</td> <!-- Assuming 'created_by' is a User model -->
                 <td>{{ payment.payment_method }}</td> <!-- Payment method (Cash, Online) -->
-                <td>{{ payment.receipt_type }}</td> <!-- Fee or Other types -->
+                
             </tr>
             {% empty %}
             <tr>
