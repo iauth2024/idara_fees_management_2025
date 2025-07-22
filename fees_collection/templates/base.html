@@ -136,29 +136,23 @@
                     <a href="#">Download</a>
                     <ul>
                         <li><a href="{% url 'download_payments' %}">Download Receipts</a></li>
-                        <!-- Added Download Students option here -->
                         <li><a href="{% url 'download_students' %}">Download Students</a></li>
                     </ul>
                 </li>
                 <li><a href="{% url 'summary' %}">Summary</a></li>
             {% endif %}
 
-            <li><a href="{% url 'make_payment' %}">Receipt Entry</a></li>
-            <li><a href="{% url 'student_payment_report' %}">Fee Card</a></li>
+            <li><a href="{% url 'make_payment' %}">Donation Entry</a></li>
+            <li><a href="{% url 'student_payment_report' %}">Donation Card</a></li>
             <li><a href="{% url 'user_payments' %}">My Entries</a></li>
             <li><a href="{% url 'reports' %}">Reports</a></li>
             <li><a href="{% url 'receipt_number_input' %}" class="print-receipt-button">Print Receipt</a></li>
-            <li><a href="{% url 'student_list' %}">Students</a></li> <!-- Added link to student list -->
-            <!-- Button to Payment List -->
-            <li><a href="{% url 'payment_list' %}">Payment List</a></li>
-
+            <li><a href="{% url 'student_list' %}">Students</a></li>
+            <li><a href="{% url 'payment_list' %}">Donation List</a></li>
         </ul>
     </div>
 
     <div class="content">
-        <!-- Button inside content -->
-    
-
         {% block content %}
         <!-- Page content will be inserted here -->
         {% endblock %}
