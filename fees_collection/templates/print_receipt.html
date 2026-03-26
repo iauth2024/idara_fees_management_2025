@@ -1,0 +1,134 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Receipt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .receipt-container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            position: relative;
+            font-size: 16px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        .receipt-item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .receipt-item label {
+            font-weight: bold;
+            color: #555;
+            width: 40%;
+        }
+        .receipt-item span {
+            display: block;
+            color: #333;
+            width: 60%;
+            text-align: right;
+        }
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .receipt-footer {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .footer-note {
+            font-size: 14px;
+            color: #777;
+        }
+        @media print {
+            body {
+                margin: 0;
+                background: none;
+            }
+            .receipt-container {
+                width: 100%;
+                border: none;
+                box-shadow: none;
+                background: none;
+                padding: 0;
+                margin: 0;
+            }
+            @page {
+                margin: 20mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="receipt-header">
+            <h1>Receipt</h1>
+        </div>
+
+        <div class="receipt-item">
+            <label>Receipt Number:</label>
+            <span>{{ receipt.receipt_no }}</span>  <!-- Display receipt number -->
+        </div>
+        <div class="receipt-item">
+            <label>Admission Number:</label>
+            <span>{{ student.admission_number }}</span>  <!-- Display admission number -->
+        </div>
+        <div class="receipt-item">
+            <label>Name:</label>
+            <span>{{ student.name }}</span>  <!-- Display student name -->
+        </div>
+        <div class="receipt-item">
+            <label>Course:</label>
+            <span>{{ student.course }}</span>  <!-- Display course -->
+        </div>
+        <div class="receipt-item">
+            <label>Section:</label>
+            <span>{{ student.section }}</span>  <!-- Display section -->
+        </div>
+        <div class="receipt-item">
+            <label>Amount:</label>
+            <span>{{ receipt.amount|indian_number_format }}</span>  <!-- Display amount -->
+        </div>
+        <div class="receipt-item">
+            <label>Date:</label>
+            <span>{{ receipt.date }}</span>  <!-- Display date -->
+        </div>
+        <div class="receipt-item">
+            <label>Receipt Type:</label>
+            <span>{{ receipt.receipt_type }}</span>  <!-- Display receipt type -->
+        </div>
+        <div class="receipt-item">
+            <label>Payment Method:</label>
+            <span>{{ receipt.payment_method }}</span>  <!-- Display payment method -->
+        </div>
+        <div class="receipt-footer">
+            <div class="footer-note">
+                Please keep this receipt for your records.
+            </div>
+        </div>
+    </div>
+    <script>
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();  // Automatically print the receipt
+            }, 500);  // Add a slight delay to ensure all content is loaded
+        }
+    </script>
+</body>
+</html>

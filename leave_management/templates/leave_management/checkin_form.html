@@ -1,0 +1,792 @@
+{% extends "leave_management/base_leave.html" %}
+{% load static %}
+
+{% block title %}Check-In Student{% endblock %}
+
+{% block content %}
+
+<style>
+    /* Your existing CSS remains exactly the same */
+    .checkin-container {
+        max-width: 600px;
+        margin: 0 auto;
+        animation: slideUp 0.4s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px 20px;
+        border-radius: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        text-align: center;
+    }
+
+    .page-header h4 {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .page-header i {
+        font-size: 2rem;
+    }
+
+    .student-card {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        border-left: 5px solid #667eea;
+    }
+
+    html[dir="rtl"] .student-card {
+        border-left: none;
+        border-right: 5px solid #667eea;
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    html[dir="rtl"] .student-info {
+        flex-direction: row-reverse;
+    }
+
+    .student-avatar {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.8rem;
+        font-weight: 600;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .student-details {
+        flex: 1;
+    }
+
+    .student-details h5 {
+        margin: 0 0 5px 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .student-details p {
+        margin: 5px 0;
+        color: #666;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    html[dir="rtl"] .student-details p {
+        flex-direction: row-reverse;
+    }
+
+    .student-details i {
+        color: #667eea;
+        font-size: 1rem;
+        width: 20px;
+    }
+
+    .leave-dates {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px dashed #e9ecef;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    html[dir="rtl"] .leave-dates {
+        flex-direction: row-reverse;
+    }
+
+    .date-badge {
+        background: #f8f9fa;
+        padding: 8px 15px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    html[dir="rtl"] .date-badge {
+        flex-direction: row-reverse;
+    }
+
+    .date-badge i {
+        color: #667eea;
+    }
+
+    .date-badge strong {
+        color: #333;
+        margin-right: 5px;
+    }
+
+    html[dir="rtl"] .date-badge strong {
+        margin-right: 0;
+        margin-left: 5px;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        color: #495057;
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+
+    html[dir="rtl"] .form-label {
+        flex-direction: row-reverse;
+    }
+
+    .form-label i {
+        color: #667eea;
+        font-size: 1.2rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-control:hover {
+        border-color: #764ba2;
+    }
+
+    .datetime-input {
+        font-family: inherit;
+    }
+
+    .helper-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    html[dir="rtl"] .helper-text {
+        flex-direction: row-reverse;
+    }
+
+    .helper-text i {
+        color: #667eea;
+        font-size: 0.9rem;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn-checkin {
+        flex: 2;
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 15px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+        min-height: 55px;
+        border: none;
+    }
+
+    .btn-checkin:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(40, 167, 69, 0.4);
+    }
+
+    .btn-checkin:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    .btn-checkin:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-checkin i {
+        font-size: 1.3rem;
+    }
+
+    .btn-cancel {
+        flex: 1;
+        background: #6c757d;
+        color: white;
+        border: none;
+        padding: 16px 25px;
+        border-radius: 15px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        min-height: 55px;
+    }
+
+    .btn-cancel:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(108, 117, 125, 0.3);
+        color: white;
+    }
+
+    .btn-cancel:active {
+        transform: translateY(0);
+    }
+
+    .quick-times {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 15px 0;
+    }
+
+    .quick-time-btn {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 12px 15px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #495057;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex: 1 1 auto;
+        min-width: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .quick-time-btn i {
+        color: #667eea;
+        font-size: 1rem;
+    }
+
+    .quick-time-btn:hover {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+
+    .quick-time-btn:hover i {
+        color: white;
+    }
+
+    .quick-time-btn:active {
+        transform: translateY(0);
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .pulse {
+        animation: pulse 0.5s ease;
+    }
+
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .alert {
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    html[dir="rtl"] .alert {
+        flex-direction: row-reverse;
+    }
+
+    .alert-warning {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        color: #856404;
+    }
+
+    html[dir="rtl"] .alert-warning {
+        border-left: none;
+        border-right: 4px solid #ffc107;
+    }
+
+    .alert-danger {
+        background: #f8d7da;
+        border-left: 4px solid #dc3545;
+        color: #721c24;
+    }
+
+    html[dir="rtl"] .alert-danger {
+        border-left: none;
+        border-right: 4px solid #dc3545;
+    }
+
+    .alert i {
+        font-size: 1.2rem;
+    }
+
+    @media (max-width: 480px) {
+        .page-header {
+            padding: 20px 15px;
+        }
+
+        .page-header h4 {
+            font-size: 1.4rem;
+        }
+
+        .student-avatar {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+        }
+
+        .student-details h5 {
+            font-size: 1.1rem;
+        }
+
+        .leave-dates {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-cancel {
+            text-align: center;
+        }
+
+        .quick-times {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .quick-time-btn {
+            flex: 0 0 auto;
+        }
+    }
+
+    /* Prevent zoom on iOS */
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+
+    /* RTL Specific */
+    html[dir="rtl"] .me-2 {
+        margin-left: 0.5rem !important;
+        margin-right: 0 !important;
+    }
+
+    html[dir="rtl"] .ms-2 {
+        margin-right: 0.5rem !important;
+        margin-left: 0 !important;
+    }
+</style>
+
+<div class="checkin-container">
+    <!-- Header -->
+    <div class="page-header">
+        <h4>
+            <i class="bi bi-box-arrow-in-right"></i>
+            <span data-trans="student_checkin">Student Check-In</span>
+        </h4>
+    </div>
+
+    <!-- Validation Messages -->
+    {% if leave.status != "approved" %}
+    <div class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+            <strong data-trans="cannot_check_in">Cannot Check In:</strong> 
+            <span data-trans="leave_is">This leave is</span> {{ leave.get_status_display|lower }}.
+            <span data-trans="only_approved">Only approved leaves can be checked in.</span>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if leave.check_in_date %}
+    <div class="alert alert-warning">
+        <i class="bi bi-info-circle-fill"></i>
+        <div>
+            <strong data-trans="already_checked_in">Already Checked In:</strong> 
+            <span data-trans="student_checked_in">Student was checked in on</span>
+            {{ leave.check_in_date|date:"d M Y" }} <span data-trans="at">at</span> {{ leave.check_in_date|time:"H:i" }}
+            {% if leave.checked_in_by %}<span data-trans="by">by</span> {{ leave.checked_in_by.user.get_full_name }}{% endif %}.
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Student Information Card -->
+    <div class="student-card">
+        <div class="student-info">
+            <div class="student-avatar">
+                {{ leave.student.name|first|upper }}
+            </div>
+            <div class="student-details">
+                <h5>{{ leave.student.name }}</h5>
+                <p>
+                    <i class="bi bi-person-badge"></i>
+                    <strong data-trans="admission">Admission:</strong> {{ leave.student.admission_number }}
+                </p>
+                <p>
+                    <i class="bi bi-diagram-3"></i>
+                    <strong data-trans="branch">Branch:</strong> {{ leave.student.branch }}
+                </p>
+                {% if leave.student.course %}
+                <p>
+                    <i class="bi bi-book"></i>
+                    <strong data-trans="course">Course:</strong> {{ leave.student.course }}
+                </p>
+                {% endif %}
+                {% if leave.student.section %}
+                <p>
+                    <i class="bi bi-layers"></i>
+                    <strong data-trans="section">Section:</strong> {{ leave.student.section }}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Leave Dates -->
+        <div class="leave-dates">
+            <div class="date-badge">
+                <i class="bi bi-calendar-plus"></i>
+                <strong data-trans="from">From:</strong> {{ leave.start_date|date:"d M Y" }} <span data-trans="at">at</span> {{ leave.start_time|time:"H:i" }}
+            </div>
+            <div class="date-badge">
+                <i class="bi bi-calendar-minus"></i>
+                <strong data-trans="to">To:</strong> {{ leave.end_date|date:"d M Y" }} <span data-trans="at">at</span> {{ leave.end_time|time:"H:i" }}
+            </div>
+            <div class="date-badge">
+                <i class="bi bi-clock-history"></i>
+                <strong data-trans="days">Days:</strong> {{ leave.total_days }}
+            </div>
+        </div>
+
+        {% if leave.reason %}
+        <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 12px;">
+            <p style="margin: 0; color: #666; font-size: 0.95rem;">
+                <i class="bi bi-chat-dots" style="color: #667eea; margin-right: 8px;"></i>
+                <strong data-trans="reason">Reason:</strong> {{ leave.reason }}
+            </p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Check-In Form -->
+    <div class="form-card">
+        <form method="post" id="checkinForm" {% if leave.status != "approved" or leave.check_in_date %}style="opacity: 0.6;"{% endif %}>
+            {% csrf_token %}
+
+            {% if leave.status == "approved" and not leave.check_in_date %}
+            <!-- Quick Time Selection -->
+            <div class="quick-times">
+                <button type="button" class="quick-time-btn" onclick="setCurrentTime(event)">
+                    <i class="bi bi-clock"></i>
+                    <span data-trans="now">Now</span>
+                </button>
+                <button type="button" class="quick-time-btn" onclick="setMorningTime(event)">
+                    <i class="bi bi-sun"></i>
+                    <span data-trans="nine_am">9 AM</span>
+                </button>
+                <button type="button" class="quick-time-btn" onclick="setAfternoonTime(event)">
+                    <i class="bi bi-sun-fill"></i>
+                    <span data-trans="two_pm">2 PM</span>
+                </button>
+                <button type="button" class="quick-time-btn" onclick="setEveningTime(event)">
+                    <i class="bi bi-moon"></i>
+                    <span data-trans="five_pm">5 PM</span>
+                </button>
+                <button type="button" class="quick-time-btn" onclick="setYesterdayTime(event)">
+                    <i class="bi bi-calendar-day"></i>
+                    <span data-trans="yesterday">Yesterday 5 PM</span>
+                </button>
+            </div>
+
+            <!-- Check-In Date & Time -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-calendar-check"></i>
+                    <span data-trans="checkin_datetime">Check-In Date & Time</span>
+                </label>
+                <input type="datetime-local"
+                       name="checkin_datetime"
+                       id="checkin_datetime"
+                       class="form-control datetime-input"
+                       value="{{ leave.end_date|date:'Y-m-d' }}T17:00"
+                       required>
+                <div class="helper-text">
+                    <i class="bi bi-info-circle"></i>
+                    <span data-trans="select_actual_time">Select the actual check-in date and time</span>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-pencil-square"></i>
+                    <span data-trans="notes">Notes (Optional)</span>
+                </label>
+                <textarea name="notes" 
+                          class="form-control" 
+                          placeholder="{% trans 'Add any additional notes about check-in (late arrival, early return, etc.)' %}"></textarea>
+                <div class="helper-text">
+                    <i class="bi bi-info-circle"></i>
+                    <span data-trans="optional_remarks">Optional: Add remarks or observations</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button type="submit" class="btn-checkin" id="submitBtn">
+                    <i class="bi bi-check-circle"></i>
+                    <span data-trans="confirm_checkin">Confirm Check-In</span>
+                </button>
+                <a href="{% url 'leave_list' %}" class="btn-cancel">
+                    <i class="bi bi-x-circle"></i>
+                    <span data-trans="cancel">Cancel</span>
+                </a>
+            </div>
+
+            {% else %}
+            <!-- Disabled Form Message -->
+            <div style="text-align: center; padding: 20px;">
+                <i class="bi bi-info-circle" style="font-size: 3rem; color: #6c757d;"></i>
+                <h5 style="margin-top: 15px; color: #6c757d;">
+                    {% if leave.check_in_date %}
+                        <span data-trans="already_checked_in_title">Student already checked in</span>
+                    {% else %}
+                        <span data-trans="checkin_not_available">Check-in not available</span>
+                    {% endif %}
+                </h5>
+                <a href="{% url 'leave_list' %}" class="btn btn-primary mt-3">
+                    <i class="bi bi-arrow-left"></i> <span data-trans="back_to_list">Back to List</span>
+                </a>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<script>
+    // Set current time in datetime-local input
+    function setCurrentTime(event) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+        document.getElementById('checkin_datetime').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+        
+        // Visual feedback
+        const btn = event.currentTarget;
+        btn.classList.add('pulse');
+        setTimeout(() => btn.classList.remove('pulse'), 500);
+    }
+
+    // Set to 9 AM today
+    function setMorningTime(event) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        
+        document.getElementById('checkin_datetime').value = `${year}-${month}-${day}T09:00`;
+        
+        const btn = event.currentTarget;
+        btn.classList.add('pulse');
+        setTimeout(() => btn.classList.remove('pulse'), 500);
+    }
+
+    // Set to 2 PM today
+    function setAfternoonTime(event) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        
+        document.getElementById('checkin_datetime').value = `${year}-${month}-${day}T14:00`;
+        
+        const btn = event.currentTarget;
+        btn.classList.add('pulse');
+        setTimeout(() => btn.classList.remove('pulse'), 500);
+    }
+
+    // Set to 5 PM today
+    function setEveningTime(event) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        
+        document.getElementById('checkin_datetime').value = `${year}-${month}-${day}T17:00`;
+        
+        const btn = event.currentTarget;
+        btn.classList.add('pulse');
+        setTimeout(() => btn.classList.remove('pulse'), 500);
+    }
+
+    // Set to yesterday 5 PM (for late check-ins)
+    function setYesterdayTime(event) {
+        const now = new Date();
+        now.setDate(now.getDate() - 1);
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        
+        document.getElementById('checkin_datetime').value = `${year}-${month}-${day}T17:00`;
+        
+        const btn = event.currentTarget;
+        btn.classList.add('pulse');
+        setTimeout(() => btn.classList.remove('pulse'), 500);
+    }
+
+    // Handle form submission with loading state
+    document.getElementById('checkinForm')?.addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submitBtn');
+        if (!submitBtn) return;
+        
+        const originalText = submitBtn.innerHTML;
+        
+        // Show loading state
+        submitBtn.innerHTML = '<span class="loading-spinner"></span> Processing...';
+        submitBtn.disabled = true;
+        
+        // Re-enable after 5 seconds if something goes wrong
+        setTimeout(() => {
+            if (submitBtn.disabled) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }, 5000);
+    });
+
+    // Set max date to today (can't check-in future)
+    document.addEventListener('DOMContentLoaded', function() {
+        const datetimeInput = document.getElementById('checkin_datetime');
+        if (datetimeInput) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            datetimeInput.max = `${year}-${month}-${day}T${hours}:${minutes}`;
+            
+            // Set default to leave end date if available, otherwise now
+            const leaveEndDate = "{{ leave.end_date|date:'Y-m-d' }}";
+            if (leaveEndDate) {
+                datetimeInput.value = `${leaveEndDate}T17:00`;
+            }
+        }
+    });
+
+    // Prevent double tap zoom on iOS
+    document.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+</script>
+
+{% endblock %}

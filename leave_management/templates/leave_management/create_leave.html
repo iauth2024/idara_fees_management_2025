@@ -1,0 +1,507 @@
+{% extends "leave_management/base_leave.html" %}
+{% load static %}
+
+{% block title %}Apply for Leave{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #6366f1;
+        --primary-soft: #f0f1ff;
+        --success: #10b981;
+        --danger: #ef4444;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-700: #374151;
+        --gray-900: #111827;
+        --radius: 10px;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    body {
+        background: var(--gray-50);
+        font-family: system-ui, -apple-system, sans-serif;
+        color: var(--gray-900);
+    }
+
+    .form-container {
+        max-width: 1100px;
+        margin: 2.5rem auto;
+        padding: 0 1rem;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    .page-header {
+        background: var(--primary);
+        color: white;
+        padding: 2rem 2.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+    }
+
+    html[dir="rtl"] .page-header {
+        flex-direction: row-reverse;
+    }
+
+    .page-header h4 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .form-body {
+        padding: 2.5rem;
+    }
+
+    .form-section {
+        margin-bottom: 2.25rem;
+        padding: 1.75rem;
+        background: var(--primary-soft);
+        border-radius: var(--radius);
+        border: 1px solid #e5e7eb;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    html[dir="rtl"] .section-title {
+        flex-direction: row-reverse;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+        display: block;
+    }
+
+    .required::after {
+        content: " *";
+        color: var(--danger);
+    }
+
+    .form-control,
+    .form-select {
+        border: 1px solid #d1d5db;
+        border-radius: var(--radius);
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        width: 100%;
+        transition: all 0.15s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        outline: none;
+    }
+
+    .auto-fill-group {
+        background: white;
+        border: 1px dashed #c7d2fe;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-top: 1.25rem;
+    }
+
+    html[dir="rtl"] .auto-fill-group {
+        border-right: 4px solid var(--primary);
+        border-left: 1px dashed #c7d2fe;
+    }
+
+    .duration-display {
+        background: #ecfdf5;
+        color: #065f46;
+        padding: 1.25rem;
+        border-radius: var(--radius);
+        text-align: center;
+        font-weight: 600;
+        margin-top: 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        border: none;
+        padding: 0.85rem 2rem;
+        border-radius: var(--radius);
+        color: white;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+        background: #4f46e5;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #6b7280;
+        border: none;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #4b5563;
+    }
+
+    .alert {
+        border-radius: var(--radius);
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .time-quick-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-top: 0.75rem;
+    }
+
+    html[dir="rtl"] .time-quick-buttons {
+        flex-direction: row-reverse;
+    }
+
+    .time-quick-btn {
+        background: #f3f4f6;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .time-quick-btn:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+        .form-body { padding: 1.5rem; }
+        .form-section { padding: 1.25rem; }
+        .page-header { padding: 1.5rem; }
+        .page-header h4 { font-size: 1.5rem; }
+    }
+
+    /* RTL Specific */
+    html[dir="rtl"] .me-2 {
+        margin-left: 0.5rem !important;
+        margin-right: 0 !important;
+    }
+
+    html[dir="rtl"] .ms-2 {
+        margin-right: 0.5rem !important;
+        margin-left: 0 !important;
+    }
+
+    html[dir="rtl"] .spinner-border {
+        margin-right: 0.5rem;
+        margin-left: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+    <div class="form-card">
+
+        <div class="page-header">
+            <i class="fas fa-paper-plane fa-2x"></i>
+            <div>
+                <h4 data-trans="student_leave_application">Student Leave Application</h4>
+                <small data-trans="submit_request">Submit your leave request for approval</small>
+            </div>
+        </div>
+
+        <div class="form-body">
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong data-trans="correct_errors">Please correct the errors below:</strong>
+                    <ul class="mb-0 mt-2">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <form method="post" id="leaveForm" novalidate>
+                {% csrf_token %}
+
+                <!-- Student Info -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-user-graduate"></i>
+                        <span data-trans="student_information">Student Information</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label required" for="{{ form.admission_number.id_for_label }}">
+                            <span data-trans="admission_number">Admission Number</span>
+                        </label>
+                        {{ form.admission_number }}
+                        <small class="form-text text-muted mt-1">
+                            <span data-trans="admission_help">Enter your admission number and press Tab to auto-fill details</span>
+                        </small>
+                        <div class="spinner-border text-primary spinner-border-sm mt-2" id="loadingSpinner" style="display:none;" role="status"></div>
+                    </div>
+
+                    <div class="auto-fill-group">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label"><span data-trans="student_name">Student Name</span></label>
+                                <input type="text" class="form-control" id="student_name" readonly placeholder="Will auto-fill">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label"><span data-trans="course">Course</span></label>
+                                <input type="text" class="form-control" id="course" readonly placeholder="—">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label"><span data-trans="section">Section</span></label>
+                                <input type="text" class="form-control" id="section" readonly placeholder="—">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label"><span data-trans="branch">Branch</span></label>
+                                <input type="text" class="form-control" id="branch" readonly placeholder="—">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leave Duration -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span data-trans="leave_duration">Leave Duration</span>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label required"><span data-trans="start_date">Start Date</span></label>
+                            {{ form.start_date }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required"><span data-trans="end_date">End Date</span></label>
+                            {{ form.end_date }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label required"><span data-trans="start_time">Start Time</span></label>
+                            {{ form.start_time }}
+                            <div class="time-quick-buttons">
+                                <button type="button" class="time-quick-btn" onclick="document.getElementById('id_start_time').value='08:00'">
+                                    <span data-trans="eight_am">8:00 AM</span>
+                                </button>
+                                <button type="button" class="time-quick-btn" onclick="document.getElementById('id_start_time').value='09:00'">
+                                    <span data-trans="nine_am">9:00 AM</span>
+                                </button>
+                                <button type="button" class="time-quick-btn" onclick="document.getElementById('id_start_time').value='14:00'">
+                                    <span data-trans="two_pm">2:00 PM</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label required"><span data-trans="end_time">End Time</span></label>
+                            {{ form.end_time }}
+                            <div class="time-quick-buttons">
+                                <button type="button" class="time-quick-btn" onclick="document.getElementById('id_end_time').value='16:00'">
+                                    <span data-trans="four_pm">4:00 PM</span>
+                                </button>
+                                <button type="button" class="time-quick-btn" onclick="document.getElementById('id_end_time').value='17:00'">
+                                    <span data-trans="five_pm">5:00 PM</span>
+                                </button>
+                                <button type="button" class="time-quick-btn" onclick="document.getElementById('id_end_time').value='18:00'">
+                                    <span data-trans="six_pm">6:00 PM</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="duration-display" id="durationDisplay" style="display:none;">
+                        <i class="fas fa-hourglass-half me-2"></i>
+                        <span data-trans="total_duration">Total leave duration:</span> <strong id="totalDays">—</strong> <span data-trans="days">days</span>
+                    </div>
+                </div>
+
+                <!-- Leave Details -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        <span data-trans="leave_details">Leave Details</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label required"><span data-trans="reason_for_leave">Reason for Leave</span></label>
+                        {{ form.reason }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><span data-trans="additional_notes">Additional Notes</span></label>
+                        {{ form.notes }}
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="text-center d-flex flex-wrap gap-3 justify-content-center">
+                    <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                        <i class="fas fa-paper-plane me-2"></i> <span data-trans="submit_request_btn">Submit Request</span>
+                    </button>
+                    <a href="{% url 'leave_list' %}" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-times me-2"></i> <span data-trans="cancel">Cancel</span>
+                    </a>
+                    <button type="reset" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-undo me-2"></i> <span data-trans="reset">Reset</span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-fill student info
+document.getElementById('id_admission_number')?.addEventListener('blur', function() {
+    const val = this.value.trim();
+    if (!val) return;
+
+    const spinner = document.getElementById('loadingSpinner');
+    spinner.style.display = 'inline-block';
+
+    fetch(`/leave/student-details/?admission_number=${encodeURIComponent(val)}`)
+        .then(r => r.json())
+        .then(data => {
+            spinner.style.display = 'none';
+            if (data.error) {
+                // Use bilingual alert
+                const message = document.documentElement.lang === 'ur' 
+                    ? 'طالب علم نہیں ملا'
+                    : 'Student not found.';
+                alert(message);
+                clearFields();
+            } else {
+                document.getElementById('student_name').value = data.name || '';
+                document.getElementById('course').value     = data.course || '';
+                document.getElementById('section').value    = data.section || '';
+                document.getElementById('branch').value     = data.branch || '';
+            }
+        })
+        .catch(() => {
+            spinner.style.display = 'none';
+            const message = document.documentElement.lang === 'ur' 
+                ? 'طالب علم کی تفصیلات لوڈ کرنے میں خرابی'
+                : 'Error loading student details.';
+            alert(message);
+        });
+});
+
+function clearFields() {
+    ['student_name','course','section','branch'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+}
+
+// Duration calculation
+function calculateDuration() {
+    const start = document.getElementById('id_start_date').value;
+    const end   = document.getElementById('id_end_date').value;
+    const display = document.getElementById('durationDisplay');
+    const daysEl  = document.getElementById('totalDays');
+
+    if (!start || !end) {
+        display.style.display = 'none';
+        return;
+    }
+
+    const d1 = new Date(start);
+    const d2 = new Date(end);
+
+    if (d2 < d1) {
+        const message = document.documentElement.lang === 'ur' 
+            ? 'اختتامی تاریخ آغاز کی تاریخ سے پہلے نہیں ہو سکتی'
+            : 'End date cannot be before start date.';
+        alert(message);
+        display.style.display = 'none';
+        return;
+    }
+
+    const diff = Math.abs(d2 - d1);
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1;
+
+    daysEl.textContent = days;
+    display.style.display = 'block';
+}
+
+['id_start_date', 'id_end_date'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', calculateDuration);
+});
+
+// Run once on load
+calculateDuration();
+
+// Basic submit confirmation
+document.getElementById('leaveForm')?.addEventListener('submit', e => {
+    const name = document.getElementById('student_name').value.trim();
+    if (!name) {
+        e.preventDefault();
+        const message = document.documentElement.lang === 'ur' 
+            ? 'براہ کرم پہلے ایک درست داخلہ نمبر درج کریں'
+            : 'Please enter a valid admission number first.';
+        alert(message);
+    }
+});
+
+// Update icon positions for RTL
+function updateIconPositions() {
+    const isRTL = document.documentElement.dir === 'rtl';
+    document.querySelectorAll('.section-title i, .btn i').forEach(icon => {
+        if (isRTL) {
+            icon.style.marginLeft = '0.5rem';
+            icon.style.marginRight = '0';
+        } else {
+            icon.style.marginRight = '0.5rem';
+            icon.style.marginLeft = '0';
+        }
+    });
+}
+
+// Call on load and when language changes
+document.addEventListener('DOMContentLoaded', updateIconPositions);
+</script>
+
+{% endblock %}

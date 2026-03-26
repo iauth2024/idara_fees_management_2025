@@ -1,0 +1,633 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fee Reports</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background-color: #f5f5f5; 
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .filter-section { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        .filter-form { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+            align-items: flex-end; 
+        }
+        .filter-group { 
+            flex: 1; 
+            min-width: 150px; 
+        }
+        .filter-group label { 
+            display: block; 
+            font-weight: bold; 
+            margin-bottom: 5px; 
+            color: #555; 
+        }
+        .filter-group select, 
+        .filter-group input { 
+            width: 100%; 
+            padding: 8px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+        }
+        .filter-button { 
+            background: #007bff; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold;
+        }
+        .filter-button:hover { 
+            background: #0056b3; 
+        }
+        
+        /* NEW: Month filter specific styles */
+        .month-filter-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+        .month-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .month-checkboxes label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        .month-checkboxes input[type="checkbox"] {
+            width: auto;
+            margin-right: 5px;
+        }
+        .selected-months-info {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            background: #007bff;
+            color: white;
+            margin-right: 5px;
+        }
+        
+        .summary-cards { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; 
+            margin-bottom: 20px; 
+        }
+        .card { 
+            background: white; 
+            padding: 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            position: relative;
+            overflow: hidden;
+        }
+        .card h3 { 
+            margin: 0 0 10px 0; 
+            color: #555; 
+            font-size: 14px; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .card .value { 
+            font-size: 24px; 
+            font-weight: bold; 
+            margin: 0; 
+        }
+        .card .sub-value {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .card .percentage-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.05);
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .card.primary { border-left: 4px solid #007bff; }
+        .card.success { border-left: 4px solid #28a745; }
+        .card.warning { border-left: 4px solid #ffc107; }
+        .card.danger { border-left: 4px solid #dc3545; }
+        .card.info { border-left: 4px solid #17a2b8; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .stat-percentage {
+            font-size: 14px;
+            color: #28a745;
+            margin-top: 5px;
+        }
+        
+        .progress-lg {
+            margin: 15px 0;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .progress-bar-lg {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill-lg {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .table-container { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            overflow-x: auto; 
+            margin-top: 20px;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 14px;
+        }
+        th { 
+            background: #007bff; 
+            color: white; 
+            padding: 12px 8px; 
+            text-align: left; 
+            white-space: nowrap;
+        }
+        td { 
+            padding: 10px 8px; 
+            border-bottom: 1px solid #eee; 
+        }
+        tr:hover { 
+            background-color: #f8f9fa; 
+        }
+        .status-badge { 
+            padding: 3px 8px; 
+            border-radius: 12px; 
+            font-size: 12px; 
+            font-weight: bold; 
+            display: inline-block;
+        }
+        .status-success { 
+            background: #d4edda; 
+            color: #155724; 
+        }
+        .status-warning { 
+            background: #fff3cd; 
+            color: #856404; 
+        }
+        .status-danger { 
+            background: #f8d7da; 
+            color: #721c24; 
+        }
+        .amount { 
+            font-weight: bold; 
+            color: #28a745; 
+        }
+        .due-amount { 
+            font-weight: bold; 
+            color: #dc3545; 
+        }
+        .progress-container {
+            width: 120px;
+        }
+        .progress-bar { 
+            width: 100%; 
+            height: 6px; 
+            background: #e0e0e0; 
+            border-radius: 3px; 
+            overflow: hidden; 
+            margin-bottom: 3px;
+        }
+        .progress-fill { 
+            height: 100%; 
+            background: #28a745; 
+            transition: width 0.3s; 
+        }
+        .progress-text {
+            font-size: 11px;
+            color: #666;
+        }
+        .no-data { 
+            text-align: center; 
+            padding: 40px; 
+            color: #999; 
+        }
+        .text-right {
+            text-align: right;
+        }
+        .export-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Fee Reports</h1>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <form method="get" class="filter-form">
+                <div class="filter-group">
+                    <label>Branch:</label>
+                    <select name="branch">
+                        <option value="">All Branches</option>
+                        {% for b in all_branches %}
+                            <option value="{{ b }}" {% if b == selected_branch %}selected{% endif %}>{{ b }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Course:</label>
+                    <select name="course">
+                        <option value="">All Courses</option>
+                        {% for c in all_courses %}
+                            <option value="{{ c }}" {% if c == selected_course %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Section:</label>
+                    <select name="section">
+                        <option value="">All Sections</option>
+                        {% for s in all_sections %}
+                            <option value="{{ s }}" {% if s == selected_section %}selected{% endif %}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Months Due (>):</label>
+                    <input type="number" name="months_due" value="{{ selected_months_due }}" min="1" max="12">
+                </div>
+                
+                <div class="filter-group">
+                    <button type="submit" class="filter-button">Apply Filters</button>
+                </div>
+                
+                {% if selected_branch or selected_course or selected_section or selected_months_due %}
+                <div class="filter-group">
+                    <a href="{% url 'reports' %}" style="color: #666; text-decoration: none; padding: 8px 15px; display: inline-block;">Clear Filters</a>
+                </div>
+                {% endif %}
+            </form>
+
+            <!-- NEW: Month Filter Section -->
+            <div class="month-filter-section">
+                <h3 style="margin-top: 0; margin-bottom: 10px; color: #333;">📅 Select Months to Include in Report</h3>
+                <form method="get" id="month-filter-form">
+                    <!-- Preserve existing filters -->
+                    {% if selected_branch %}
+                    <input type="hidden" name="branch" value="{{ selected_branch }}">
+                    {% endif %}
+                    {% if selected_course %}
+                    <input type="hidden" name="course" value="{{ selected_course }}">
+                    {% endif %}
+                    {% if selected_section %}
+                    <input type="hidden" name="section" value="{{ selected_section }}">
+                    {% endif %}
+                    {% if selected_months_due %}
+                    <input type="hidden" name="months_due" value="{{ selected_months_due }}">
+                    {% endif %}
+                    
+                    <div class="month-checkboxes">
+                    {% for month_num, month_name in month_choices %}
+                    {% with month_str=month_num|stringformat:"i" %}
+                    <label>
+                        <input type="checkbox" name="months" value="{{ month_num }}"
+                            {% if month_str in selected_months %}checked{% endif %}>
+                        {{ month_name }}
+                    </label>
+                    {% endwith %}
+                    {% endfor %}
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button type="submit" class="filter-button" style="background: #28a745;">Apply Month Filter</button>
+                        {% if selected_months %}
+                        <a href="?{% if selected_branch %}branch={{ selected_branch }}&{% endif %}{% if selected_course %}course={{ selected_course }}&{% endif %}{% if selected_section %}section={{ selected_section }}&{% endif %}{% if selected_months_due %}months_due={{ selected_months_due }}{% endif %}" 
+                           class="btn" style="background: #6c757d; color: white;">Clear Months</a>
+                        {% endif %}
+                    </div>
+                </form>
+                
+                <!-- Display current month selection -->
+{% if selected_months %}
+<div class="selected-months-info">
+    <strong>Selected Period:</strong> 
+    {% for month_str in selected_months %}
+        {% for m_num, m_name in month_choices %}
+            {% if m_num|stringformat:"i" == month_str %}
+                <span class="badge">{{ m_name }}</span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    <span style="margin-left: 10px; color: #28a745;">
+        ({{ months_passed }} month{% if months_passed > 1 %}s{% endif %} included)
+    </span>
+</div>
+{% else %}
+<div class="selected-months-info" style="background: #fff3cd; color: #856404;">
+    <strong>Note:</strong> No months selected. Showing all months up to current month ({{ months_passed }} months).
+</div>
+{% endif %}
+        <!-- Summary Cards - Enhanced with Percentages -->
+        <div class="summary-cards">
+            <div class="card primary">
+                <h3>Total Students</h3>
+                <p class="value">{{ total_students }}</p>
+                <div class="sub-value">Active students</div>
+            </div>
+            <div class="card success">
+                <h3>Amount Collected</h3>
+                <p class="value">₹ {{ total_collected|indian_number_format }}</p>
+                <div class="sub-value">{{ overall_collection_percentage|floatformat:1 }}% of total</div>
+            </div>
+            <div class="card warning">
+                <h3>Total Expected</h3>
+                <p class="value">₹ {{ total_expected|indian_number_format }}</p>
+                <div class="sub-value">For {{ months_passed }} month{% if months_passed > 1 %}s{% endif %}</div>
+            </div>
+            <div class="card danger">
+                <h3>Total Due</h3>
+                <p class="value">₹ {{ total_due_amount|indian_number_format }}</p>
+                <div class="sub-value">{{ total_due_percentage|floatformat:1 }}% outstanding</div>
+            </div>
+        </div>
+
+        <!-- Payment Status Statistics -->
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-label">Fully Paid</div>
+                <div class="stat-number">{{ fully_paid }}</div>
+                <div class="stat-percentage">{{ fully_paid_percentage|floatformat:1 }}% of total</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Partial Payment</div>
+                <div class="stat-number">{{ partial_paid }}</div>
+                <div class="stat-percentage">{{ partial_paid_percentage|floatformat:1 }}% of total</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">No Payment</div>
+                <div class="stat-number">{{ no_payment }}</div>
+                <div class="stat-percentage">{{ no_payment_percentage|floatformat:1 }}% of total</div>
+            </div>
+        </div>
+
+        <!-- Collection Progress Bar -->
+        <div class="progress-lg">
+            <div class="progress-label">
+                <span>Overall Collection Progress ({{ months_passed }} months)</span>
+                <span><strong>{{ overall_collection_percentage|floatformat:1 }}%</strong> (₹ {{ total_collected|indian_number_format }} / ₹ {{ total_expected|indian_number_format }})</span>
+            </div>
+            <div class="progress-bar-lg">
+                <div class="progress-fill-lg" style="width: {{ overall_collection_percentage }}%;">
+                    {% if overall_collection_percentage > 15 %}{{ overall_collection_percentage|floatformat:1 }}%{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Distribution Mini Table -->
+        <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0; color: #333;">Payment Status Distribution</h3>
+            <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="width: 12px; height: 12px; background: #28a745; border-radius: 3px; margin-right: 10px;"></span>
+                        <span style="flex: 1;">Fully Paid:</span>
+                        <span style="font-weight: bold;">{{ fully_paid }} ({{ fully_paid_percentage|floatformat:1 }}%)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="width: 12px; height: 12px; background: #ffc107; border-radius: 3px; margin-right: 10px;"></span>
+                        <span style="flex: 1;">Partial Payment:</span>
+                        <span style="font-weight: bold;">{{ partial_paid }} ({{ partial_paid_percentage|floatformat:1 }}%)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="width: 12px; height: 12px; background: #dc3545; border-radius: 3px; margin-right: 10px;"></span>
+                        <span style="flex: 1;">No Payment:</span>
+                        <span style="font-weight: bold;">{{ no_payment }} ({{ no_payment_percentage|floatformat:1 }}%)</span>
+                    </div>
+                </div>
+                <div style="flex: 2;">
+                    <div style="display: flex; height: 30px; border-radius: 15px; overflow: hidden;">
+                        <div style="background: #28a745; width: {{ fully_paid_percentage }}%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
+                            {% if fully_paid_percentage > 8 %}{{ fully_paid_percentage|floatformat:1 }}%{% endif %}
+                        </div>
+                        <div style="background: #ffc107; width: {{ partial_paid_percentage }}%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
+                            {% if partial_paid_percentage > 8 %}{{ partial_paid_percentage|floatformat:1 }}%{% endif %}
+                        </div>
+                        <div style="background: #dc3545; width: {{ no_payment_percentage }}%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
+                            {% if no_payment_percentage > 8 %}{{ no_payment_percentage|floatformat:1 }}%{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student List -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Admission No.</th>
+                        <th>Student Name</th>
+                        <th>Father's Name</th>
+                        <th>Branch</th>
+                        <th>Course</th>
+                        <th>Section</th>
+                        <th class="text-right">Monthly Fee</th>
+                        <th class="text-right">Expected Fee</th>
+                        <th class="text-right">Paid</th>
+                        <th class="text-right">Due</th>
+                        <th class="text-right">Months Paid</th>
+                        <th>Progress</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for info in additional_info %}
+                        <tr>
+                            <td>{{ info.admission_number|default:"-" }}</td>
+                            <td>{{ info.student_name|default:"-" }}</td>
+                            <td>{{ info.father_name|default:"-" }}</td>
+                            <td>{{ info.branch|default:"-" }}</td>
+                            <td>{{ info.course|default:"-" }}</td>
+                            <td>{{ info.section|default:"-" }}</td>
+                            <td class="text-right">₹ {{ info.monthly_fees|indian_number_format }}</td>
+                            <td class="text-right">₹ {{ info.expected_fee|indian_number_format }}</td>
+                            <td class="text-right amount">₹ {{ info.total_paid|indian_number_format }}</td>
+                            <td class="text-right due-amount">₹ {{ info.total_due|indian_number_format }}</td>
+                            <td class="text-right">{{ info.months_paid|floatformat:1 }}</td>
+                            <td>
+                                <div class="progress-container">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: {{ info.payment_percentage|floatformat:0 }}%"></div>
+                                    </div>
+                                    <span class="progress-text">{{ info.payment_percentage|floatformat:1 }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-badge status-{{ info.status_class }}">
+                                    {{ info.status }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="13" class="no-data">No students found matching the criteria</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Export Options -->
+        {% if additional_info %}
+        <div class="export-buttons">
+            <button onclick="exportToExcel()" class="btn btn-success">📥 Export to Excel</button>
+            <button onclick="window.print()" class="btn btn-primary">🖨️ Print Report</button>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Add this script for Excel export functionality -->
+    <script>
+    function exportToExcel() {
+        // Get the table
+        var table = document.querySelector('table');
+        var rows = table.querySelectorAll('tr');
+        
+        // Create CSV content
+        var csv = [];
+        for (var i = 0; i < rows.length; i++) {
+            var row = [], cols = rows[i].querySelectorAll('td, th');
+            for (var j = 0; j < cols.length; j++) {
+                // Clean the text content (remove ₹ symbol and commas)
+                var data = cols[j].innerText.replace(/,/g, '').replace('₹', '').trim();
+                row.push('"' + data + '"');
+            }
+            csv.push(row.join(','));
+        }
+        
+        // Download CSV
+        var csvContent = csv.join('\n');
+        var blob = new Blob([csvContent], { type: 'text/csv' });
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'fee_report.csv';
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+    </script>
+</body>
+</html>

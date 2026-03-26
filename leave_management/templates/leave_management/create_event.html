@@ -1,0 +1,1143 @@
+{% extends "leave_management/base_leave.html" %}
+{% load static %}
+
+{% block title %}Create Holiday Event{% endblock %}
+
+{% block extra_css %}
+<style>
+    .event-container {
+        max-width: 800px;
+        margin: 0 auto;
+        animation: slideUp 0.4s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Header Section */
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px 20px;
+        border-radius: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    html[dir="rtl"] .page-header h2 {
+        flex-direction: row-reverse;
+    }
+
+    .page-header h2 i {
+        font-size: 2rem;
+    }
+
+    .page-header p {
+        margin: 10px 0 0 0;
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+
+    /* Form Card */
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+    .form-section {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    html[dir="rtl"] .section-title {
+        flex-direction: row-reverse;
+    }
+
+    .section-title i {
+        color: #667eea;
+        font-size: 1.5rem;
+    }
+
+    /* Form Fields */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        color: #495057;
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+
+    html[dir="rtl"] .form-label {
+        flex-direction: row-reverse;
+    }
+
+    .form-label i {
+        color: #667eea;
+        font-size: 1.2rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-control:hover {
+        border-color: #764ba2;
+    }
+
+    .date-input {
+        font-family: inherit;
+    }
+
+    /* Checkbox Grid */
+    .checkbox-section {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .checkbox-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+
+    html[dir="rtl"] .checkbox-actions {
+        flex-direction: row-reverse;
+    }
+
+    .action-btn {
+        background: white;
+        border: 2px solid #667eea;
+        color: #667eea;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+    }
+
+    html[dir="rtl"] .action-btn {
+        flex-direction: row-reverse;
+    }
+
+    .action-btn:hover, .action-btn:active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .action-btn i {
+        font-size: 1.1rem;
+    }
+
+    .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+        max-width: 100%;
+    }
+
+    .checkbox-item {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    html[dir="rtl"] .checkbox-item {
+        flex-direction: row-reverse;
+    }
+
+    .checkbox-item:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: #667eea;
+    }
+
+    .checkbox-item label {
+        font-size: 0.95rem;
+        color: #495057;
+        cursor: pointer;
+        flex: 1;
+    }
+
+    /* Submit Button */
+    .submit-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 16px 40px;
+        border-radius: 15px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 55px;
+        width: 100%;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    html[dir="rtl"] .submit-btn {
+        flex-direction: row-reverse;
+    }
+
+    .submit-btn:hover, .submit-btn:active {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+    }
+
+    .submit-btn i {
+        font-size: 1.3rem;
+    }
+
+    /* Print Slips Section */
+    .print-section {
+        background: linear-gradient(135deg, #f8f9ff 0%, #f0f3ff 100%);
+        border-radius: 20px;
+        padding: 25px;
+        margin-top: 30px;
+        border: 2px dashed #667eea;
+    }
+
+    .print-section h3 {
+        color: #333;
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    html[dir="rtl"] .print-section h3 {
+        flex-direction: row-reverse;
+    }
+
+    .print-section h3 i {
+        color: #28a745;
+    }
+
+    .print-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .select-control {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        font-size: 16px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .select-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .print-btn {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 15px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 55px;
+        box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+    }
+
+    html[dir="rtl"] .print-btn {
+        flex-direction: row-reverse;
+    }
+
+    .print-btn:hover, .print-btn:active {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 40px rgba(40, 167, 69, 0.4);
+    }
+
+    .print-btn i {
+        font-size: 1.3rem;
+    }
+
+    /* Recent Events List */
+    .recent-events {
+        margin-top: 40px;
+    }
+
+    .recent-events h4 {
+        font-size: 1.2rem;
+        color: #495057;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    html[dir="rtl"] .recent-events h4 {
+        flex-direction: row-reverse;
+    }
+
+    .events-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .event-item {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        border-left: 4px solid #667eea;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    html[dir="rtl"] .event-item {
+        border-left: none;
+        border-right: 4px solid #667eea;
+    }
+
+    .event-info {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    html[dir="rtl"] .event-info {
+        align-items: flex-end;
+    }
+
+    .event-name {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .event-dates {
+        font-size: 0.9rem;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    html[dir="rtl"] .event-dates {
+        flex-direction: row-reverse;
+    }
+
+    .event-dates i {
+        color: #667eea;
+    }
+
+    .event-badge {
+        font-size: 0.8rem;
+        color: #667eea;
+        background: #e6e9ff;
+        padding: 2px 8px;
+        border-radius: 12px;
+        display: inline-block;
+        margin-top: 5px;
+    }
+
+    .event-status {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    html[dir="rtl"] .event-status {
+        flex-direction: row-reverse;
+    }
+
+    .status-active {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .cancel-link {
+        color: #dc3545;
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    html[dir="rtl"] .cancel-link {
+        flex-direction: row-reverse;
+    }
+
+    .cancel-link:hover {
+        background: #f8d7da;
+        transform: translateX(5px);
+    }
+
+    html[dir="rtl"] .cancel-link:hover {
+        transform: translateX(-5px);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 576px) {
+        .checkbox-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .event-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        html[dir="rtl"] .event-item {
+            align-items: flex-end;
+        }
+
+        .cancel-link {
+            align-self: flex-end;
+        }
+
+        .page-header h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* Loading States */
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Helper text */
+    .helper-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    html[dir="rtl"] .helper-text {
+        flex-direction: row-reverse;
+    }
+
+    .helper-text i {
+        color: #667eea;
+    }
+
+    /* Course-Section Relationship Styles */
+    .course-badge {
+        background: #667eea;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        margin-left: 5px;
+    }
+
+    html[dir="rtl"] .course-badge {
+        margin-left: 0;
+        margin-right: 5px;
+    }
+
+    .section-item {
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+    }
+
+    html[dir="rtl"] .section-item {
+        border-left: none;
+        border-right: 3px solid transparent;
+    }
+
+    .section-item[data-course] {
+        border-left-color: #667eea;
+    }
+
+    html[dir="rtl"] .section-item[data-course] {
+        border-left-color: transparent;
+        border-right-color: #667eea;
+    }
+
+    .section-highlight {
+        border-left: 4px solid #28a745 !important;
+        background: linear-gradient(135deg, #f8fff9 0%, #f0fff4 100%);
+    }
+
+    html[dir="rtl"] .section-highlight {
+        border-left: none !important;
+        border-right: 4px solid #28a745 !important;
+    }
+
+    /* RTL Specific */
+    html[dir="rtl"] .me-1,
+    html[dir="rtl"] .me-2 {
+        margin-left: 0.25rem !important;
+        margin-right: 0 !important;
+    }
+
+    html[dir="rtl"] .ms-1,
+    html[dir="rtl"] .ms-2 {
+        margin-right: 0.25rem !important;
+        margin-left: 0 !important;
+    }
+
+    /* Debug Info */
+    .debug-info {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 10px 15px;
+        margin-bottom: 20px;
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    .debug-info summary {
+        cursor: pointer;
+        color: #667eea;
+        font-weight: 600;
+    }
+
+    html[dir="rtl"] .debug-info summary {
+        text-align: right;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="event-container">
+    <!-- Debug Info - Remove in production -->
+    <details class="debug-info">
+        <summary><i class="bi bi-bug"></i> <span data-trans="debug_info">Debug Information</span></summary>
+        <div class="mt-2">
+            <p><strong data-trans="total_events">Total Events:</strong> {{ events|length }}</p>
+            <p><strong data-trans="total_branches">Total Branches:</strong> {{ branches|length }}</p>
+            <p><strong data-trans="total_courses">Total Courses:</strong> {{ courses|length }}</p>
+            <p><strong data-trans="total_sections">Total Sections:</strong> {{ sections|length }}</p>
+        </div>
+    </details>
+
+    <!-- Header -->
+    <div class="page-header">
+        <h2>
+            <i class="bi bi-calendar-plus"></i>
+            <span data-trans="create_holiday_event">Create Holiday Event</span>
+        </h2>
+        <p data-trans="schedule_holidays">Schedule holidays and non-working days for students</p>
+    </div>
+
+    <!-- Main Form Card -->
+    <div class="form-card">
+        <form method="post" id="eventForm">
+            {% csrf_token %}
+
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="bi bi-info-circle"></i>
+                    <span data-trans="basic_info">Basic Information</span>
+                </div>
+
+                <!-- Event Name -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-tag"></i>
+                        <span data-trans="event_name">Event Name</span>
+                    </label>
+                    <input type="text" 
+                           name="name" 
+                           required 
+                           class="form-control"
+                           placeholder="{% if LANGUAGE_CODE == 'ur' %}مثلاً، عید الاضحی چھٹیاں، گرمیوں کی چھٹیاں{% else %}e.g., Bakrid Vacation, Summer Holiday{% endif %}">
+                    <div class="helper-text">
+                        <i class="bi bi-info-circle"></i>
+                        <span data-trans="event_name_help">Enter a descriptive name for the holiday</span>
+                    </div>
+                </div>
+
+                <!-- Date Range -->
+                <div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="bi bi-play-fill"></i>
+                            <span data-trans="start_date">Start Date</span>
+                        </label>
+                        <input type="date" 
+                               name="start_date" 
+                               required 
+                               class="form-control date-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="bi bi-stop-fill"></i>
+                            <span data-trans="end_date">End Date</span>
+                        </label>
+                        <input type="date" 
+                               name="end_date" 
+                               required 
+                               class="form-control date-input">
+                    </div>
+                </div>
+                <div class="helper-text">
+                    <i class="bi bi-calendar-range"></i>
+                    <span data-trans="date_range_help">Select the date range for this holiday</span>
+                </div>
+            </div>
+
+            <!-- Branch Selection -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="bi bi-building"></i>
+                    <span data-trans="branch_selection">Branch Selection</span>
+                </div>
+
+                <div class="checkbox-section">
+                    <div class="checkbox-actions">
+                        <button type="button" class="action-btn" onclick="selectAll('branch')">
+                            <i class="bi bi-check-all"></i>
+                            <span data-trans="select_all_branches">Select All Branches</span>
+                        </button>
+                        <button type="button" class="action-btn" onclick="deselectAll('branch')">
+                            <i class="bi bi-x-circle"></i>
+                            <span data-trans="deselect_all">Deselect All</span>
+                        </button>
+                    </div>
+
+                    <div class="checkbox-grid">
+                        {% for branch in branches %}
+                        {% if branch %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="branch" value="{{ branch }}" id="branch_{{ forloop.counter }}">
+                            <label for="branch_{{ forloop.counter }}">{{ branch }}</label>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="helper-text" style="margin-top: 15px;">
+                        <i class="bi bi-info-circle"></i>
+                        <span data-trans="branch_help">Select one or more branches (leave empty for all branches)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Selection -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="bi bi-book"></i>
+                    <span data-trans="course_selection">Course Selection</span>
+                </div>
+
+                <div class="checkbox-section">
+                    <div class="checkbox-actions">
+                        <button type="button" class="action-btn" onclick="selectAll('course')">
+                            <i class="bi bi-check-all"></i>
+                            <span data-trans="select_all_courses">Select All Courses</span>
+                        </button>
+                        <button type="button" class="action-btn" onclick="deselectAll('course')">
+                            <i class="bi bi-x-circle"></i>
+                            <span data-trans="deselect_all">Deselect All</span>
+                        </button>
+                    </div>
+
+                    <div class="checkbox-grid">
+                        {% for course in courses %}
+                        {% if course %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" 
+                                   name="course" 
+                                   value="{{ course }}" 
+                                   id="course_{{ forloop.counter }}"
+                                   class="course-checkbox"
+                                   onchange="filterSectionsByCourse()">
+                            <label for="course_{{ forloop.counter }}">{{ course }}</label>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="helper-text" style="margin-top: 15px;">
+                        <i class="bi bi-info-circle"></i>
+                        <span data-trans="course_help">Select specific courses (leave empty for all courses)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Selection -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="bi bi-grid"></i>
+                    <span data-trans="section_selection">Section Selection</span>
+                </div>
+
+                <div class="checkbox-section">
+                    <div class="checkbox-actions">
+                        <button type="button" class="action-btn" onclick="selectAll('section')">
+                            <i class="bi bi-check-all"></i>
+                            <span data-trans="select_all_sections">Select All Sections</span>
+                        </button>
+                        <button type="button" class="action-btn" onclick="deselectAll('section')">
+                            <i class="bi bi-x-circle"></i>
+                            <span data-trans="deselect_all">Deselect All</span>
+                        </button>
+                    </div>
+
+                    <div class="checkbox-grid" id="sectionGrid">
+                        {% regroup sections by course as sections_by_course %}
+                        {% for course_group in sections_by_course %}
+                            {% for section in course_group.list %}
+                            {% if section.section %}
+                            <div class="checkbox-item section-item" data-course="{{ course_group.grouper }}">
+                                <input type="checkbox" name="section" value="{{ section.section }}" id="section_{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+                                <label for="section_{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+                                    {{ section.section }}
+                                    <span class="course-badge">{{ course_group.grouper }}</span>
+                                </label>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        {% empty %}
+                            <div class="text-center p-3 text-muted" data-trans="no_sections">No sections available</div>
+                        {% endfor %}
+                    </div>
+                    <div class="helper-text" style="margin-top: 15px;">
+                        <i class="bi bi-info-circle"></i>
+                        <span data-trans="section_help">Sections are filtered based on selected courses above</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <i class="bi bi-calendar-check"></i>
+                <span data-trans="create_event_btn">Create Holiday Event</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Print Slips Section -->
+    <div class="print-section">
+        <h3>
+            <i class="bi bi-printer"></i>
+            <span data-trans="print_slips">Print Leave Slips</span>
+        </h3>
+
+        <form method="get" action="{% url 'print_event_slips' %}" class="print-form">
+            <div>
+                <label class="form-label">
+                    <i class="bi bi-calendar2-event"></i>
+                    <span data-trans="select_event">Select Event</span>
+                </label>
+                <select name="event_id" required class="select-control" id="eventSelect">
+                    <option value="">-- <span data-trans="choose_event">Choose an event</span> --</option>
+                    {% for event in events %}
+                    <option value="{{ event.id }}">
+                        {{ event.name }} 
+                        ({{ event.start_date|date:"d M Y" }} - {{ event.end_date|date:"d M Y" }})
+                        {% if event.branch or event.course or event.section %}
+                            - 
+                            {% if event.branch %}<i class="bi bi-building"></i> {{ event.branch }}{% endif %}
+                            {% if event.course %}<i class="bi bi-book"></i> {{ event.course }}{% endif %}
+                            {% if event.section %}<i class="bi bi-grid"></i> {{ event.section }}{% endif %}
+                        {% else %}
+                            - <span data-trans="all_students">All Students</span>
+                        {% endif %}
+                    </option>
+                    {% empty %}
+                    <option value="" disabled><span data-trans="no_active_events">No active events available</span></option>
+                    {% endfor %}
+                </select>
+                {% if not events %}
+                    <div class="helper-text" style="color: #dc3545; margin-top: 10px;">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <span data-trans="no_events_warning">No active events found. Create an event first.</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label class="form-label">
+                    <i class="bi bi-funnel"></i>
+                    <span data-trans="section_filter">Section Filter (Optional)</span>
+                </label>
+                <select name="section" class="select-control" id="sectionFilter">
+                    <option value=""><span data-trans="all_sections">All Sections</span></option>
+                    {% regroup sections by course as sections_by_course %}
+                    {% for course_group in sections_by_course %}
+                        {% for section in course_group.list %}
+                        {% if section.section %}
+                        <option value="{{ section.section }}" class="section-option" data-course="{{ course_group.grouper }}">
+                            {{ section.section }} ({{ course_group.grouper }})
+                        </option>
+                        {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </select>
+                <div class="helper-text">
+                    <i class="bi bi-info-circle"></i>
+                    <span data-trans="filter_help">Filter by specific section or print all</span>
+                </div>
+            </div>
+
+            <button type="submit" class="print-btn" {% if not events %}disabled style="opacity:0.5;"{% endif %}>
+                <i class="bi bi-printer"></i>
+                <span data-trans="generate_print">Generate & Print Slips</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Recent Events List -->
+    {% if events %}
+    <div class="recent-events">
+        <h4>
+            <i class="bi bi-clock-history"></i>
+            <span data-trans="recent_events">Recent Events</span>
+        </h4>
+        <div class="events-list">
+            {% for event in events|slice:":5" %}
+            <div class="event-item">
+                <div class="event-info">
+                    <span class="event-name">{{ event.name }}</span>
+                    <span class="event-dates">
+                        <i class="bi bi-calendar"></i>
+                        {{ event.start_date|date:"d M Y" }} - {{ event.end_date|date:"d M Y" }}
+                    </span>
+                    {% if event.branch or event.course or event.section %}
+                    <span class="event-badge">
+                        {% if event.branch %}<i class="bi bi-building"></i> {{ event.branch }} {% endif %}
+                        {% if event.course %}<i class="bi bi-book"></i> {{ event.course }} {% endif %}
+                        {% if event.section %}<i class="bi bi-grid"></i> {{ event.section }}{% endif %}
+                    </span>
+                    {% endif %}
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="event-status status-active">
+                        <i class="bi bi-check-circle"></i>
+                        <span data-trans="active">Active</span>
+                    </span>
+                    <a href="{% url 'cancel_event' event.id %}"
+                       onclick="return confirmCancel(event)"
+                       class="cancel-link">
+                        <i class="bi bi-x-circle"></i>
+                        <span data-trans="cancel">Cancel</span>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Filter sections based on selected courses
+    function filterSectionsByCourse() {
+        const selectedCourses = [];
+        document.querySelectorAll('input[name="course"]:checked').forEach(cb => {
+            selectedCourses.push(cb.value);
+        });
+        
+        console.log('Selected courses:', selectedCourses);
+        
+        const sectionItems = document.querySelectorAll('.section-item');
+        console.log('Total sections:', sectionItems.length);
+        
+        if (selectedCourses.length === 0) {
+            // If no courses selected, show all sections
+            sectionItems.forEach(item => {
+                item.style.display = 'flex';
+                item.classList.remove('section-highlight');
+            });
+            showToast(document.documentElement.lang === 'ur' ? 'تمام سیکشن دکھا رہا ہے' : 'Showing all sections');
+        } else {
+            // Show only sections belonging to selected courses
+            let visibleCount = 0;
+            sectionItems.forEach(item => {
+                const courseName = item.dataset.course;
+                if (selectedCourses.includes(courseName)) {
+                    item.style.display = 'flex';
+                    item.classList.add('section-highlight');
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                    item.classList.remove('section-highlight');
+                }
+            });
+            console.log(`Visible sections: ${visibleCount}`);
+            const message = document.documentElement.lang === 'ur' 
+                ? `منتخب کورسز کے لیے ${visibleCount} سیکشن دکھا رہا ہے`
+                : `Showing ${visibleCount} sections for selected courses`;
+            showToast(message);
+        }
+        
+        // Also filter the section filter dropdown in print section
+        filterSectionDropdown(selectedCourses);
+    }
+    
+    // Filter section dropdown in print section
+    function filterSectionDropdown(selectedCourses) {
+        const sectionOptions = document.querySelectorAll('#sectionFilter .section-option');
+        
+        if (selectedCourses.length === 0) {
+            sectionOptions.forEach(opt => {
+                opt.style.display = 'block';
+            });
+        } else {
+            sectionOptions.forEach(opt => {
+                const courseName = opt.dataset.course;
+                if (selectedCourses.includes(courseName)) {
+                    opt.style.display = 'block';
+                } else {
+                    opt.style.display = 'none';
+                }
+            });
+        }
+    }
+
+    // Select/Deselect All Functions
+    function selectAll(name) {
+        document.querySelectorAll(`input[name="${name}"]`).forEach(el => {
+            el.checked = true;
+        });
+        
+        if (name === 'course') {
+            filterSectionsByCourse();
+        }
+        
+        const message = document.documentElement.lang === 'ur' 
+            ? `تمام ${name} آپشنز منتخب`
+            : `All ${name} options selected`;
+        showToast(message);
+    }
+
+    function deselectAll(name) {
+        document.querySelectorAll(`input[name="${name}"]`).forEach(el => {
+            el.checked = false;
+        });
+        
+        if (name === 'course') {
+            filterSectionsByCourse();
+        }
+        
+        const message = document.documentElement.lang === 'ur' 
+            ? `تمام ${name} آپشنز غیر منتخب`
+            : `All ${name} options deselected`;
+        showToast(message);
+    }
+
+    // Custom confirm for cancel
+    function confirmCancel(event) {
+        event.preventDefault();
+        const link = event.currentTarget;
+        
+        const confirmMessage = document.documentElement.lang === 'ur' 
+            ? '❌ کیا آپ واقعی اس ایونٹ کو منسوخ کرنا چاہتے ہیں؟\nیہ عمل واپس نہیں لیا جا سکتا۔'
+            : '❌ Are you sure you want to cancel this event?\nThis action cannot be undone.';
+        
+        if (confirm(confirmMessage)) {
+            const originalText = link.innerHTML;
+            link.innerHTML = '<span class="loading-spinner"></span> ' + (document.documentElement.lang === 'ur' ? 'منسوخ ہو رہا ہے...' : 'Cancelling...');
+            link.style.pointerEvents = 'none';
+            
+            setTimeout(() => {
+                window.location.href = link.href;
+            }, 500);
+        }
+        return false;
+    }
+
+    // Simple toast notification
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            z-index: 9999;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        `;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideDown 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 2000);
+    }
+
+    // Form submission loading state
+    document.getElementById('eventForm')?.addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submitBtn');
+        const originalText = submitBtn.innerHTML;
+        
+        const loadingText = document.documentElement.lang === 'ur' ? 'ایونٹ بن رہا ہے...' : 'Creating Event...';
+        submitBtn.innerHTML = '<span class="loading-spinner"></span> ' + loadingText;
+        submitBtn.disabled = true;
+        
+        setTimeout(() => {
+            if (submitBtn.disabled) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }, 5000);
+    });
+
+    // Validate date range
+    document.querySelectorAll('input[name="start_date"], input[name="end_date"]').forEach(input => {
+        input.addEventListener('change', function() {
+            const start = document.querySelector('input[name="start_date"]').value;
+            const end = document.querySelector('input[name="end_date"]').value;
+            
+            if (start && end && new Date(start) > new Date(end)) {
+                const message = document.documentElement.lang === 'ur' 
+                    ? '⚠️ اختتامی تاریخ آغاز کی تاریخ کے بعد ہونی چاہیے'
+                    : '⚠️ End date must be after start date';
+                alert(message);
+                document.querySelector('input[name="end_date"]').value = '';
+            }
+        });
+    });
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Events count:', {{ events|length }});
+        
+        // Check if there are any pre-selected courses
+        const selectedCourses = document.querySelectorAll('input[name="course"]:checked');
+        if (selectedCourses.length > 0) {
+            filterSectionsByCourse();
+        }
+    });
+
+    // Prevent double tap zoom on iOS
+    document.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+</script>
+
+{% endblock %}

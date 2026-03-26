@@ -1,0 +1,956 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_CODE == 'ur' %}rtl{% else %}ltr{% endif %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>{% if LANGUAGE_CODE == 'ur' %}طالب علم چھٹی پاس - A5 سائز{% else %}Student Leave Pass - A5 Size{% endif %}</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Urdu Font Support */
+        @font-face {
+            font-family: 'Jameel Noori Nastaleeq';
+            src: url('https://cdn.jsdelivr.net/gh/engineerjkk/urdu-fonts/Jameel%20Noori%20Nastaleeq.ttf') format('truetype');
+        }
+
+        html[dir="rtl"] body {
+            font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Segoe UI', Tahoma, serif;
+            line-height: 1.8;
+        }
+
+        /* Print Button */
+        .print-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            border: 2px solid white;
+        }
+
+        html[dir="rtl"] .print-btn {
+            flex-direction: row-reverse;
+        }
+
+        .print-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .print-btn:active {
+            transform: translateY(0);
+        }
+
+        .print-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* A5 Leave Pass Card */
+        .slip {
+            max-width: 148mm; /* A5 width */
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            margin: auto;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            border: none;
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+            font-size: 11px; /* Base font size for A5 */
+        }
+
+        html[dir="rtl"] .slip {
+            text-align: right;
+        }
+
+        @media print {
+            .slip {
+                max-width: 148mm;
+                min-height: 210mm; /* A5 height */
+                box-shadow: none;
+                border: 1px solid #333;
+                padding: 12px;
+                margin: 0 auto;
+                font-size: 10px;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Decorative Header */
+        .slip::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+        }
+
+        /* Header */
+        .pass-header {
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .pass-header h3 {
+            font-size: 1.4rem;
+            color: #333;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pass-header .subtitle {
+            color: #666;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        html[dir="rtl"] .pass-header .subtitle {
+            flex-direction: row-reverse;
+        }
+
+        .pass-header .subtitle i {
+            color: #667eea;
+            font-size: 0.8rem;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.03;
+            font-size: 3.5rem;
+            color: #667eea;
+            font-weight: 900;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #667eea, #764ba2, transparent);
+            margin: 12px 0;
+        }
+
+        /* Student Info Section */
+        .info-section {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f3ff 100%);
+            border-radius: 15px;
+            padding: 12px;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        html[dir="rtl"] .section-title {
+            flex-direction: row-reverse;
+        }
+
+        .section-title i {
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 2px;
+        }
+
+        .info-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            word-break: break-word;
+        }
+
+        .info-value.highlight {
+            color: #667eea;
+        }
+
+        /* Leave Details */
+        .leave-details {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 15px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-wrap: nowrap;
+        }
+
+        html[dir="rtl"] .date-range {
+            flex-direction: row-reverse;
+        }
+
+        .date-box {
+            flex: 1;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 5px;
+            border-radius: 12px;
+            min-width: 100px;
+        }
+
+        .date-box .label {
+            font-size: 0.7rem;
+            opacity: 0.9;
+            margin-bottom: 3px;
+        }
+
+        .date-box .date {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .date-box .time {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            margin-top: 3px;
+            font-weight: 500;
+        }
+
+        .date-arrow {
+            font-size: 1.2rem;
+            color: #667eea;
+        }
+
+        html[dir="rtl"] .date-arrow {
+            transform: rotate(180deg);
+        }
+
+        .reason-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .reason-box .label {
+            font-size: 0.75rem;
+            color: #666;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        html[dir="rtl"] .reason-box .label {
+            flex-direction: row-reverse;
+        }
+
+        .reason-box .label i {
+            font-size: 0.8rem;
+        }
+
+        .reason-box .reason {
+            font-size: 0.9rem;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        /* Time Details */
+        .time-details {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #e8f0fe;
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin: 10px 0;
+        }
+
+        html[dir="rtl"] .time-details {
+            flex-direction: row-reverse;
+        }
+
+        .time-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        html[dir="rtl"] .time-item {
+            flex-direction: row-reverse;
+        }
+
+        .time-item i {
+            color: #667eea;
+            font-size: 0.9rem;
+        }
+
+        .time-item .time-label {
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .time-item .time-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Approvals Section */
+        .approvals-section {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f3ff 100%);
+            border-radius: 15px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .approval-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px dashed #d1d5db;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        html[dir="rtl"] .approval-item {
+            flex-direction: row-reverse;
+        }
+
+        .approval-item:last-child {
+            border-bottom: none;
+        }
+
+        .approval-dept {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.85rem;
+        }
+
+        html[dir="rtl"] .approval-dept {
+            flex-direction: row-reverse;
+        }
+
+        .approval-dept i {
+            color: #28a745;
+            font-size: 0.8rem;
+        }
+
+        .approval-person {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #667eea;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        html[dir="rtl"] .approval-person {
+            flex-direction: row-reverse;
+        }
+
+        .approval-person i {
+            color: #764ba2;
+            font-size: 0.8rem;
+        }
+
+        .empty-approvals {
+            text-align: center;
+            color: #999;
+            padding: 15px;
+            font-style: italic;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .empty-approvals i {
+            font-size: 2.2rem;
+            color: #ddd;
+        }
+
+        .empty-approvals small {
+            font-size: 0.7rem;
+        }
+
+        /* Signatures */
+        .signatures {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .signature-box {
+            background: white;
+            border: 1px dashed #667eea;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .signature-box .label {
+            font-size: 0.8rem;
+            color: #495057;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        html[dir="rtl"] .signature-box .label {
+            flex-direction: row-reverse;
+        }
+
+        .signature-box .label i {
+            color: #667eea;
+            font-size: 0.9rem;
+        }
+
+        .signature-line {
+            width: 100%;
+            height: 30px;
+            border-bottom: 1px solid #333;
+            margin-top: 8px;
+        }
+
+        .signature-date {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        /* Footer */
+        .pass-footer {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.65rem;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        html[dir="rtl"] .pass-footer {
+            flex-direction: row-reverse;
+        }
+
+        .pass-footer i {
+            color: #667eea;
+            font-size: 0.7rem;
+        }
+
+        /* QR Code Placeholder */
+        .qr-placeholder {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            width: 45px;
+            height: 45px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.5;
+        }
+
+        html[dir="rtl"] .qr-placeholder {
+            right: auto;
+            left: 15px;
+        }
+
+        .qr-placeholder i {
+            font-size: 1.5rem;
+            color: #999;
+        }
+
+        /* Print Styles for A5 */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+                display: block;
+            }
+
+            .print-btn {
+                display: none;
+            }
+
+            .slip {
+                box-shadow: none;
+                border: 1px solid #000;
+                padding: 12px;
+                max-width: 148mm;
+                min-height: 210mm;
+                margin: 0 auto;
+                page-break-after: avoid;
+                page-break-inside: avoid;
+                font-size: 10px;
+            }
+
+            .slip::before {
+                display: none;
+            }
+
+            .watermark {
+                opacity: 0.02;
+            }
+
+            .qr-placeholder {
+                border: 1px solid #ddd;
+            }
+
+            .date-box {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .info-section, .approvals-section, .time-details {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .slip {
+                padding: 12px;
+            }
+
+            .pass-header h3 {
+                font-size: 1.2rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .date-range {
+                flex-direction: column;
+            }
+
+            .date-box {
+                width: 100%;
+            }
+
+            .date-arrow {
+                transform: rotate(90deg);
+            }
+
+            html[dir="rtl"] .date-arrow {
+                transform: rotate(270deg);
+            }
+
+            .signatures {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .approval-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .time-details {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 6px;
+        }
+
+        html[dir="rtl"] .status-badge {
+            margin-left: 0;
+            margin-right: 6px;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Duration Badge */
+        .duration-badge {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #667eea;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 5px;
+        }
+
+        html[dir="rtl"] .duration-badge {
+            flex-direction: row-reverse;
+        }
+
+        .duration-badge i {
+            font-size: 0.7rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Print Button -->
+    <button onclick="window.print()" class="print-btn">
+        <i class="fas fa-print"></i>
+        {% if LANGUAGE_CODE == 'ur' %}
+            چھٹی پاس پرنٹ کریں (A5)
+        {% else %}
+            Print Leave Pass (A5)
+        {% endif %}
+    </button>
+
+    <!-- A5 Leave Pass Card -->
+    <div class="slip">
+        <!-- Watermark -->
+        <div class="watermark">
+            {% if LANGUAGE_CODE == 'ur' %}چھٹی پاس{% else %}LEAVE PASS{% endif %}
+        </div>
+        
+        <!-- QR Code Placeholder (optional) -->
+        <div class="qr-placeholder">
+            <i class="fas fa-qrcode"></i>
+        </div>
+
+        <!-- Header -->
+        <div class="pass-header">
+            <h3>
+                {% if LANGUAGE_CODE == 'ur' %}
+                    طالب علم چھٹی پاس
+                {% else %}
+                    Student Leave Pass
+                {% endif %}
+            </h3>
+            <div class="subtitle">
+                <i class="fas fa-university"></i>
+                {% if LANGUAGE_CODE == 'ur' %}
+                    سرکاری دستاویز - A5 سائز
+                {% else %}
+                    Official Document - A5 Size
+                {% endif %}
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- Student Information Section -->
+        <div class="info-section">
+            <div class="section-title">
+                <i class="fas fa-user-graduate"></i>
+                {% if LANGUAGE_CODE == 'ur' %}
+                    طالب علم کی معلومات
+                {% else %}
+                    Student Information
+                {% endif %}
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">
+                        {% if LANGUAGE_CODE == 'ur' %}مکمل نام{% else %}Full Name{% endif %}
+                    </span>
+                    <span class="info-value highlight">{{ leave.student.name }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">
+                        {% if LANGUAGE_CODE == 'ur' %}داخلہ نمبر{% else %}Admission No{% endif %}
+                    </span>
+                    <span class="info-value">{{ leave.student.admission_number }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">
+                        {% if LANGUAGE_CODE == 'ur' %}برانچ{% else %}Branch{% endif %}
+                    </span>
+                    <span class="info-value">{{ leave.student.branch }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">
+                        {% if LANGUAGE_CODE == 'ur' %}کورس اور سیکشن{% else %}Course & Section{% endif %}
+                    </span>
+                    <span class="info-value">{{ leave.student.course }} - {{ leave.student.section }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leave Details Section -->
+        <div class="leave-details">
+            <div class="section-title">
+                <i class="fas fa-calendar-alt"></i>
+                {% if LANGUAGE_CODE == 'ur' %}چھٹی کی تفصیلات{% else %}Leave Details{% endif %}
+            </div>
+
+            <!-- Date Range with Times -->
+            <div class="date-range">
+                <div class="date-box">
+                    <div class="label">
+                        {% if LANGUAGE_CODE == 'ur' %}سے{% else %}FROM{% endif %}
+                    </div>
+                    <div class="date">{{ leave.start_date|date:"d M Y" }}</div>
+                    <div class="time">
+                        <i class="fas fa-clock"></i>
+                        {{ leave.start_time|time:"h:i A" }}
+                    </div>
+                </div>
+                <div class="date-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="date-box">
+                    <div class="label">
+                        {% if LANGUAGE_CODE == 'ur' %}تک{% else %}TO{% endif %}
+                    </div>
+                    <div class="date">{{ leave.end_date|date:"d M Y" }}</div>
+                    <div class="time">
+                        <i class="fas fa-clock"></i>
+                        {{ leave.end_time|time:"h:i A" }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Time Details Summary -->
+            <div class="time-details">
+                <div class="time-item">
+                    <i class="fas fa-hourglass-start"></i>
+                    <span class="time-label">
+                        {% if LANGUAGE_CODE == 'ur' %}شروع{% else %}Start{% endif %}:
+                    </span>
+                    <span class="time-value">{{ leave.start_time|time:"h:i A" }}</span>
+                </div>
+                <div class="time-item">
+                    <i class="fas fa-hourglass-end"></i>
+                    <span class="time-label">
+                        {% if LANGUAGE_CODE == 'ur' %}اختتام{% else %}End{% endif %}:
+                    </span>
+                    <span class="time-value">{{ leave.end_time|time:"h:i A" }}</span>
+                </div>
+                <div class="time-item">
+                    <i class="fas fa-clock"></i>
+                    <span class="time-label">
+                        {% if LANGUAGE_CODE == 'ur' %}مدت{% else %}Duration{% endif %}:
+                    </span>
+                    <span class="time-value">{{ leave.duration }}</span>
+                </div>
+            </div>
+
+            <!-- Duration Badge -->
+            <div class="duration-badge">
+                <i class="fas fa-hourglass-half"></i>
+                {% if LANGUAGE_CODE == 'ur' %}
+                    چھٹی کی مدت: {{ leave.start_date|date:"d M" }} {{ leave.start_time|time:"h:i A" }} - 
+                    {{ leave.end_date|date:"d M" }} {{ leave.end_time|time:"h:i A" }}
+                {% else %}
+                    Leave Period: {{ leave.start_date|date:"d M" }} {{ leave.start_time|time:"h:i A" }} - 
+                    {{ leave.end_date|date:"d M" }} {{ leave.end_time|time:"h:i A" }}
+                {% endif %}
+            </div>
+
+            <div class="reason-box">
+                <div class="label">
+                    <i class="fas fa-comment"></i>
+                    {% if LANGUAGE_CODE == 'ur' %}چھٹی کی وجہ{% else %}Reason for Leave{% endif %}
+                </div>
+                <div class="reason">{{ leave.reason }}</div>
+            </div>
+        </div>
+
+        <!-- Approvals Section -->
+        <div class="approvals-section">
+            <div class="section-title">
+                <i class="fas fa-check-circle"></i>
+                {% if LANGUAGE_CODE == 'ur' %}منظوری کی تاریخ{% else %}Approval History{% endif %}
+            </div>
+
+            {% for h in history %}
+            <div class="approval-item">
+                <div class="approval-dept">
+                    <i class="fas fa-building"></i>
+                    {{ h.department }}
+                </div>
+                <div class="approval-person">
+                    <i class="fas fa-user-check"></i>
+                    {{ h.action_by.user.get_full_name }}
+                    <span class="status-badge status-approved">
+                        <i class="fas fa-check"></i> 
+                        {% if LANGUAGE_CODE == 'ur' %}منظور شدہ{% else %}Approved{% endif %}
+                    </span>
+                </div>
+                {% if h.action_time %}
+                <small style="color: #999; font-size: 0.65rem; width: 100%; text-align: {% if LANGUAGE_CODE == 'ur' %}left{% else %}right{% endif %};">
+                    <i class="fas fa-clock"></i> {{ h.action_time|time:"h:i A" }}
+                </small>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="empty-approvals">
+                <i class="fas fa-clock"></i>
+                <span>
+                    {% if LANGUAGE_CODE == 'ur' %}ابھی تک کوئی منظوری ریکارڈ نہیں ہوئی{% else %}No approvals recorded yet{% endif %}
+                </span>
+                <small>
+                    {% if LANGUAGE_CODE == 'ur' %}زیر التواء شعبہ جاتی منظوری{% else %}Pending department approvals{% endif %}
+                </small>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Signatures Section -->
+        <div class="signatures">
+            <div class="signature-box">
+                <div class="label">
+                    <i class="fas fa-sign-out-alt"></i>
+                    {% if LANGUAGE_CODE == 'ur' %}چیک آؤٹ{% else %}Check-Out{% endif %}
+                </div>
+                <div class="signature-line"></div>
+                <div class="signature-date">
+                    <i class="fas fa-clock"></i> 
+                    {% if LANGUAGE_CODE == 'ur' %}وقت: _________{% else %}Time: _________{% endif %}
+                </div>
+            </div>
+            
+            <div class="signature-box">
+                <div class="label">
+                    <i class="fas fa-sign-in-alt"></i>
+                    {% if LANGUAGE_CODE == 'ur' %}چیک ان{% else %}Check-In{% endif %}
+                </div>
+                <div class="signature-line"></div>
+                <div class="signature-date">
+                    <i class="fas fa-clock"></i> 
+                    {% if LANGUAGE_CODE == 'ur' %}وقت: _________{% else %}Time: _________{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="pass-footer">
+            <i class="fas fa-print"></i>
+            {% if LANGUAGE_CODE == 'ur' %}
+                A5 چھٹی پاس • دستخطوں اور ٹائم سٹیمپ کے ساتھ درست
+            {% else %}
+                A5 Leave Pass • Valid with signatures & timestamps
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Auto-trigger print dialog when page loads (optional)
+        // window.onload = function() { window.print(); }
+        
+        // Prevent double tap zoom on iOS
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>

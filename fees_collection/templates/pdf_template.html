@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report PDF</title>
+    <style>
+        @font-face {
+            font-family: 'Amiri';
+            src: url('{{ STATIC_URL }}fonts/Amiri-Regular.ttf') format('truetype');
+        }
+        body {
+            font-family: 'Amiri', sans-serif;
+            direction: rtl; /* For right-to-left languages */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reports</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Admission Number</th>
+                <th>Name</th>
+                <th>Father's Name</th>
+                <th>Phone</th>
+                <th>Course</th>
+                <th>Branch</th>
+                <th>Section</th>
+                <th>Monthly Fees</th>
+                <th>Total Fees</th>
+                <th>Total Paid</th>
+                <th>Total Due</th>
+                <th>Months Paid</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in additional_info %}
+            <tr>
+                <td>{{ item.student.admission_number }}</td>
+                <td>{{ item.student.name }}</td>
+                <td>{{ item.student.father_name }}</td>
+                <td>{{ item.student.phone }}</td>
+                <td>{{ item.student.course }}</td>
+                <td>{{ item.student.branch }}</td>
+                <td>{{ item.student.section }}</td>
+                <td>{{ item.monthly_fees }}</td>
+                <td>{{ item.total_fees }}</td>
+                <td>{{ item.total_paid }}</td>
+                <td>{{ item.total_due }}</td>
+                <td>{{ item.months_paid }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

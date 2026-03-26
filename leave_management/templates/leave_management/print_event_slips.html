@@ -1,0 +1,1044 @@
+{% extends "leave_management/base_leave.html" %}
+{% load static %}
+
+{% block title %}Print Leave Slips{% endblock %}
+
+{% block extra_css %}
+<style>
+    .print-container {
+        max-width: 210mm;  /* A4 width */
+        margin: 0 auto;
+        animation: slideUp 0.4s ease-out;
+        background: #f5f5f5;
+        padding: 10px;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Header */
+    .print-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px 15px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    html[dir="rtl"] .print-header {
+        flex-direction: row-reverse;
+    }
+
+    .print-header h2 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    html[dir="rtl"] .print-header h2 {
+        flex-direction: row-reverse;
+    }
+
+    .print-header h2 i {
+        font-size: 1.6rem;
+    }
+
+    .print-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .btn-pdf, .btn-print, .btn-back {
+        padding: 8px 15px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        min-height: 40px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    html[dir="rtl"] .btn-pdf,
+    html[dir="rtl"] .btn-print,
+    html[dir="rtl"] .btn-back {
+        flex-direction: row-reverse;
+    }
+
+    .btn-pdf {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-pdf:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    }
+
+    .btn-print {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-print:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+    }
+
+    .btn-back {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-back:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+    }
+
+    /* Event Info Card */
+    .event-info-card {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    html[dir="rtl"] .event-info-card {
+        flex-direction: row-reverse;
+    }
+
+    .event-icon {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .event-details {
+        flex: 1;
+    }
+
+    .event-details h3 {
+        margin: 0 0 3px 0;
+        font-size: 1.1rem;
+        color: #333;
+    }
+
+    .event-meta {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        color: #6c757d;
+        font-size: 0.8rem;
+    }
+
+    html[dir="rtl"] .event-meta {
+        flex-direction: row-reverse;
+    }
+
+    .event-meta span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    html[dir="rtl"] .event-meta span {
+        flex-direction: row-reverse;
+    }
+
+    .event-meta i {
+        color: #667eea;
+        font-size: 0.8rem;
+    }
+
+    .student-count {
+        background: #667eea;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    html[dir="rtl"] .student-count {
+        flex-direction: row-reverse;
+    }
+
+    /* Summary Cards */
+    .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .summary-card {
+        background: white;
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    html[dir="rtl"] .summary-card {
+        flex-direction: row-reverse;
+    }
+
+    .summary-icon {
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.1rem;
+    }
+
+    .summary-info h4 {
+        margin: 0;
+        font-size: 0.7rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .summary-info p {
+        margin: 2px 0 0 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #333;
+    }
+
+    /* Filters Applied */
+    .filters-applied {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        border-left: 3px solid #28a745;
+        font-size: 0.8rem;
+    }
+
+    html[dir="rtl"] .filters-applied {
+        border-left: none;
+        border-right: 3px solid #28a745;
+        flex-direction: row-reverse;
+    }
+
+    .filter-tag {
+        background: white;
+        border: 1px solid #667eea;
+        color: #667eea;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    html[dir="rtl"] .filter-tag {
+        flex-direction: row-reverse;
+    }
+
+    .remove-filter {
+        text-decoration: none;
+        color: #dc3545;
+    }
+
+    /* A4 Grid with 2 A5 slips per row */
+    .slips-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        background: white;
+        border-radius: 15px;
+        padding: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    html[dir="rtl"] .slips-grid {
+        direction: rtl;
+    }
+
+    .slip-item {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 15px;
+        border-left: 3px solid #667eea;
+        page-break-inside: avoid;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        font-size: 0.85rem;
+        break-inside: avoid;
+        height: fit-content;
+    }
+
+    html[dir="rtl"] .slip-item {
+        border-left: none;
+        border-right: 3px solid #667eea;
+    }
+
+    .slip-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding-bottom: 6px;
+        border-bottom: 1px dashed #dee2e6;
+    }
+
+    html[dir="rtl"] .slip-header {
+        flex-direction: row-reverse;
+    }
+
+    .slip-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    html[dir="rtl"] .slip-title {
+        flex-direction: row-reverse;
+    }
+
+    .slip-title i {
+        color: #667eea;
+        font-size: 1rem;
+    }
+
+    .slip-number {
+        background: #667eea;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 12px;
+        font-size: 0.65rem;
+        font-weight: 600;
+    }
+
+    .slip-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    html[dir="rtl"] .slip-body {
+        direction: rtl;
+    }
+
+    .info-section {
+        background: white;
+        border-radius: 6px;
+        padding: 8px;
+    }
+
+    .info-section h5 {
+        margin: 0 0 6px 0;
+        color: #667eea;
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding-bottom: 3px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    html[dir="rtl"] .info-section h5 {
+        flex-direction: row-reverse;
+    }
+
+    .info-section h5 i {
+        font-size: 0.8rem;
+    }
+
+    .info-group {
+        margin-bottom: 4px;
+        display: flex;
+        border-bottom: 1px solid #f8f9fa;
+        padding-bottom: 3px;
+        font-size: 0.7rem;
+    }
+
+    html[dir="rtl"] .info-group {
+        flex-direction: row-reverse;
+    }
+
+    .info-label {
+        font-size: 0.6rem;
+        color: #6c757d;
+        width: 35%;
+        font-weight: 500;
+    }
+
+    .info-value {
+        font-size: 0.65rem;
+        font-weight: 600;
+        color: #333;
+        width: 65%;
+    }
+
+    .slip-footer {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px dashed #dee2e6;
+    }
+
+    html[dir="rtl"] .slip-footer {
+        direction: rtl;
+    }
+
+    .signature-box {
+        text-align: center;
+    }
+
+    .signature-line {
+        border-bottom: 1px solid #333;
+        margin-bottom: 3px;
+        height: 15px;
+        background: repeating-linear-gradient(45deg, #f0f0f0 0px, #f0f0f0 3px, #fff 3px, #fff 6px);
+    }
+
+    .signature-label {
+        font-size: 0.55rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .signature-label small {
+        display: block;
+        font-size: 0.45rem;
+        color: #999;
+        margin-top: 1px;
+    }
+
+    .slip-footer-note {
+        grid-column: span 3;
+        text-align: center;
+        font-size: 0.5rem;
+        color: #999;
+        border-top: 1px solid #eee;
+        padding-top: 3px;
+        margin-top: 3px;
+    }
+
+    /* Print Styles */
+    @media print {
+        @page {
+            size: A4;
+            margin: 0.5cm;
+        }
+        
+        body {
+            background: white;
+        }
+        
+        .no-print {
+            display: none !important;
+        }
+        
+        .print-container {
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            background: white;
+        }
+        
+        .slips-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.3cm;
+            padding: 0;
+            background: white;
+            box-shadow: none;
+        }
+        
+        .slip-item {
+            border: 1px solid #000;
+            box-shadow: none;
+            background: white;
+            margin: 0;
+            padding: 0.2cm;
+            font-size: 0.7rem;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        
+        .slip-item:nth-child(2n) {
+            break-after: page;
+        }
+        
+        .event-info-card {
+            display: none;
+        }
+        
+        .slip-header {
+            margin-bottom: 0.1cm;
+            padding-bottom: 0.05cm;
+        }
+        
+        .slip-title {
+            font-size: 0.8rem;
+        }
+        
+        .slip-number {
+            font-size: 0.55rem;
+            padding: 1px 4px;
+        }
+        
+        .info-section {
+            border: 1px solid #eee;
+            padding: 0.1cm;
+        }
+        
+        .info-section h5 {
+            font-size: 0.65rem;
+            margin-bottom: 0.1cm;
+        }
+        
+        .info-label {
+            font-size: 0.55rem;
+        }
+        
+        .info-value {
+            font-size: 0.6rem;
+        }
+        
+        .signature-line {
+            border-bottom: 1px solid #000;
+            background: none;
+            height: 0.3cm;
+        }
+        
+        .signature-label {
+            font-size: 0.5rem;
+        }
+        
+        .signature-label small {
+            font-size: 0.4rem;
+        }
+        
+        .slip-footer-note {
+            font-size: 0.45rem;
+        }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .slips-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .slip-footer {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .summary-cards {
+            grid-template-columns: 1fr;
+        }
+        
+        .print-header {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 40px 15px;
+        background: white;
+        border-radius: 15px;
+        grid-column: span 2;
+    }
+
+    .empty-state i {
+        font-size: 3.5rem;
+        color: #dee2e6;
+        margin-bottom: 15px;
+    }
+
+    .empty-state h3 {
+        color: #495057;
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        color: #6c757d;
+        margin-bottom: 20px;
+        font-size: 0.85rem;
+    }
+
+    /* Loading Overlay */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255,255,255,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .loading-spinner-large {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Paper Size Note */
+    .paper-size-note {
+        background: #e7f3ff;
+        border: 1px solid #667eea;
+        border-radius: 8px;
+        padding: 8px 12px;
+        margin-bottom: 15px;
+        font-size: 0.8rem;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    html[dir="rtl"] .paper-size-note {
+        flex-direction: row-reverse;
+    }
+    
+    .paper-size-note i {
+        color: #667eea;
+        font-size: 1rem;
+    }
+
+    /* Page Break Indicator */
+    .page-break-indicator {
+        grid-column: span 2;
+        text-align: center;
+        font-size: 0.7rem;
+        color: #999;
+        margin: 10px 0;
+        position: relative;
+    }
+    
+    .page-break-indicator::before,
+    .page-break-indicator::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 40%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #667eea, transparent);
+    }
+    
+    html[dir="rtl"] .page-break-indicator::before {
+        left: auto;
+        right: 0;
+    }
+    
+    html[dir="rtl"] .page-break-indicator::after {
+        right: auto;
+        left: 0;
+    }
+    
+    .page-break-indicator::before {
+        left: 0;
+    }
+    
+    .page-break-indicator::after {
+        right: 0;
+    }
+    
+    .page-break-indicator span {
+        background: white;
+        padding: 0 10px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* RTL Specific */
+    html[dir="rtl"] .me-1,
+    html[dir="rtl"] .me-2 {
+        margin-left: 0.25rem !important;
+        margin-right: 0 !important;
+    }
+
+    html[dir="rtl"] .ms-1,
+    html[dir="rtl"] .ms-2 {
+        margin-right: 0.25rem !important;
+        margin-left: 0 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="print-container">
+    <!-- A4 Paper Size Note -->
+    <div class="paper-size-note no-print">
+        <i class="bi bi-info-circle"></i>
+        <span>
+            <strong data-trans="a4_format">A4 Format with 2 slips per page:</strong>
+            <span data-trans="total_slips">Total</span>: {{ students|length }} <span data-trans="slips">slip{{ students|length|pluralize }}</span>
+            ({{ students|length }} <span data-trans="slips_will_print">slips will print on</span> 
+            {{ students|length|divisibleby:"2"|yesno:"exact,maybe partial" }} <span data-trans="pages">pages</span>)
+        </span>
+    </div>
+
+    <!-- Header with Actions - Hidden when printing -->
+    <div class="print-header no-print">
+        <h2>
+            <i class="bi bi-printer"></i>
+            <span data-trans="leave_slips_2_per_a4">Leave Slips - 2 per A4</span>
+        </h2>
+        <div class="print-actions">
+            <a href="?event_id={{ event.id }}{% if section_filter %}&section={{ section_filter }}{% endif %}&format=pdf" class="btn-pdf">
+                <i class="bi bi-file-pdf"></i>
+                <span data-trans="pdf">PDF</span>
+            </a>
+            <button onclick="window.print()" class="btn-print">
+                <i class="bi bi-printer"></i>
+                <span data-trans="print">Print</span> ({{ students|length }} <span data-trans="slips">slips</span>)
+            </button>
+            <a href="{% url 'create_event' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i>
+                <span data-trans="back">Back</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Event Information -->
+    <div class="event-info-card">
+        <div class="event-icon">
+            <i class="bi bi-calendar-event"></i>
+        </div>
+        <div class="event-details">
+            <h3>{{ event.name }}</h3>
+            <div class="event-meta">
+                <span><i class="bi bi-calendar"></i> {{ event.start_date|date:"d/m/Y" }} - {{ event.end_date|date:"d/m/Y" }}</span>
+                {% if event.branch %}
+                <span><i class="bi bi-building"></i> {{ event.branch }}</span>
+                {% endif %}
+                {% if event.course %}
+                <span><i class="bi bi-book"></i> {{ event.course }}</span>
+                {% endif %}
+                {% if event.section %}
+                <span><i class="bi bi-grid"></i> {{ event.section }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="student-count">
+            <i class="bi bi-people-fill"></i>
+            {{ students|length }}
+        </div>
+    </div>
+
+    <!-- Summary Cards - Compact -->
+    <div class="summary-cards no-print">
+        <div class="summary-card">
+            <div class="summary-icon">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="summary-info">
+                <h4 data-trans="students">Students</h4>
+                <p>{{ students|length }}</p>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-icon" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+            <div class="summary-info">
+                <h4 data-trans="days">Days</h4>
+                <p>{{ event.start_date|timesince:event.end_date }}</p>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-icon" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
+                <i class="bi bi-grid-3x3"></i>
+            </div>
+            <div class="summary-info">
+                <h4 data-trans="pages">Pages</h4>
+                <p>{{ pages_needed }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Applied -->
+    {% if section_filter %}
+    <div class="filters-applied no-print">
+        <span><i class="bi bi-funnel-fill"></i> <span data-trans="filter">Filter:</span></span>
+        <span class="filter-tag">
+            <i class="bi bi-check-circle-fill"></i>
+            <span data-trans="section">Section</span>: {{ section_filter }}
+            <a href="?event_id={{ event.id }}" class="remove-filter">
+                <i class="bi bi-x-circle"></i>
+            </a>
+        </span>
+    </div>
+    {% endif %}
+
+    <!-- Leave Slips - Grid with 2 columns for A5 on A4 -->
+    <div class="slips-grid">
+        {% if students %}
+            {% for student in students %}
+            <div class="slip-item">
+                <div class="slip-header">
+                    <div class="slip-title">
+                        <i class="bi bi-file-text-fill"></i>
+                        <span data-trans="leave_slip">LEAVE SLIP</span>
+                    </div>
+                    <div class="slip-number">
+                        #{{ forloop.counter }}
+                    </div>
+                </div>
+
+                <div class="slip-body">
+                    <!-- Student Information Section -->
+                    <div class="info-section">
+                        <h5>
+                            <i class="bi bi-person-badge"></i>
+                            <span data-trans="student">STUDENT</span>
+                        </h5>
+                        
+                        <div class="info-group">
+                            <div class="info-label" data-trans="name">Name</div>
+                            <div class="info-value">{{ student.name|truncatechars:20 }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label" data-trans="adm_no">Adm No.</div>
+                            <div class="info-value">{{ student.admission_number }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label" data-trans="course">Course</div>
+                            <div class="info-value">{{ student.course|truncatechars:15 }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label" data-trans="section">Section</div>
+                            <div class="info-value">{{ student.section }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Leave Details Section -->
+                    <div class="info-section">
+                        <h5 style="color: #28a745;">
+                            <i class="bi bi-calendar-check"></i>
+                            <span data-trans="leave">LEAVE</span>
+                        </h5>
+
+                        <div class="info-group">
+                            <div class="info-label" data-trans="event">Event</div>
+                            <div class="info-value">{{ event.name|truncatechars:15 }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label" data-trans="from">From</div>
+                            <div class="info-value">{{ event.start_date|date:"d/m/y" }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label" data-trans="to">To</div>
+                            <div class="info-value">{{ event.end_date|date:"d/m/y" }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label" data-trans="days">Days</div>
+                            <div class="info-value">
+                                {{ event.start_date|timesince:event.end_date }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Signatures Section -->
+                <div class="slip-footer">
+                    <div class="signature-box">
+                        <div class="signature-line"></div>
+                        <div class="signature-label">
+                            <span data-trans="student">Student</span>
+                            <small>___/___/_____</small>
+                        </div>
+                    </div>
+                    <div class="signature-box">
+                        <div class="signature-line"></div>
+                        <div class="signature-label">
+                            <span data-trans="parent">Parent</span>
+                            <small>___/___/_____</small>
+                        </div>
+                    </div>
+                    <div class="signature-box">
+                        <div class="signature-line"></div>
+                        <div class="signature-label">
+                            <span data-trans="authority">Authority</span>
+                            <small>stamp</small>
+                        </div>
+                    </div>
+                    <div class="slip-footer-note">
+                        <i class="bi bi-printer"></i> 
+                        <span data-trans="system_generated">System generated</span> • 
+                        <span data-trans="valid_with_signatures">Valid with signatures</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add page break indicator after every 2 slips (for preview only) -->
+            {% if forloop.counter|divisibleby:2 and not forloop.last %}
+            <div class="page-break-indicator no-print">
+                <span data-trans="page">Page</span> {{ forloop.counter|add:"2"|divisibleby:2 }}
+            </div>
+            {% endif %}
+
+            {% endfor %}
+        {% else %}
+            <!-- Empty State - spans both columns -->
+            <div class="empty-state">
+                <i class="bi bi-file-earmark-x"></i>
+                <h3 data-trans="no_students">No Students Found</h3>
+                <p data-trans="no_students_desc">No students match the selected criteria</p>
+                <a href="{% url 'create_event' %}" class="btn-back">
+                    <i class="bi bi-arrow-left"></i>
+                    <span data-trans="back">Back</span>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Print Footer Note -->
+    <div style="text-align: center; margin-top: 15px; color: #6c757d; font-size: 0.7rem;" class="no-print">
+        <i class="bi bi-info-circle"></i>
+        {{ students|length }} <span data-trans="slips">slip{{ students|length|pluralize }}</span> • 
+        {% with remainder=students|length|divisibleby:"2" %}
+            {% if remainder %}
+                <span data-trans="exactly_pages">Exactly</span> {{ students|length|add:"2"|divisibleby:"2" }} <span data-trans="pages">pages</span>
+            {% else %}
+                {{ students|length|add:"1"|divisibleby:"2" }} <span data-trans="pages">pages</span> 
+                (<span data-trans="last_page_one_slip">last page has 1 slip</span>)
+            {% endif %}
+        {% endwith %}
+        • <span data-trans="a4_two_per_page">A4 paper with 2 slips per page</span>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="loading-spinner-large"></div>
+</div>
+
+<script>
+    // Show loading overlay when downloading PDF
+    document.querySelectorAll('.btn-pdf').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        });
+    });
+
+    // Keyboard shortcut for printing (Ctrl+P)
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'p') {
+            e.preventDefault();
+            window.print();
+        }
+    });
+
+    // Update print button text with page count
+    document.addEventListener('DOMContentLoaded', function() {
+        const slipCount = {{ students|length }};
+        const pagesNeeded = Math.ceil(slipCount / 2);
+        const printBtn = document.querySelector('.btn-print');
+        if (printBtn && slipCount > 0) {
+            const isRTL = document.documentElement.lang === 'ur';
+            const printText = isRTL ? 'پرنٹ کریں' : 'Print';
+            const slipsText = isRTL ? 'سلپس' : 'slips';
+            const pageText = isRTL ? 'صفحہ' : 'page';
+            const pagesText = isRTL ? 'صفحات' : 'pages';
+            
+            printBtn.innerHTML = `<i class="bi bi-printer"></i> ${printText} ${slipCount} ${slipsText} (${pagesNeeded} ${pagesNeeded > 1 ? pagesText : pageText})`;
+        }
+    });
+
+    // Calculate pages for preview
+    document.addEventListener('DOMContentLoaded', function() {
+        const slipCount = {{ students|length }};
+        const pagesNeeded = Math.ceil(slipCount / 2);
+        const pageIndicator = document.querySelector('.summary-cards .summary-card:last-child p');
+        if (pageIndicator) {
+            pageIndicator.textContent = pagesNeeded;
+        }
+    });
+
+    // Prevent double tap zoom on iOS
+    document.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+</script>
+
+{% endblock %}

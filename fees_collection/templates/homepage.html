@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block sidebar %}
+    <div class="horizontal-menu" style="background-color: #4361ee; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px;">
+        <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+            {% if user.is_staff %}
+                <li><a href="{% url 'upload_file' %}" style="color: #ffffff; text-decoration: none; padding: 8px 12px; border-radius: 4px; transition: background-color 0.3s;">📤 Upload</a></li>
+                <li><a href="{% url 'download_payments' %}" style="color: #ffffff; text-decoration: none; padding: 8px 12px; border-radius: 4px; transition: background-color 0.3s;">📥 Download</a></li>
+                <li><a href="{% url 'summary' %}" style="color: #ffffff; text-decoration: none; padding: 8px 12px; border-radius: 4px; transition: background-color 0.3s;">📊 Summary</a></li>
+                <li><a href="{% url 'student_receipt_list' %}" style="color: #ffffff; text-decoration: none; padding: 8px 12px; border-radius: 4px; transition: background-color 0.3s;">👨‍🎓 Students</a></li>
+                <li><a href="{% url 'student_payment_report' %}" style="color: #ffffff; text-decoration: none; padding: 8px 12px; border-radius: 4px; transition: background-color 0.3s;">💰 Donation List</a></li>
+            {% endif %}
+            <li><a href="{% url 'make_payment' %}" style="color: #ffffff; text-decoration: none; padding: 8px 12px; border-radius: 4px; transition: background-color 0.3s;">🧾 Donation Entry</a></li>
+            <li><a href="{% url 'user_payments' %}" style="color: #ffffff; text-decoration: none; padding: 8px 12px; border-radius: 4px; transition: background-color 0.3s;">📋 My Entries</a></li>
+            <li><a href="{% url 'reports' %}" style="color: #ffffff; text-decoration: none; padding: 8px 12px; border-radius: 4px; transition: background-color 0.3s;">📈 Reports</a></li>
+            <li><a href="{% url 'receipt_number_input' %}" style="color: white; text-decoration: none; padding: 8px 12px; border-radius: 4px; background-color: #4cc9f0; transition: background-color 0.3s;">🖨️ Print Receipt</a></li>
+            <li style="margin-left: auto;">
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="color: white; background-color: #f72585; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; font-family: inherit; font-size: inherit;">🚪 Logout</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div style="background-color: #ffffff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <h1 style="color: #4361ee; margin-bottom: 10px;">👋 Hi {{ user.username }}!</h1>
+        <h2 style="color: #4cc9f0; margin-bottom: 20px;">🏠 Welcome to the Home Page</h2>
+        
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #4895ef; margin-top: 20px;">
+            <h3 style="color: #4895ef; margin-bottom: 10px;">💵 Total Donations Collected By Me</h3>
+            <p style="font-size: 32px; color: #3a0ca3; font-weight: bold; margin: 0;">₹{{ total_collected|floatformat:2 }}</p>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Fee Details</title>
+</head>
+<body>
+    <h1>All Fee Details</h1>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Receipt No</th>
+                <th>Date</th>
+                <th>Student</th>
+                <th>Student Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Loop through fee details data and display each payment -->
+            {% if student_payments %}
+            {% for payment in student_payments %}
+            <tr>
+                <td>{{ payment.amount }}</td>
+                <td>{{ payment.receipt_no }}</td>
+                <td>{{ payment.date }}</td>
+                <td>{{ payment.student.name }}</td>
+                <td>{{ payment.student.phone }}</td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="5">No fee details found for this student.</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</body>
+</html>

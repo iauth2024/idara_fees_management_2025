@@ -1,0 +1,352 @@
+{% extends "leave_management/base_leave.html" %}
+{% load static %}
+
+{% block title %}Leave Dashboard{% endblock %}
+
+{% block extra_css %}
+<!-- Your CSS remains exactly the same -->
+{% endblock %}
+
+{% block content %}
+<!-- Language Switcher -->
+<div class="container-fluid mb-3">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-end">
+                <form action="{% url 'set_language' %}" method="post" class="language-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <div class="btn-group" role="group">
+                        <button type="submit" name="language" value="en" 
+                                class="btn btn-sm {% if LANGUAGE_CODE == 'en' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            🇬🇧 English
+                        </button>
+                        <button type="submit" name="language" value="ur" 
+                                class="btn btn-sm {% if LANGUAGE_CODE == 'ur' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            🇵🇰 اردو
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-header">
+    <div class="dashboard-header-content">
+        <div>
+            <h3>📊 <span data-trans="dashboard_overview">Dashboard Overview</span></h3>
+            <p><span data-trans="welcome_back">Welcome back! Here's what's happening with leave management today.</span></p>
+        </div>
+        <a href="{% url 'logout' %}" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span data-trans="logout">Logout</span>
+        </a>
+    </div>
+</div>
+
+<!-- Quick Stats Row - These use dynamic data, so no translation needed for the numbers -->
+<!-- But the labels need translation -->
+
+<!-- Main Stats Cards -->
+<div class="row">
+    <!-- Total Students -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="stats-card card shadow" onclick="window.location.href='{% url 'leave_list' %}'">
+            <div class="card-body text-center">
+                <div class="stats-icon">👥</div>
+                <h6 data-trans="total_students">Total Students</h6>
+                <h3 class="text-primary">{{ total_students }}</h3>
+                <div class="trend-indicator">
+                    <i class="fas fa-arrow-up"></i> <span data-trans="active_enrollment">Active enrollment</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Students On Leave -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="stats-card card shadow" onclick="window.location.href='{% url 'leave_list' %}?status=approved'">
+            <div class="card-body text-center">
+                <div class="stats-icon">🏃</div>
+                <h6 data-trans="currently_on_leave">Currently On Leave</h6>
+                <h3 class="text-success">{{ students_on_leave }}</h3>
+                <div class="trend-indicator">
+                    <i class="fas fa-clock"></i> <span data-trans="away_right_now">Away right now</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overdue Students -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="stats-card card shadow" onclick="window.location.href='{% url 'checkin_report' %}'">
+            <div class="card-body text-center">
+                <div class="stats-icon">⚠️</div>
+                <h6 data-trans="overdue_returns">Overdue Returns</h6>
+                <h3 class="text-danger">{{ overdue_students }}</h3>
+                <div class="trend-indicator text-danger">
+                    <i class="fas fa-exclamation-triangle"></i> <span data-trans="requires_attention">Requires attention</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Check-Ins -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="stats-card card shadow" onclick="window.location.href='{% url 'checkin_report' %}'">
+            <div class="card-body text-center">
+                <div class="stats-icon">✅</div>
+                <h6 data-trans="todays_checkins">Today's Check-Ins</h6>
+                <h3 class="text-warning">{{ today_checkins }}</h3>
+                <div class="trend-indicator">
+                    <i class="fas fa-calendar-check"></i> <span data-trans="returned_today">Returned today</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- This Month Leaves -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="stats-card card shadow" onclick="window.location.href='{% url 'leave_reports' %}'">
+            <div class="card-body text-center">
+                <div class="stats-icon">📅</div>
+                <h6 data-trans="this_month_leaves">This Month Leaves</h6>
+                <h3 class="text-info">{{ monthly_leaves }}</h3>
+                <div class="trend-indicator">
+                    <i class="fas fa-chart-line"></i> <span data-trans="monthly_total">Monthly total</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rejected Leaves -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="stats-card card shadow" onclick="window.location.href='{% url 'leave_list' %}?status=rejected'">
+            <div class="card-body text-center">
+                <div class="stats-icon">❌</div>
+                <h6 data-trans="rejected_leaves">Rejected Leaves</h6>
+                <h3 class="text-secondary">{{ rejected_leaves }}</h3>
+                <div class="trend-indicator text-secondary">
+                    <i class="fas fa-chart-down"></i> <span data-trans="not_approved">Not approved</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="action-buttons">
+    <a href="{% url 'leave_reports' %}" class="btn btn-primary">
+        <i class="fas fa-chart-bar me-2"></i> <span data-trans="view_leave_reports">View Leave Reports</span>
+    </a>
+    <a href="{% url 'create_leave' %}" class="btn btn-success">
+        <i class="fas fa-plus-circle me-2"></i> <span data-trans="apply_for_leave">Apply for Leave</span>
+    </a>
+    <a href="{% url 'event_list' %}" class="btn btn-info">
+        <i class="fas fa-calendar-alt me-2"></i> <span data-trans="manage_events">Manage Events</span>
+    </a>
+</div>
+
+<hr>
+
+<h4 class="section-title">
+    <i class="fas fa-chart-pie me-2"></i>
+    <span data-trans="department_approvals_summary">Department Approvals Summary</span>
+</h4>
+
+<div class="row">
+    <!-- Approvals Section -->
+    <div class="col-md-6 mb-4">
+        <div class="dept-card card shadow">
+            <div class="card-header">
+                <div>
+                    <i class="fas fa-check-circle"></i> <span data-trans="approved_leaves">Approved Leaves</span>
+                </div>
+                <span class="badge badge-light">{{ dept_approvals|length }} <span data-trans="depts">depts</span></span>
+            </div>
+            <div class="card-body">
+                {% if dept_approvals %}
+                    <ul class="dept-list">
+                        {% for item in dept_approvals %}
+                            <li>
+                                <span>
+                                    <i class="fas fa-building me-2" style="color: #667eea;"></i>
+                                    {{ item.department|title }}
+                                </span>
+                                <span class="badge">{{ item.total }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <p data-trans="no_approvals_yet">No approvals yet</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Rejections Section -->
+    <div class="col-md-6 mb-4">
+        <div class="dept-card card shadow">
+            <div class="card-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div>
+                    <i class="fas fa-times-circle"></i> <span data-trans="rejected_leaves">Rejected Leaves</span>
+                </div>
+                <span class="badge badge-light">{{ dept_rejections|length }} <span data-trans="depts">depts</span></span>
+            </div>
+            <div class="card-body">
+                {% if dept_rejections %}
+                    <ul class="dept-list">
+                        {% for item in dept_rejections %}
+                            <li>
+                                <span>
+                                    <i class="fas fa-building me-2" style="color: #f5576c;"></i>
+                                    {{ item.department|title }}
+                                </span>
+                                <span class="badge" style="background: #f5576c;">{{ item.total }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-times-circle"></i>
+                        <p data-trans="no_rejections_yet">No rejections yet</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Super Admin Section -->
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="super-admin-card card shadow">
+            <div class="card-body text-center">
+                <h6>
+                    <i class="fas fa-crown me-2"></i>
+                    <span data-trans="super_admin_approvals">Super Admin Approvals</span>
+                </h6>
+                <h3 class="text-white">{{ super_admin_approvals }}</h3>
+                <p style="opacity: 0.8; margin-top: 10px; font-size: 0.9em;">
+                    <i class="fas fa-clock me-1"></i>
+                    <span data-trans="pending_approvals_super_admin">Pending approvals at super admin level</span>
+                </p>
+                {% if super_admin_approvals > 0 %}
+                <a href="{% url 'leave_list' %}?pending=super_admin" class="btn btn-light btn-sm mt-2">
+                    <i class="fas fa-eye me-1"></i> <span data-trans="view_pending">View Pending</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+{% if recent_activity %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-history me-2 text-primary"></i>
+                    <span data-trans="recent_activity">Recent Activity</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th data-trans="student">Student</th>
+                                <th data-trans="action">Action</th>
+                                <th data-trans="department">Department</th>
+                                <th data-trans="time">Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for activity in recent_activity %}
+                            <tr>
+                                <td>{{ activity.leave.student.name }}</td>
+                                <td>
+                                    <span class="badge {% if activity.action == 'approved' %}bg-success{% else %}bg-danger{% endif %}">
+                                        {{ activity.action|title }}
+                                    </span>
+                                </td>
+                                <td>{{ activity.department|title }}</td>
+                                <td>{{ activity.action_time|timesince }} <span data-trans="ago">ago</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Your existing JavaScript remains exactly the same
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    // Add logout confirmation
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            const message = document.documentElement.lang === 'ur' 
+                ? 'کیا آپ لاگ آؤٹ کرنا چاہتے ہیں؟'
+                : 'Are you sure you want to logout?';
+            if (!confirm(message)) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // RTL-aware hover effects
+    const isRTL = document.documentElement.dir === 'rtl';
+    document.querySelectorAll('.dept-list li').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            if (isRTL) {
+                this.style.transform = 'translateX(-5px)';
+            }
+        });
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+        });
+    });
+});
+
+// Format numbers with commas
+function formatNumber(num) {
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+}
+
+// Update stats icon positions based on RTL
+function updateIconPositions() {
+    const isRTL = document.documentElement.dir === 'rtl';
+    document.querySelectorAll('.stats-icon').forEach(icon => {
+        icon.style.right = isRTL ? 'auto' : '15px';
+        icon.style.left = isRTL ? '15px' : 'auto';
+    });
+}
+
+// Call on load and when language changes
+document.addEventListener('DOMContentLoaded', updateIconPositions);
+</script>
+{% endblock %}

@@ -1,0 +1,688 @@
+{% extends "leave_management/base_leave.html" %}
+{% load static %}
+
+{% block title %}Holiday Events{% endblock %}
+
+{% block extra_css %}
+<style>
+    .events-container {
+        max-width: 600px;
+        margin: 0 auto;
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Header Section */
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px 20px;
+        border-radius: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    html[dir="rtl"] .page-header {
+        flex-direction: row-reverse;
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    html[dir="rtl"] .page-header h2 {
+        flex-direction: row-reverse;
+    }
+
+    .page-header h2 i {
+        font-size: 2rem;
+    }
+
+    .create-btn {
+        background: white;
+        color: #667eea;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        min-height: 44px;
+    }
+
+    html[dir="rtl"] .create-btn {
+        flex-direction: row-reverse;
+    }
+
+    .create-btn:hover, .create-btn:active {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        background: #f8f9fa;
+    }
+
+    .create-btn i {
+        font-size: 1.2rem;
+    }
+
+    /* Mobile Card View */
+    .events-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .event-card {
+        background: white;
+        border-radius: 20px;
+        padding: 0;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        border-left: 5px solid #667eea;
+        overflow: hidden;
+    }
+
+    html[dir="rtl"] .event-card {
+        border-left: none;
+        border-right: 5px solid #667eea;
+    }
+
+    .event-card:hover, .event-card:active {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.15);
+    }
+
+    .event-header {
+        background: linear-gradient(135deg, #f8f9ff 0%, #f0f3ff 100%);
+        padding: 15px 20px;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    html[dir="rtl"] .event-header {
+        flex-direction: row-reverse;
+    }
+
+    .event-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    html[dir="rtl"] .event-name {
+        flex-direction: row-reverse;
+    }
+
+    .event-name i {
+        color: #667eea;
+        font-size: 1.3rem;
+    }
+
+    .event-body {
+        padding: 15px 20px;
+    }
+
+    .event-detail {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    html[dir="rtl"] .event-detail {
+        flex-direction: row-reverse;
+    }
+
+    .event-detail:last-child {
+        margin-bottom: 0;
+    }
+
+    .detail-icon {
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .detail-content {
+        flex: 1;
+    }
+
+    .detail-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+    }
+
+    .detail-value {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .detail-value.branch {
+        background: #e9ecef;
+        padding: 4px 10px;
+        border-radius: 20px;
+        display: inline-block;
+        font-size: 0.9rem;
+    }
+
+    .event-footer {
+        padding: 15px 20px;
+        background: #f8f9fa;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    html[dir="rtl"] .event-footer {
+        flex-direction: row-reverse;
+    }
+
+    .status-badge {
+        padding: 8px 15px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    html[dir="rtl"] .status-badge {
+        flex-direction: row-reverse;
+    }
+
+    .status-active {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        color: #155724;
+        border-left: 3px solid #28a745;
+    }
+
+    html[dir="rtl"] .status-active {
+        border-left: none;
+        border-right: 3px solid #28a745;
+    }
+
+    .status-cancelled {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        color: #721c24;
+        border-left: 3px solid #dc3545;
+    }
+
+    html[dir="rtl"] .status-cancelled {
+        border-left: none;
+        border-right: 3px solid #dc3545;
+    }
+
+    .action-btn {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        min-height: 44px;
+    }
+
+    html[dir="rtl"] .action-btn {
+        flex-direction: row-reverse;
+    }
+
+    .action-btn:hover, .action-btn:active {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+    }
+
+    .action-btn i {
+        font-size: 1.1rem;
+    }
+
+    .action-btn.disabled, .action-btn.cancelled {
+        background: #6c757d;
+        pointer-events: none;
+        opacity: 0.6;
+    }
+
+    .cancelled-text {
+        color: #6c757d;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 10px 0;
+    }
+
+    html[dir="rtl"] .cancelled-text {
+        flex-direction: row-reverse;
+    }
+
+    .cancelled-text i {
+        font-size: 1.2rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: #dee2e6;
+        margin-bottom: 15px;
+    }
+
+    .empty-state h3 {
+        font-size: 1.3rem;
+        color: #495057;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+    .empty-state .create-btn {
+        display: inline-flex;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 30px;
+    }
+
+    /* Date formatting */
+    .date-range {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    html[dir="rtl"] .date-range {
+        flex-direction: row-reverse;
+    }
+
+    .date-range i {
+        color: #667eea;
+    }
+
+    /* Table view for larger screens */
+    .desktop-table {
+        display: none;
+    }
+
+    @media (min-width: 768px) {
+        .events-grid {
+            display: none;
+        }
+        
+        .desktop-table {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        
+        .table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: {% if LANGUAGE_CODE == 'ur' %}right{% else %}left{% endif %};
+        }
+        
+        .table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            color: #333;
+            text-align: {% if LANGUAGE_CODE == 'ur' %}right{% else %}left{% endif %};
+        }
+        
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .table tr:hover {
+            background: #f8f9ff;
+        }
+    }
+
+    /* Loading animation */
+    .loading-pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    /* Touch-friendly improvements */
+    button, a, .action-btn, .create-btn {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* RTL Specific */
+    html[dir="rtl"] .me-1,
+    html[dir="rtl"] .me-2 {
+        margin-left: 0.25rem !important;
+        margin-right: 0 !important;
+    }
+
+    html[dir="rtl"] .ms-1,
+    html[dir="rtl"] .ms-2 {
+        margin-right: 0.25rem !important;
+        margin-left: 0 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="events-container">
+    <!-- Header with Create Button -->
+    <div class="page-header">
+        <h2>
+            <i class="bi bi-calendar2-event"></i>
+            <span data-trans="holiday_events">Holiday Events</span>
+        </h2>
+        <a href="{% url 'create_event' %}" class="create-btn">
+            <i class="bi bi-plus-circle"></i>
+            <span data-trans="create_event">Create Event</span>
+        </a>
+    </div>
+
+    {% if events %}
+        <!-- Mobile Card View -->
+        <div class="events-grid">
+            {% for event in events %}
+            <div class="event-card">
+                <div class="event-header">
+                    <div class="event-name">
+                        <i class="bi bi-gift"></i>
+                        {{ event.name }}
+                    </div>
+                </div>
+                
+                <div class="event-body">
+                    <!-- Date Range -->
+                    <div class="event-detail">
+                        <div class="detail-icon">
+                            <i class="bi bi-calendar-range"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label" data-trans="date_range">Date Range</div>
+                            <div class="detail-value date-range">
+                                <i class="bi bi-play-fill"></i>
+                                {{ event.start_date|date:"d M Y" }}
+                                <i class="bi bi-arrow-right"></i>
+                                <i class="bi bi-stop-fill"></i>
+                                {{ event.end_date|date:"d M Y" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Branch -->
+                    <div class="event-detail">
+                        <div class="detail-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label" data-trans="branch">Branch</div>
+                            <div class="detail-value branch">
+                                {% if event.branch %}
+                                    {{ event.branch }}
+                                {% else %}
+                                    <span data-trans="all_branches">All Branches</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course & Section -->
+                    <div class="event-detail">
+                        <div class="detail-icon">
+                            <i class="bi bi-book"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label" data-trans="course_section">Course / Section</div>
+                            <div class="detail-value">
+                                {% if event.course %}
+                                    {{ event.course }}
+                                    {% if event.section %}
+                                        - {{ event.section }}
+                                    {% endif %}
+                                {% else %}
+                                    <span data-trans="all_courses">All Courses</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="event-footer">
+                    <!-- Status Badge -->
+                    {% if event.status == "active" or not event.status %}
+                        <span class="status-badge status-active">
+                            <i class="bi bi-check-circle"></i>
+                            <span data-trans="active">Active</span>
+                        </span>
+                    {% else %}
+                        <span class="status-badge status-cancelled">
+                            <i class="bi bi-x-circle"></i>
+                            <span data-trans="cancelled">Cancelled</span>
+                        </span>
+                    {% endif %}
+
+                    <!-- Action Button -->
+                    {% if event.status == "active" or not event.status %}
+                        <a href="{% url 'cancel_event' event.id %}"
+                           onclick="return confirmCancel(event)"
+                           class="action-btn">
+                            <i class="bi bi-x-circle"></i>
+                            <span data-trans="cancel_event">Cancel Event</span>
+                        </a>
+                    {% else %}
+                        <span class="cancelled-text">
+                            <i class="bi bi-ban"></i>
+                            <span data-trans="cancelled">Cancelled</span>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Desktop Table View -->
+        <div class="desktop-table">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th data-trans="name">Name</th>
+                        <th data-trans="start">Start</th>
+                        <th data-trans="end">End</th>
+                        <th data-trans="branch">Branch</th>
+                        <th data-trans="course">Course</th>
+                        <th data-trans="section">Section</th>
+                        <th data-trans="status">Status</th>
+                        <th data-trans="action">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                    <tr>
+                        <td><strong>{{ event.name }}</strong></td>
+                        <td>{{ event.start_date|date:"d M Y" }}</td>
+                        <td>{{ event.end_date|date:"d M Y" }}</td>
+                        <td>{% if event.branch %}{{ event.branch }}{% else %}<span data-trans="all">All</span>{% endif %}</td>
+                        <td>{% if event.course %}{{ event.course }}{% else %}<span data-trans="all">All</span>{% endif %}</td>
+                        <td>{% if event.section %}{{ event.section }}{% else %}<span data-trans="all">All</span>{% endif %}</td>
+                        <td>
+                            {% if event.status == "active" or not event.status %}
+                                <span class="status-badge status-active">
+                                    <i class="bi bi-check-circle"></i> <span data-trans="active">Active</span>
+                                </span>
+                            {% else %}
+                                <span class="status-badge status-cancelled">
+                                    <i class="bi bi-x-circle"></i> <span data-trans="cancelled">Cancelled</span>
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if event.status == "active" or not event.status %}
+                                <a href="{% url 'cancel_event' event.id %}"
+                                   onclick="return confirmCancel(event)"
+                                   class="action-btn"
+                                   style="padding: 8px 15px; font-size: 0.85rem;">
+                                    <i class="bi bi-x-circle"></i>
+                                    <span data-trans="cancel">Cancel</span>
+                                </a>
+                            {% else %}
+                                <span style="color:gray;" data-trans="cancelled">Cancelled</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <i class="bi bi-calendar2-x"></i>
+            <h3 data-trans="no_events">No Holiday Events</h3>
+            <p data-trans="no_events_desc">There are no holiday events scheduled yet.</p>
+            <a href="{% url 'create_event' %}" class="create-btn">
+                <i class="bi bi-plus-circle"></i>
+                <span data-trans="create_first_event">Create Your First Event</span>
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    // Custom confirm for cancel with bilingual support
+    function confirmCancel(event) {
+        event.preventDefault();
+        const link = event.currentTarget;
+        
+        const confirmMessage = document.documentElement.lang === 'ur' 
+            ? '❌ کیا آپ واقعی اس ایونٹ کو منسوخ کرنا چاہتے ہیں؟'
+            : '❌ Are you sure you want to cancel this event?';
+        
+        if (confirm(confirmMessage)) {
+            // Add loading state
+            const originalText = link.innerHTML;
+            const loadingText = document.documentElement.lang === 'ur' ? 'منسوخ ہو رہا ہے...' : 'Cancelling...';
+            link.innerHTML = '<span class="loading-spinner"></span> ' + loadingText;
+            link.style.pointerEvents = 'none';
+            
+            // Navigate after a short delay
+            setTimeout(() => {
+                window.location.href = link.href;
+            }, 500);
+        }
+        return false;
+    }
+
+    // Add loading spinner style if not already present
+    if (!document.querySelector('#spinner-style')) {
+        const style = document.createElement('style');
+        style.id = 'spinner-style';
+        style.textContent = `
+            .loading-spinner {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border: 2px solid rgba(255,255,255,0.3);
+                border-radius: 50%;
+                border-top-color: white;
+                animation: spin 1s ease-in-out infinite;
+                margin-right: 5px;
+            }
+            
+            html[dir="rtl"] .loading-spinner {
+                margin-right: 0;
+                margin-left: 5px;
+            }
+            
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Prevent double tap zoom on iOS
+    document.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+</script>
+
+{% endblock %}

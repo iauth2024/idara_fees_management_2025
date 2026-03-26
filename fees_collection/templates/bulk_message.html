@@ -1,0 +1,938 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bulk Message - Fee Due Students</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .header h1 {
+            color: #1a1a2e;
+            font-size: 28px;
+        }
+        
+        .header h1 i {
+            margin-right: 10px;
+            color: #4e73df;
+        }
+        
+        .back-btn {
+            background: white;
+            color: #4e73df;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #4e73df;
+            color: white;
+        }
+        
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+        
+        .filter-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #4e73df;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: #4e73df;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2e59d9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78,115,223,0.3);
+        }
+        
+        .btn-success {
+            background: #1cc88a;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #17a673;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(28,200,138,0.3);
+        }
+        
+        .btn-warning {
+            background: #f6c23e;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #e74a3b;
+            color: white;
+        }
+        
+        .btn-outline {
+            background: white;
+            border: 2px solid #e1e5e9;
+            color: #555;
+        }
+        
+        .btn-outline:hover {
+            border-color: #4e73df;
+            color: #4e73df;
+        }
+        
+        /* Message Composer */
+        .message-composer {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+        
+        .composer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .composer-header h3 {
+            color: #1a1a2e;
+            font-size: 18px;
+        }
+        
+        .template-selector {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .template-selector select {
+            padding: 10px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            min-width: 250px;
+        }
+        
+        .message-input {
+            margin-bottom: 20px;
+        }
+        
+        .message-input textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 15px;
+            line-height: 1.6;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .message-input textarea:focus {
+            outline: none;
+            border-color: #4e73df;
+        }
+        
+        .message-stats {
+            display: flex;
+            gap: 30px;
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .placeholder-hints {
+            background: #f8f9fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .placeholder-hint {
+            background: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid #e1e5e9;
+            font-size: 12px;
+            color: #4e73df;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .placeholder-hint:hover {
+            background: #4e73df;
+            color: white;
+            border-color: #4e73df;
+        }
+        
+        .message-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        /* Selection Controls */
+        .selection-bar {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .selection-info {
+            font-size: 16px;
+            color: #1a1a2e;
+        }
+        
+        .selection-info strong {
+            color: #4e73df;
+            font-size: 20px;
+            margin-right: 5px;
+        }
+        
+        .selection-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        /* Students Table */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .students-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .students-table th {
+            background: #f8f9fc;
+            color: #4e73df;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #e1e5e9;
+        }
+        
+        .students-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e1e5e9;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .students-table tbody tr:hover {
+            background: #f8f9fc;
+            cursor: pointer;
+        }
+        
+        .students-table tbody tr.selected {
+            background: #e8f0fe;
+        }
+        
+        .checkbox-col {
+            width: 50px;
+            text-align: center;
+        }
+        
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #4e73df;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-danger {
+            background: #fce8e6;
+            color: #e74a3b;
+        }
+        
+        .status-warning {
+            background: #fff3e0;
+            color: #f6c23e;
+        }
+        
+        .phone-number {
+            font-family: monospace;
+            color: #1cc88a;
+            font-weight: 500;
+        }
+        
+        .amount-due {
+            color: #e74a3b;
+            font-weight: 600;
+        }
+        
+        /* Progress Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e1e5e9;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4e73df, #1cc88a);
+            transition: width 0.3s;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .filter-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .selection-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .students-table {
+                font-size: 12px;
+            }
+            
+            .students-table td, 
+            .students-table th {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i>📱</i> Bulk Message to Due Students
+            </h1>
+            <a href="{% url 'reports' %}" class="back-btn">
+                ← Back to Reports
+            </a>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <form method="get" class="filter-form">
+                <div class="filter-group">
+                    <label>Branch:</label>
+                    <select name="branch">
+                        <option value="">All Branches</option>
+                        {% for b in all_branches %}
+                            <option value="{{ b }}" {% if b == selected_branch %}selected{% endif %}>{{ b }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Course:</label>
+                    <select name="course">
+                        <option value="">All Courses</option>
+                        {% for c in all_courses %}
+                            <option value="{{ c }}" {% if c == selected_course %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Section:</label>
+                    <select name="section">
+                        <option value="">All Sections</option>
+                        {% for s in all_sections %}
+                            <option value="{{ s }}" {% if s == selected_section %}selected{% endif %}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Months Due (≥):</label>
+                    <input type="number" name="months_due" value="{{ selected_months_due }}" min="1" max="12">
+                </div>
+                
+                <div class="filter-group filter-actions">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a href="{% url 'bulk_message' %}" class="btn btn-outline">Clear</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Message Composer -->
+        <div class="message-composer">
+            <div class="composer-header">
+                <h3>✏️ Compose Message</h3>
+                <div class="template-selector">
+                    <select id="templateSelect" onchange="loadTemplate()">
+                        <option value="">Select Template</option>
+                        {% for template in message_templates %}
+                            <option value="{{ template.message }}">{{ template.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-outline" onclick="showSaveTemplateModal()">Save as Template</button>
+                </div>
+            </div>
+            
+            <div class="message-input">
+                <textarea id="messageText" placeholder="Type your message here... Use {placeholders} for personalization">Dear {student_name}, your fee of ₹{due_amount} is due. Please clear it immediately to avoid late fee. - Management</textarea>
+            </div>
+            
+            <!-- Placeholder Hints -->
+            <div class="placeholder-hints">
+                <span class="placeholder-hint" onclick="insertPlaceholder('{student_name}')">{student_name}</span>
+                <span class="placeholder-hint" onclick="insertPlaceholder('{father_name}')">{father_name}</span>
+                <span class="placeholder-hint" onclick="insertPlaceholder('{branch}')">{branch}</span>
+                <span class="placeholder-hint" onclick="insertPlaceholder('{course}')">{course}</span>
+                <span class="placeholder-hint" onclick="insertPlaceholder('{section}')">{section}</span>
+                <span class="placeholder-hint" onclick="insertPlaceholder('{due_amount}')">{due_amount}</span>
+                <span class="placeholder-hint" onclick="insertPlaceholder('{monthly_fees}')">{monthly_fees}</span>
+                <span class="placeholder-hint" onclick="insertPlaceholder('{admission_number}')">{admission_number}</span>
+            </div>
+            
+            <div class="message-stats">
+                <span>📝 Characters: <span id="charCount">0</span></span>
+                <span>📱 Recipients: <span id="recipientCount">{{ total_due_students }}</span></span>
+                <span>💰 Total Due: <span id="totalDueAmount">₹ 0</span></span>
+            </div>
+            
+            <div class="message-actions">
+                <button class="btn btn-success" onclick="sendMessages('sms')">
+                    <i>📱</i> Send SMS
+                </button>
+                <button class="btn btn-success" onclick="sendMessages('whatsapp')">
+                    <i>💬</i> Send WhatsApp
+                </button>
+                <button class="btn btn-primary" onclick="previewMessage()">
+                    <i>👁️</i> Preview
+                </button>
+            </div>
+        </div>
+
+        <!-- Selection Controls -->
+        <div class="selection-bar">
+            <div class="selection-info">
+                <strong id="selectedCount">0</strong> of <strong>{{ total_due_students }}</strong> students selected
+            </div>
+            <div class="selection-actions">
+                <button class="btn btn-outline" onclick="selectAll()">Select All</button>
+                <button class="btn btn-outline" onclick="deselectAll()">Deselect All</button>
+                <button class="btn btn-outline" onclick="selectByBranch()">By Branch</button>
+                <button class="btn btn-outline" onclick="selectByCourse()">By Course</button>
+            </div>
+        </div>
+
+        <!-- Students Table -->
+        <div class="table-container">
+            <table class="students-table">
+                <thead>
+                    <tr>
+                        <th class="checkbox-col">
+                            <input type="checkbox" id="selectAllCheckbox" onchange="toggleAllCheckboxes()">
+                        </th>
+                        <th>Admission No.</th>
+                        <th>Student Name</th>
+                        <th>Father's Name</th>
+                        <th>Branch</th>
+                        <th>Course</th>
+                        <th>Section</th>
+                        <th>Student Phone</th>
+                        <th>Father's Phone</th>
+                        <th>Monthly Fee</th>
+                        <th>Due Amount</th>
+                        <th>Months Behind</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in student_list %}
+                    <tr onclick="toggleRowSelection(this)" data-student-id="{{ student.id }}" data-phone="{{ student.phone }}" data-father-phone="{{ student.father_phone }}" data-due="{{ student.due_amount }}">
+                        <td class="checkbox-col">
+                            <input type="checkbox" class="student-checkbox" data-student-id="{{ student.id }}" onchange="updateSelectedCount()">
+                        </td>
+                        <td>{{ student.admission_number }}</td>
+                        <td><strong>{{ student.student_name }}</strong></td>
+                        <td>{{ student.father_name }}</td>
+                        <td>{{ student.branch }}</td>
+                        <td>{{ student.course }}</td>
+                        <td>{{ student.section }}</td>
+                        <td class="phone-number">{{ student.phone|default:"-" }}</td>
+                        <td class="phone-number">{{ student.father_phone|default:"-" }}</td>
+                        <td>₹ {{ student.monthly_fees|indian_number_format }}</td>
+                        <td class="amount-due">₹ {{ student.due_amount|indian_number_format }}</td>
+                        <td>{{ student.months_behind }}</td>
+                        <td>
+                            <span class="status-badge {% if student.months_behend > 3 %}status-danger{% else %}status-warning{% endif %}">
+                                {{ student.months_behind }} Months
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="13" style="text-align: center; padding: 50px;">
+                            <i style="font-size: 48px; color: #ccc; display: block; margin-bottom: 15px;">📭</i>
+                            <h3 style="color: #666;">No due students found</h3>
+                            <p style="color: #999;">Try adjusting your filters</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Progress Modal -->
+    <div id="progressModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px;">📤 Sending Messages</h3>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
+            </div>
+            <p id="progressText">Sending 0 of 0 messages...</p>
+            <div style="margin-top: 20px;">
+                <p>✅ Sent: <span id="sentCount">0</span></p>
+                <p>❌ Failed: <span id="failedCount">0</span></p>
+            </div>
+            <button id="closeModalBtn" class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="closeModal()" disabled>Close</button>
+        </div>
+    </div>
+
+    <!-- Save Template Modal -->
+    <div id="saveTemplateModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px;">💾 Save Message Template</h3>
+            <input type="text" id="templateName" placeholder="Template Name" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e1e5e9; border-radius: 8px;">
+            <textarea id="templateMessage" rows="4" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e1e5e9; border-radius: 8px;">{{ message }}</textarea>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" style="flex: 1;" onclick="saveTemplate()">Save</button>
+                <button class="btn btn-outline" style="flex: 1;" onclick="closeSaveTemplateModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let selectedStudents = new Set();
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCharCount();
+            updateSelectedCount();
+            calculateTotalDue();
+            
+            // Add event listener for message text
+            document.getElementById('messageText').addEventListener('input', function() {
+                updateCharCount();
+            });
+        });
+        
+        // Character count
+        function updateCharCount() {
+            const text = document.getElementById('messageText').value;
+            document.getElementById('charCount').textContent = text.length;
+        }
+        
+        // Insert placeholder at cursor position
+        function insertPlaceholder(placeholder) {
+            const textarea = document.getElementById('messageText');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            
+            textarea.value = text.substring(0, start) + placeholder + text.substring(end);
+            textarea.focus();
+            textarea.selectionStart = start + placeholder.length;
+            textarea.selectionEnd = start + placeholder.length;
+            
+            updateCharCount();
+        }
+        
+        // Row selection
+        function toggleRowSelection(row) {
+            const checkbox = row.querySelector('.student-checkbox');
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                row.classList.add('selected');
+                selectedStudents.add(checkbox.dataset.studentId);
+            } else {
+                row.classList.remove('selected');
+                selectedStudents.delete(checkbox.dataset.studentId);
+            }
+            
+            updateSelectedCount();
+            updateSelectAllCheckbox();
+            calculateTotalDue();
+        }
+        
+        function toggleAllCheckboxes() {
+            const selectAll = document.getElementById('selectAllCheckbox').checked;
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+            const rows = document.querySelectorAll('.students-table tbody tr');
+            
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.checked = selectAll;
+                if (selectAll) {
+                    rows[index].classList.add('selected');
+                    selectedStudents.add(checkbox.dataset.studentId);
+                } else {
+                    rows[index].classList.remove('selected');
+                    selectedStudents.delete(checkbox.dataset.studentId);
+                }
+            });
+            
+            updateSelectedCount();
+            calculateTotalDue();
+        }
+        
+        function updateSelectAllCheckbox() {
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+            const selectAll = document.getElementById('selectAllCheckbox');
+            const checkedCount = document.querySelectorAll('.student-checkbox:checked').length;
+            
+            selectAll.checked = checkedCount === checkboxes.length;
+            selectAll.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+        }
+        
+        function selectAll() {
+            document.getElementById('selectAllCheckbox').checked = true;
+            toggleAllCheckboxes();
+        }
+        
+        function deselectAll() {
+            document.getElementById('selectAllCheckbox').checked = false;
+            toggleAllCheckboxes();
+        }
+        
+        function selectByBranch() {
+            const branch = prompt('Enter branch name to select all students from this branch:');
+            if (branch) {
+                const rows = document.querySelectorAll('.students-table tbody tr');
+                rows.forEach(row => {
+                    const rowBranch = row.cells[4].textContent.trim(); // Branch is in 5th column (index 4)
+                    if (rowBranch.toLowerCase() === branch.toLowerCase()) {
+                        const checkbox = row.querySelector('.student-checkbox');
+                        checkbox.checked = true;
+                        row.classList.add('selected');
+                        selectedStudents.add(checkbox.dataset.studentId);
+                    }
+                });
+                updateSelectedCount();
+                updateSelectAllCheckbox();
+                calculateTotalDue();
+            }
+        }
+        
+        function selectByCourse() {
+            const course = prompt('Enter course name to select all students from this course:');
+            if (course) {
+                const rows = document.querySelectorAll('.students-table tbody tr');
+                rows.forEach(row => {
+                    const rowCourse = row.cells[5].textContent.trim(); // Course is in 6th column (index 5)
+                    if (rowCourse.toLowerCase() === course.toLowerCase()) {
+                        const checkbox = row.querySelector('.student-checkbox');
+                        checkbox.checked = true;
+                        row.classList.add('selected');
+                        selectedStudents.add(checkbox.dataset.studentId);
+                    }
+                });
+                updateSelectedCount();
+                updateSelectAllCheckbox();
+                calculateTotalDue();
+            }
+        }
+        
+        function updateSelectedCount() {
+            const count = selectedStudents.size;
+            document.getElementById('selectedCount').textContent = count;
+            document.getElementById('recipientCount').textContent = count;
+        }
+        
+        function calculateTotalDue() {
+            let total = 0;
+            const rows = document.querySelectorAll('.students-table tbody tr');
+            rows.forEach(row => {
+                const checkbox = row.querySelector('.student-checkbox');
+                if (checkbox && checkbox.checked) {
+                    const dueCell = row.cells[10]; // Due amount is in 11th column (index 10)
+                    const dueText = dueCell.textContent.replace('₹', '').replace(/,/g, '').trim();
+                    total += parseFloat(dueText) || 0;
+                }
+            });
+            document.getElementById('totalDueAmount').textContent = '₹ ' + total.toLocaleString('en-IN');
+        }
+        
+        // Message sending
+        function sendMessages(type) {
+            const selectedIds = Array.from(selectedStudents);
+            if (selectedIds.length === 0) {
+                alert('Please select at least one student');
+                return;
+            }
+            
+            const message = document.getElementById('messageText').value;
+            if (!message.trim()) {
+                alert('Please enter a message');
+                return;
+            }
+            
+            // Show modal
+            document.getElementById('progressModal').classList.add('active');
+            document.getElementById('closeModalBtn').disabled = true;
+            
+            // Prepare data
+            const data = {
+                student_ids: selectedIds,
+                message: message,
+                message_type: type
+            };
+            
+            // Send request
+            fetch('{% url "send_bulk_message" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('progressFill').style.width = '100%';
+                    document.getElementById('progressText').textContent = `Completed: ${data.sent} sent, ${data.failed} failed`;
+                    document.getElementById('sentCount').textContent = data.sent;
+                    document.getElementById('failedCount').textContent = data.failed;
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+            })
+            .finally(() => {
+                document.getElementById('closeModalBtn').disabled = false;
+            });
+        }
+        
+        function previewMessage() {
+            const selectedIds = Array.from(selectedStudents);
+            if (selectedIds.length === 0) {
+                alert('Please select at least one student');
+                return;
+            }
+            
+            // Get first selected student for preview
+            const firstStudentId = selectedIds[0];
+            const row = document.querySelector(`tr[data-student-id="${firstStudentId}"]`);
+            
+            if (row) {
+                const studentName = row.cells[2].textContent; // Student name column
+                const fatherName = row.cells[3].textContent; // Father name column
+                const dueAmount = row.dataset.due;
+                
+                let message = document.getElementById('messageText').value;
+                message = message.replace(/{student_name}/g, studentName);
+                message = message.replace(/{father_name}/g, fatherName);
+                message = message.replace(/{due_amount}/g, dueAmount);
+                
+                alert('Preview for ' + studentName + ':\n\n' + message);
+            }
+        }
+        
+        // Template functions
+        function loadTemplate() {
+            const select = document.getElementById('templateSelect');
+            const message = select.value;
+            if (message) {
+                document.getElementById('messageText').value = message;
+                updateCharCount();
+            }
+        }
+        
+        function showSaveTemplateModal() {
+            const message = document.getElementById('messageText').value;
+            document.getElementById('templateMessage').value = message;
+            document.getElementById('saveTemplateModal').classList.add('active');
+        }
+        
+        function closeSaveTemplateModal() {
+            document.getElementById('saveTemplateModal').classList.remove('active');
+        }
+        
+        function saveTemplate() {
+            const name = document.getElementById('templateName').value;
+            const message = document.getElementById('templateMessage').value;
+            
+            if (!name || !message) {
+                alert('Please enter both name and message');
+                return;
+            }
+            
+            fetch('{% url "save_message_template" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({name: name, message: message})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Template saved successfully');
+                    closeSaveTemplateModal();
+                    // Add to select dropdown
+                    const select = document.getElementById('templateSelect');
+                    const option = document.createElement('option');
+                    option.value = data.template.message;
+                    option.textContent = data.template.name;
+                    select.appendChild(option);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            });
+        }
+        
+        function closeModal() {
+            document.getElementById('progressModal').classList.remove('active');
+        }
+        
+        // Utility function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

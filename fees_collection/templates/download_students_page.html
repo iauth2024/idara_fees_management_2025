@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Students</title>
+</head>
+<body>
+    <h1>Download Students</h1>
+    <form method="GET" action="{% url 'download_students' %}">
+        <label for="course">Course:</label>
+        <input type="text" id="course" name="course">
+
+        <label for="branch">Branch:</label>
+        <input type="text" id="branch" name="branch">
+
+        <button type="submit">Download</button>
+    </form>
+</body>
+</html>

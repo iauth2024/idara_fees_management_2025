@@ -1,0 +1,231 @@
+{% load static %}
+
+<div class="table-responsive">
+    <table class="table table-bordered table-sm table-hover">
+        <thead class="table-primary">
+            <tr>
+                <th scope="col">
+                    <i class="bi bi-person-badge me-1"></i>
+                    <span data-trans="admission_no">Admission No</span>
+                </th>
+                <th scope="col">
+                    <i class="bi bi-person me-1"></i>
+                    <span data-trans="name">Name</span>
+                </th>
+                <th scope="col">
+                    <i class="bi bi-diagram-3 me-1"></i>
+                    <span data-trans="class">Class</span>
+                </th>
+                <th scope="col">
+                    <i class="bi bi-calendar-check me-1"></i>
+                    <span data-trans="leave_end_date">Leave End Date</span>
+                </th>
+                <th scope="col" class="text-center">
+                    <i class="bi bi-gear me-1"></i>
+                    <span data-trans="action">Action</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in leaves %}
+                <tr class="align-middle">
+                    <td>
+                        <span class="badge bg-secondary">{{ leave.student.admission_number }}</span>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="student-avatar me-2">
+                                {{ leave.student.name|first|upper }}
+                            </div>
+                            <div>
+                                <strong>{{ leave.student.name }}</strong>
+                                {% if leave.student.branch %}
+                                <br>
+                                <small class="text-muted">{{ leave.student.branch }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if leave.student.course or leave.student.section %}
+                            <span class="dept-badge">
+                                <i class="bi bi-book me-1"></i>
+                                {{ leave.student.course|default:"-" }} 
+                                {% if leave.student.section %} - {{ leave.student.section }}{% endif %}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="date-display">
+                            <i class="bi bi-calendar3 text-warning me-1"></i>
+                            <strong>{{ leave.end_date|date:"d M Y" }}</strong>
+                        </div>
+                        {% if leave.end_time %}
+                        <br>
+                        <small class="text-muted">
+                            <i class="bi bi-clock me-1"></i>
+                            {{ leave.end_time|time:"H:i" }}
+                        </small>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <a href="{% url 'checkin_leave' leave.id %}"
+                           class="btn btn-warning btn-sm checkin-btn"
+                           title="{% if LANGUAGE_CODE == 'ur' %}چیک ان کریں{% else %}Check-In{% endif %}"
+                           onclick="return confirm('{% if LANGUAGE_CODE == 'ur' %}کیا آپ اس طالب علم کو چیک ان کرنا چاہتے ہیں؟{% else %}Are you sure you want to check-in this student?{% endif %}')">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span data-trans="check_in">Check-In</span>
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4">
+                        <div class="empty-state">
+                            <i class="bi bi-inbox" style="font-size: 2.5rem; color: #dee2e6; display: block; margin-bottom: 10px;"></i>
+                            <p class="text-muted mb-0" data-trans="no_records">No records found.</p>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .student-avatar {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+        flex-shrink: 0;
+    }
+
+    .dept-badge {
+        background: #f8f9fa;
+        color: #495057;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        display: inline-block;
+        border: 1px solid #e9ecef;
+    }
+
+    .date-display {
+        color: #495057;
+        font-size: 0.9rem;
+    }
+
+    .checkin-btn {
+        border-radius: 20px;
+        padding: 4px 15px;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        border: none;
+        color: white;
+        box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+    }
+
+    .checkin-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(255, 193, 7, 0.4);
+        color: white;
+    }
+
+    .checkin-btn i {
+        font-size: 0.9rem;
+    }
+
+    .table th {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        border: none !important;
+        white-space: nowrap;
+    }
+
+    .table td {
+        vertical-align: middle;
+        padding: 12px 8px;
+    }
+
+    .table tbody tr:hover {
+        background: linear-gradient(135deg, #fff8e7 0%, #fff3e0 100%);
+        transition: all 0.3s ease;
+    }
+
+    .empty-state {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .badge.bg-secondary {
+        background: #6c757d !important;
+        padding: 5px 8px;
+        font-size: 0.8rem;
+    }
+
+    /* RTL Specific */
+    html[dir="rtl"] .me-1 {
+        margin-left: 0.25rem !important;
+        margin-right: 0 !important;
+    }
+
+    html[dir="rtl"] .me-2 {
+        margin-left: 0.5rem !important;
+        margin-right: 0 !important;
+    }
+
+    html[dir="rtl"] .student-avatar {
+        margin-left: 0.5rem !important;
+        margin-right: 0 !important;
+    }
+
+    html[dir="rtl"] .dept-badge i,
+    html[dir="rtl"] .date-display i {
+        margin-left: 0.25rem;
+        margin-right: 0;
+    }
+
+    html[dir="rtl"] .checkin-btn i {
+        margin-left: 0.25rem;
+        margin-right: 0;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 576px) {
+        .table td, .table th {
+            font-size: 0.8rem;
+            padding: 8px 4px;
+        }
+        
+        .student-avatar {
+            width: 28px;
+            height: 28px;
+            font-size: 0.8rem;
+        }
+        
+        .checkin-btn {
+            padding: 3px 10px;
+            font-size: 0.75rem;
+        }
+        
+        .dept-badge {
+            padding: 2px 6px;
+            font-size: 0.75rem;
+        }
+    }
+</style>

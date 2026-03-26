@@ -1,0 +1,462 @@
+{% extends "leave_management/base_leave.html" %}
+{% load static %}
+
+{% block title %}Leave Reports{% endblock %}
+
+{% block extra_css %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .reports-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        overflow: hidden;
+        animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .header h2 {
+        font-size: 2.5em;
+        font-weight: 300;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header p {
+        font-size: 1.1em;
+        opacity: 0.9;
+    }
+
+    .search-form {
+        background: #f8f9fa;
+        padding: 30px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        align-items: end;
+    }
+
+    html[dir="rtl"] .form-grid {
+        direction: rtl;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-size: 0.9em;
+        color: #555;
+        margin-bottom: 5px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    html[dir="rtl"] .form-group label {
+        flex-direction: row-reverse;
+    }
+
+    .form-group input {
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1em;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-group input:hover {
+        border-color: #764ba2;
+    }
+
+    .search-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        height: 45px;
+        margin-top: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    html[dir="rtl"] .search-btn {
+        flex-direction: row-reverse;
+    }
+
+    .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .search-btn:active {
+        transform: translateY(0);
+    }
+
+    .table-container {
+        padding: 30px;
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85em;
+        letter-spacing: 0.5px;
+        padding: 15px 10px;
+        white-space: nowrap;
+        text-align: {% if LANGUAGE_CODE == 'ur' %}right{% else %}left{% endif %};
+    }
+
+    td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #e0e0e0;
+        color: #333;
+        font-size: 0.95em;
+        text-align: {% if LANGUAGE_CODE == 'ur' %}right{% else %}left{% endif %};
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    tbody tr:hover {
+        background: linear-gradient(135deg, #f5f7ff 0%, #f3e8ff 100%);
+        transform: scale(1.01);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        font-weight: 600;
+        text-align: center;
+        display: inline-block;
+    }
+
+    .status-on-time {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-late {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .download-section {
+        padding: 20px 30px 30px;
+        text-align: right;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    html[dir="rtl"] .download-section {
+        text-align: left;
+    }
+
+    .download-btn {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+    }
+
+    html[dir="rtl"] .download-btn {
+        flex-direction: row-reverse;
+    }
+
+    .download-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+    }
+
+    .download-btn:active {
+        transform: translateY(0);
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 50px;
+        color: #666;
+        font-size: 1.2em;
+    }
+
+    .date-range {
+        background: #f8f9fa;
+        padding: 15px 30px;
+        border-bottom: 1px solid #e0e0e0;
+        color: #555;
+        font-size: 0.95em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    html[dir="rtl"] .date-range {
+        flex-direction: row-reverse;
+    }
+
+    .date-range strong {
+        color: #667eea;
+    }
+
+    /* RTL Specific */
+    html[dir="rtl"] .me-2 {
+        margin-left: 0.5rem !important;
+        margin-right: 0 !important;
+    }
+
+    html[dir="rtl"] .ms-2 {
+        margin-right: 0.5rem !important;
+        margin-left: 0 !important;
+    }
+
+    @media (max-width: 768px) {
+        .header h2 {
+            font-size: 1.8em;
+        }
+
+        .search-form {
+            padding: 20px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .search-btn {
+            margin-top: 10px;
+        }
+
+        .table-container {
+            padding: 15px;
+        }
+
+        th, td {
+            font-size: 0.8em;
+            padding: 8px 5px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="reports-container">
+    <div class="header">
+        <h2>📋 <span data-trans="leave_reports">Leave Reports</span></h2>
+        <p data-trans="manage_track">Manage and track all leave applications</p>
+    </div>
+
+    <form method="GET" class="search-form">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>
+                    <i class="bi bi-person-badge"></i>
+                    <span data-trans="admission_no">Admission No</span>
+                </label>
+                <input type="text" name="adm_no" placeholder="{% if LANGUAGE_CODE == 'ur' %}داخلہ نمبر درج کریں{% else %}Enter admission number{% endif %}" value="{{ request.GET.adm_no }}">
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <i class="bi bi-person"></i>
+                    <span data-trans="name">Name</span>
+                </label>
+                <input type="text" name="name" placeholder="{% if LANGUAGE_CODE == 'ur' %}طالب علم کا نام درج کریں{% else %}Enter student name{% endif %}" value="{{ request.GET.name }}">
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <i class="bi bi-diagram-3"></i>
+                    <span data-trans="branch">Branch</span>
+                </label>
+                <input type="text" name="branch" placeholder="{% if LANGUAGE_CODE == 'ur' %}برانچ درج کریں{% else %}Enter branch{% endif %}" value="{{ request.GET.branch }}">
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <i class="bi bi-calendar-plus"></i>
+                    <span data-trans="from_date">From Date</span>
+                </label>
+                <input type="date" name="from_date" value="{{ request.GET.from_date }}">
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <i class="bi bi-calendar-minus"></i>
+                    <span data-trans="to_date">To Date</span>
+                </label>
+                <input type="date" name="to_date" value="{{ request.GET.to_date }}">
+            </div>
+            
+            <button type="submit" class="search-btn">
+                <i class="bi bi-search"></i>
+                <span data-trans="search">Search</span>
+            </button>
+        </div>
+    </form>
+
+    {% if from_date or to_date %}
+    <div class="date-range">
+        <i class="bi bi-calendar-range"></i>
+        <span data-trans="showing_leaves">Showing leaves</span>
+        {% if from_date %} <span data-trans="from">from</span> <strong>{{ from_date }}</strong>{% endif %}
+        {% if to_date %} <span data-trans="to">to</span> <strong>{{ to_date }}</strong>{% endif %}
+    </div>
+    {% endif %}
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th data-trans="adm_no">Adm No</th>
+                    <th data-trans="name">Name</th>
+                    <th data-trans="branch">Branch</th>
+                    <th data-trans="course">Course</th>
+                    <th data-trans="section">Section</th>
+                    <th data-trans="from">From</th>
+                    <th data-trans="to">To</th>
+                    <th data-trans="days">Days</th>
+                    <th data-trans="check_in">Check In</th>
+                    <th data-trans="status">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for l in leaves %}
+                <tr>
+                    <td><strong>{{ l.adm_no }}</strong></td>
+                    <td>{{ l.name }}</td>
+                    <td>{{ l.branch }}</td>
+                    <td>{{ l.course }}</td>
+                    <td>{{ l.section }}</td>
+                    <td>{{ l.start_date|date:"d M Y" }}</td>
+                    <td>{{ l.end_date|date:"d M Y" }}</td>
+                    <td><strong>{{ l.days }}</strong> <span data-trans="days_small">days</span></td>
+                    <td>{% if l.checkin %}{{ l.checkin|time:"H:i" }}{% else %}--{% endif %}</td>
+                    <td>
+                        {% if l.late == "On Time" %}
+                            <span class="status-badge status-on-time">
+                                <i class="bi bi-check-circle"></i> <span data-trans="on_time">On Time</span>
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-late">
+                                <i class="bi bi-exclamation-triangle"></i> <span data-trans="late">Late</span>
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" class="no-results">
+                        <i class="bi bi-inbox" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
+                        <span data-trans="no_records">No leave records found matching your criteria</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="download-section">
+        <a href="{% url 'download_leave_report' %}" class="download-btn">
+            <i class="bi bi-download"></i>
+            <span data-trans="download_csv">Download CSV Report</span>
+        </a>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Preserve search parameters when changing language
+    document.addEventListener('DOMContentLoaded', function() {
+        const langForm = document.querySelector('.language-form');
+        if (langForm) {
+            const currentParams = new URLSearchParams(window.location.search);
+            const nextInput = langForm.querySelector('input[name="next"]');
+            if (nextInput && currentParams.toString()) {
+                const basePath = nextInput.value.split('?')[0];
+                nextInput.value = basePath + '?' + currentParams.toString();
+            }
+        }
+    });
+</script>
+{% endblock %}

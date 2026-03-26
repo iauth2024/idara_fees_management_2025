@@ -1,0 +1,964 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_CODE == 'ur' %}rtl{% else %}ltr{% endif %}">
+<head>
+    <title>{% block title %}Leave Management{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        /* Your existing CSS remains exactly the same */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Urdu Font Support */
+        @font-face {
+            font-family: 'Jameel Noori Nastaleeq';
+            src: url('https://cdn.jsdelivr.net/gh/engineerjkk/urdu-fonts/Jameel%20Noori%20Nastaleeq.ttf') format('truetype');
+        }
+
+        /* RTL Support for Urdu */
+        html[dir="rtl"] body {
+            font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', -apple-system, BlinkMacSystemFont, serif;
+            line-height: 1.8;
+            text-align: right;
+        }
+
+        html[dir="rtl"] .mobile-sidebar {
+            left: auto;
+            right: -280px;
+        }
+
+        html[dir="rtl"] .mobile-sidebar.open {
+            left: auto;
+            right: 0;
+        }
+
+        html[dir="rtl"] .sidebar-nav a {
+            text-align: right;
+            padding: 15px 20px;
+        }
+
+        html[dir="rtl"] .sidebar-nav a i {
+            margin-left: 15px;
+            margin-right: 0;
+        }
+
+        html[dir="rtl"] .brand {
+            flex-direction: row-reverse;
+        }
+
+        html[dir="rtl"] .brand i {
+            margin-left: 10px;
+            margin-right: 0;
+        }
+
+        html[dir="rtl"] .alert {
+            text-align: right;
+        }
+
+        html[dir="rtl"] .alert i {
+            margin-left: 10px;
+            margin-right: 0;
+        }
+
+        html[dir="rtl"] .sidebar-nav a:hover {
+            transform: translateX(-5px);
+        }
+
+        html[dir="rtl"] .sidebar-nav .active-link {
+            border-left: none;
+            border-right: 4px solid #fff;
+        }
+
+        html[dir="rtl"] .alert-info {
+            border-left: none;
+            border-right: 4px solid #0284c7;
+        }
+
+        /* Mobile First Styles */
+        .app-wrapper {
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Mobile Header */
+        .mobile-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand i {
+            font-size: 1.5rem;
+        }
+
+        /* Language Toggle */
+        .language-form select {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            min-height: 40px;
+            min-width: 100px;
+        }
+
+        .language-form select:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .language-form select option {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        html[dir="rtl"] .language-form select {
+            font-family: 'Jameel Noori Nastaleeq', serif;
+            font-size: 1rem;
+        }
+
+        .menu-toggle {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover, .menu-toggle:active {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Mobile Sidebar */
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            z-index: 1001;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            padding-top: 70px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+        }
+
+        .mobile-sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: none;
+        }
+
+        .sidebar-overlay.open {
+            display: block;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h5 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header h5 i {
+            font-size: 2rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-nav li {
+            margin: 5px 10px;
+        }
+
+        .sidebar-nav a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .sidebar-nav a i {
+            font-size: 1.3rem;
+            width: 25px;
+        }
+
+        .sidebar-nav a:hover, .sidebar-nav a:active {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+
+        .sidebar-nav .active-link {
+            background: rgba(255,255,255,0.25);
+            border-left: 4px solid #fff;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 15px 10px;
+        }
+
+        .fees-link {
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            margin: 10px !important;
+            border-radius: 12px !important;
+        }
+
+        .fees-link a {
+            color: white !important;
+        }
+
+        .fees-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 80px 15px 20px 15px;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        /* Message Alerts */
+        .alert {
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.3s ease;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            color: #0369a1;
+            border-left: 4px solid #0284c7;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Tablet and Desktop Styles */
+        @media (min-width: 768px) {
+            .mobile-header {
+                display: none;
+            }
+
+            .mobile-sidebar {
+                left: 0;
+                width: 250px;
+                box-shadow: none;
+            }
+
+            html[dir="rtl"] .mobile-sidebar {
+                left: auto;
+                right: 0;
+            }
+
+            .sidebar-overlay {
+                display: none !important;
+            }
+
+            .main-content {
+                margin-left: 250px;
+                padding: 20px;
+            }
+
+            html[dir="rtl"] .main-content {
+                margin-left: 0;
+                margin-right: 250px;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Touch-friendly improvements */
+        button, a, select {
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        input, select, textarea {
+            font-size: 16px !important;
+        }
+
+        /* Smooth scrolling */
+        * {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Custom scrollbar for sidebar */
+        .mobile-sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .mobile-sidebar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .mobile-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+        }
+
+        /* Language transition */
+        body, .mobile-header, .sidebar-nav a, .alert {
+            transition: all 0.3s ease;
+        }
+
+        /* Elements with data-trans attribute */
+        [data-trans] {
+            transition: all 0.2s ease;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+<div class="app-wrapper">
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <div class="header-left">
+            <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="brand">
+                <i class="bi bi-calendar-check"></i>
+                <span data-trans="leave_system">Leave System</span>
+            </div>
+        </div>
+        
+        <!-- Language Toggle Form -->
+        <form action="{% url 'set_language' %}" method="post" class="language-form">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <select name="language" id="languageSelect" onchange="changeLanguage(this.value)" aria-label="Select language">
+                <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>
+                    🇬🇧 English
+                </option>
+                <option value="ur" {% if LANGUAGE_CODE == 'ur' %}selected{% endif %}>
+                    🇵🇰 اردو
+                </option>
+            </select>
+        </form>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar">
+        <div class="sidebar-header">
+            <h5>
+                <i class="bi bi-building"></i>
+                <span data-trans="leave_management">Leave Management</span>
+            </h5>
+        </div>
+
+        <ul class="sidebar-nav">
+            <li>
+                <a href="{% url 'leave_dashboard' %}" class="{% if request.resolver_match.url_name == 'leave_dashboard' %}active-link{% endif %}" onclick="closeSidebar()">
+                    <i class="bi bi-speedometer2"></i>
+                    <span data-trans="dashboard">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'leave_list' %}" class="{% if request.resolver_match.url_name == 'leave_list' %}active-link{% endif %}" onclick="closeSidebar()">
+                    <i class="bi bi-list-ul"></i>
+                    <span data-trans="leave_list">Leave List</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'create_leave' %}" class="{% if request.resolver_match.url_name == 'create_leave' %}active-link{% endif %}" onclick="closeSidebar()">
+                    <i class="bi bi-plus-circle"></i>
+                    <span data-trans="create_leave">Create Leave</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'checkin_report' %}" class="{% if request.resolver_match.url_name == 'checkin_report' %}active-link{% endif %}" onclick="closeSidebar()">
+                    <i class="bi bi-check2-circle"></i>
+                    <span data-trans="checkin_report">Check-In Report</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'leave_reports' %}" class="{% if request.resolver_match.url_name == 'leave_reports' %}active-link{% endif %}" onclick="closeSidebar()">
+                    <i class="bi bi-file-text"></i>
+                    <span data-trans="reports">Reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'event_list' %}" class="{% if request.resolver_match.url_name == 'event_list' %}active-link{% endif %}" onclick="closeSidebar()">
+                    <i class="bi bi-calendar-event"></i>
+                    <span data-trans="holiday_events">Holiday Events</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'create_event' %}" class="{% if request.resolver_match.url_name == 'create_event' %}active-link{% endif %}" onclick="closeSidebar()">
+                    <i class="bi bi-plus-circle"></i>
+                    <span data-trans="create_event">Create Event</span>
+                </a>
+            </li>
+            
+            <div class="sidebar-divider"></div>
+            
+            <li class="fees-link">
+                <a href="/fees/" onclick="closeSidebar()">
+                    <i class="bi bi-currency-rupee"></i>
+                    <span data-trans="go_to_fees">Go To Fees</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<script>
+   // Urdu Translation Dictionary
+// Complete Urdu Translation Dictionary
+const translations = {
+    'ur': {
+        // ==================== BASE TEMPLATE ====================
+        // Header & Navigation
+        'leave_system': 'نظام چھٹی',
+        'leave_management': 'نظام چھٹی',
+        'dashboard': 'ڈیش بورڈ',
+        'leave_list': 'چھٹیوں کی فہرست',
+        'create_leave': 'چھٹی بنائیں',
+        'checkin_report': 'چیک ان رپورٹ',
+        'reports': 'رپورٹس',
+        'holiday_events': 'تعطیلات',
+        'create_event': 'ایونٹ بنائیں',
+        'go_to_fees': 'فیس سیکشن',
+        
+        // Language Switcher
+        'select_language': 'زبان منتخب کریں',
+        'english': 'انگریزی',
+        'urdu': 'اردو',
+
+        // ==================== DASHBOARD PAGE ====================
+        'leave_dashboard': 'چھٹی ڈیش بورڈ',
+        'dashboard_overview': 'ڈیش بورڈ کا جائزہ',
+        'welcome_back': 'خوش آمدید! آج چھٹی کے نظام میں کیا ہو رہا ہے۔',
+        'logout': 'لاگ آؤٹ',
+        
+        // Stats Cards
+        'total_students': 'کل طلباء',
+        'on_leave': 'چھٹی پر',
+        'checked_in_today': 'آج چیک ان',
+        'this_month': 'اس ماہ',
+        'active_enrollment': 'فعال اندراج',
+        'currently_on_leave': 'موجودہ چھٹی پر',
+        'away_right_now': 'اس وقت باہر',
+        'overdue_returns': 'تاخیر شدہ واپسی',
+        'requires_attention': 'توجہ درکار',
+        'todays_checkins': 'آج کے چیک ان',
+        'returned_today': 'آج واپس آئے',
+        'this_month_leaves': 'اس ماہ کی چھٹیاں',
+        'monthly_total': 'ماہانہ کل',
+        'rejected_leaves': 'مسترد شدہ چھٹیاں',
+        'not_approved': 'منظور شدہ نہیں',
+        
+        // Action Buttons
+        'view_leave_reports': 'چھٹی رپورٹس دیکھیں',
+        'apply_for_leave': 'چھٹی کے لیے درخواست دیں',
+        'manage_events': 'ایونٹس کا نظم کریں',
+        
+        // Department Approvals
+        'department_approvals_summary': 'شعبہ جاتی منظوری کا خلاصہ',
+        'approved_leaves': 'منظور شدہ چھٹیاں',
+        'depts': 'شعبہ جات',
+        'no_approvals_yet': 'ابھی کوئی منظوری نہیں',
+        'no_rejections_yet': 'ابھی کوئی مسترد نہیں',
+        
+        // Super Admin
+        'super_admin_approvals': 'سپر ایڈمن منظوریاں',
+        'pending_approvals_super_admin': 'سپر ایڈمن کی سطح پر زیر التواء منظوریاں',
+        'view_pending': 'زیر التواء دیکھیں',
+        
+        // Recent Activity
+        'recent_activity': 'حالیہ سرگرمی',
+        'student': 'طالب علم',
+        'action': 'کارروائی',
+        'department': 'شعبہ',
+        'time': 'وقت',
+        'ago': 'پہلے',
+
+        // ==================== CHECK-IN PAGE ====================
+        'student_checkin': 'طالب علم چیک ان',
+        'cannot_check_in': 'چیک ان نہیں کر سکتے',
+        'leave_is': 'یہ چھٹی',
+        'only_approved': 'صرف منظور شدہ چھٹیاں چیک ان کی جا سکتی ہیں۔',
+        'already_checked_in': 'پہلے ہی چیک ان ہو چکا ہے',
+        'student_checked_in': 'طالب علم چیک ان ہوا',
+        'at': 'بجے',
+        'by': 'کے ذریعے',
+        'admission': 'داخلہ نمبر',
+        
+        // Quick Time Buttons
+        'now': 'ابھی',
+        'eight_am': '8:00 AM',
+        'nine_am': 'صبح 9 بجے',
+        'two_pm': 'دوپہر 2 بجے',
+        'four_pm': '4:00 PM',
+        'five_pm': 'شام 5 بجے',
+        'six_pm': '6:00 PM',
+        'yesterday': 'کل شام 5 بجے',
+        
+        // Check-in Form
+        'checkin_datetime': 'چیک ان کی تاریخ اور وقت',
+        'select_actual_time': 'اصل چیک ان کی تاریخ اور وقت منتخب کریں',
+        'notes': 'نوٹس (اختیاری)',
+        'optional_remarks': 'اختیاری: ریمارکس یا مشاہدات شامل کریں',
+        'confirm_checkin': 'چیک ان کی تصدیق کریں',
+        'already_checked_in_title': 'طالب علم پہلے ہی چیک ان کر چکا ہے',
+        'checkin_not_available': 'چیک ان دستیاب نہیں ہے',
+        'back_to_list': 'واپس فہرست میں',
+
+        // ==================== CREATE LEAVE PAGE ====================
+        'student_leave_application': 'طالب علم چھٹی کی درخواست',
+        'submit_request': 'منظوری کے لیے اپنی چھٹی کی درخواست جمع کروائیں',
+        'correct_errors': 'براہ کرم نیچے دی گئی غلطیوں کو درست کریں',
+        
+        // Student Information
+        'student_information': 'طالب علم کی معلومات',
+        'admission_number': 'داخلہ نمبر',
+        'admission_help': 'اپنا داخلہ نمبر درج کریں اور تفصیلات خودکار fill کرنے کے لیے Tab دبائیں',
+        'student_name': 'طالب علم کا نام',
+        'will_auto_fill': 'خودکار fill ہو جائے گا',
+        
+        // Leave Duration
+        'leave_duration': 'چھٹی کی مدت',
+        'start_date': 'آغاز کی تاریخ',
+        'end_date': 'اختتامی تاریخ',
+        'start_time': 'آغاز کا وقت',
+        'end_time': 'اختتامی وقت',
+        'total_duration': 'کل چھٹی کی مدت',
+        'days': 'دن',
+        
+        // Leave Details
+        'leave_details': 'چھٹی کی تفصیلات',
+        'reason_for_leave': 'چھٹی کی وجہ',
+        'additional_notes': 'اضافی نوٹس',
+        'submit_request_btn': 'درخواست جمع کروائیں',
+        'reset': 'ری سیٹ کریں',
+
+        // ==================== CHECK-IN REPORT PAGE ====================
+        'checkin_report': 'چیک ان رپورٹ',
+        'search': 'تلاش کریں',
+        'today_returns': 'آج کی متوقع واپسی',
+        'admission_no': 'داخلہ نمبر',
+        'leave_dates': 'چھٹی کی تاریخیں',
+        'actions': 'کارروائیاں',
+        'checkin': 'چیک ان',
+        'no_today_returns': 'آج واپس آنے والے کوئی طالب علم نہیں',
+        'overdue_students': 'تاخیر شدہ طالب علم',
+        'return_date': 'واپسی کی تاریخ',
+        'days_overdue': 'تاخیر کے دن',
+        'checkin_now': 'ابھی چیک ان کریں',
+        'no_overdue': 'کوئی تاخیر شدہ طالب علم نہیں',
+        'future_returns': 'مستقبل میں واپسی',
+        'no_future': 'کوئی مستقبل کی واپسی مقرر نہیں',
+        'view_details': 'تفصیلات دیکھیں',
+
+        // ==================== LEAVE REPORTS PAGE ====================
+        'leave_reports': 'چھٹی رپورٹس',
+        'manage_track': 'تمام چھٹی کی درخواستوں کا نظم کریں اور ٹریک کریں',
+        'from_date': 'آغاز کی تاریخ',
+        'to_date': 'اختتامی تاریخ',
+        'showing_leaves': 'چھٹیاں دکھا رہا ہے',
+        'adm_no': 'داخلہ نمبر',
+        'days_small': 'دن',
+        'check_in': 'چیک ان',
+        'status': 'حالت',
+        'on_time': 'بروقت',
+        'late': 'تاخیر',
+        'no_records': 'آپ کے معیار سے مماثل کوئی چھٹی ریکارڈ نہیں ملا',
+        'download_csv': 'سی ایس وی رپورٹ ڈاؤن لوڈ کریں',
+
+        // ==================== APPROVAL TABLE ====================
+        'start': 'آغاز',
+        'end': 'اختتام',
+        'approve': 'منظور کریں',
+        'reject': 'مسترد کریں',
+        'no_pending': 'کوئی زیر التواء منظوری نہیں',
+
+        // ==================== LEAVE LIST PAGE ====================
+        'manage_track_leaves': 'تمام چھٹی کی درخواستوں کا نظم کریں اور ٹریک کریں',
+        'create_new_leave': 'نئی چھٹی بنائیں',
+        'total_leaves': 'کل چھٹیاں',
+        'pending_for_you': 'آپ کے لیے زیر التواء',
+        'on_leave_today': 'آج چھٹی پر',
+        'not_checked_in': 'چیک ان نہیں کیا',
+        'pending_approvals': 'آپ کے لیے زیر التواء منظوریاں',
+        'students_on_leave': 'آج چھٹی پر طلباء',
+        'checked_in': 'چیک ان شدہ',
+        'not_returned': 'واپس نہیں آیا',
+        'all_leave_requests': 'تمام چھٹی کی درخواستیں',
+        'all': 'تمام',
+        'pending': 'زیر التواء',
+        'approved': 'منظور شدہ',
+        'rejected': 'مسترد شدہ',
+        'total': 'کل',
+        'records': 'ریکارڈز',
+        'initiated_by': 'شروع کردہ',
+        'pending_dept': 'زیر التواء شعبہ',
+        'system': 'سسٹم',
+        'no_requests': 'کوئی چھٹی کی درخواست نہیں ملی',
+        'click_to_start': 'شروع کرنے کے لیے "نئی چھٹی بنائیں" بٹن پر کلک کریں',
+
+        // ==================== CHECK-IN TABLE ====================
+        'class': 'کلاس',
+        'leave_end_date': 'چھٹی کی اختتامی تاریخ',
+
+        // ==================== CREATE EVENT PAGE ====================
+        'debug_info': 'ڈیبگ معلومات',
+        'total_events': 'کل ایونٹس',
+        'total_branches': 'کل برانچز',
+        'total_courses': 'کل کورسز',
+        'total_sections': 'کل سیکشنز',
+        'create_holiday_event': 'چھٹی کا ایونٹ بنائیں',
+        'schedule_holidays': 'طلباء کے لیے چھٹیاں اور غیر کام کے دن شیڈول کریں',
+        'basic_info': 'بنیادی معلومات',
+        'event_name': 'ایونٹ کا نام',
+        'event_name_help': 'چھٹی کے لیے ایک وضاحتی نام درج کریں',
+        'date_range_help': 'اس چھٹی کے لیے تاریخ کی حد منتخب کریں',
+        'branch_selection': 'برانچ کا انتخاب',
+        'select_all_branches': 'تمام برانچز منتخب کریں',
+        'deselect_all': 'تمام غیر منتخب کریں',
+        'branch_help': 'ایک یا زیادہ برانچز منتخب کریں (تمام برانچز کے لیے خالی چھوڑ دیں)',
+        'course_selection': 'کورس کا انتخاب',
+        'select_all_courses': 'تمام کورسز منتخب کریں',
+        'course_help': 'مخصوص کورسز منتخب کریں (تمام کورسز کے لیے خالی چھوڑ دیں)',
+        'section_selection': 'سیکشن کا انتخاب',
+        'select_all_sections': 'تمام سیکشنز منتخب کریں',
+        'no_sections': 'کوئی سیکشن دستیاب نہیں',
+        'section_help': 'سیکشنز اوپر منتخب کردہ کورسز کی بنیاد پر فلٹر کیے جاتے ہیں',
+        'create_event_btn': 'چھٹی کا ایونٹ بنائیں',
+        'print_slips': 'چھٹی سلپس پرنٹ کریں',
+        'select_event': 'ایونٹ منتخب کریں',
+        'choose_event': 'ایونٹ منتخب کریں',
+        'all_students': 'تمام طلباء',
+        'no_active_events': 'کوئی فعال ایونٹ دستیاب نہیں',
+        'no_events_warning': 'کوئی فعال ایونٹ نہیں ملا۔ پہلے ایک ایونٹ بنائیں۔',
+        'section_filter': 'سیکشن فلٹر (اختیاری)',
+        'all_sections': 'تمام سیکشنز',
+        'filter_help': 'مخصوص سیکشن سے فلٹر کریں یا تمام پرنٹ کریں',
+        'generate_print': 'سلپس بنائیں اور پرنٹ کریں',
+
+        // ==================== EVENT LIST PAGE ====================
+        'date_range': 'تاریخ کی حد',
+        'all_branches': 'تمام برانچز',
+        'course_section': 'کورس / سیکشن',
+        'all_courses': 'تمام کورسز',
+        'cancelled': 'منسوخ شدہ',
+        'cancel_event': 'ایونٹ منسوخ کریں',
+        'name': 'نام',
+        'no_events': 'کوئی تعطیلات نہیں',
+        'no_events_desc': 'ابھی تک کوئی تعطیلات شیڈول نہیں ہیں۔',
+        'create_first_event': 'اپنا پہلا ایونٹ بنائیں',
+
+        // ==================== PRINT SLIPS PAGE ====================
+        'a4_format': 'A4 فارمیٹ جس میں 2 سلپس فی صفحہ',
+        'total_slips': 'کل',
+        'slips': 'سلپس',
+        'slips_will_print': 'سلپس پرنٹ ہوں گی',
+        'pages': 'صفحات',
+        'leave_slips_2_per_a4': 'چھٹی سلپس - 2 فی A4',
+        'pdf': 'پی ڈی ایف',
+        'print': 'پرنٹ کریں',
+        'back': 'واپس',
+        'filter': 'فلٹر',
+        'leave_slip': 'چھٹی سلپ',
+        'leave': 'چھٹی',
+        'event': 'ایونٹ',
+        'parent': 'والدین',
+        'authority': 'اتھارٹی',
+        'system_generated': 'سسٹم سے تیار کردہ',
+        'valid_with_signatures': 'دستخطوں کے ساتھ درست',
+        'page': 'صفحہ',
+        'no_students': 'کوئی طالب علم نہیں ملا',
+        'no_students_desc': 'منتخب کردہ معیار سے مماثل کوئی طالب علم نہیں',
+        'exactly_pages': 'بالکل',
+        'last_page_one_slip': 'آخری صفحہ میں 1 سلپ ہے',
+        'a4_two_per_page': 'A4 کاغذ جس میں 2 سلپس فی صفحہ',
+
+        // ==================== PRINT LEAVE SLIP PAGE ====================
+        'student_leave_pass': 'طالب علم چھٹی پاس',
+        'a5_size': 'A5 سائز',
+        'print_leave_pass': 'چھٹی پاس پرنٹ کریں',
+        'leave_pass': 'چھٹی پاس',
+        'official_document': 'سرکاری دستاویز',
+        'full_name': 'مکمل نام',
+        'duration': 'مدت',
+        'leave_period': 'چھٹی کی مدت',
+        'approval_history': 'منظوری کی تاریخ',
+        'no_approvals': 'ابھی تک کوئی منظوری ریکارڈ نہیں ہوئی',
+        'checkout': 'چیک آؤٹ'
+    }
+};
+    // Current language
+    let currentLang = '{{ LANGUAGE_CODE }}';
+
+    // Function to translate page
+    function translatePage(lang) {
+        // Find all elements with data-trans attribute
+        document.querySelectorAll('[data-trans]').forEach(element => {
+            const key = element.getAttribute('data-trans');
+            if (lang === 'ur' && translations.ur[key]) {
+                element.textContent = translations.ur[key];
+            } else {
+                // Fallback to original English text (stored in data-original)
+                if (!element.hasAttribute('data-original')) {
+                    element.setAttribute('data-original', element.textContent);
+                }
+                element.textContent = element.getAttribute('data-original');
+            }
+        });
+
+        // Update HTML direction
+        document.documentElement.dir = lang === 'ur' ? 'rtl' : 'ltr';
+        document.documentElement.lang = lang;
+
+        // Update body class for Urdu font
+        if (lang === 'ur') {
+            document.body.classList.add('urdu-mode');
+        } else {
+            document.body.classList.remove('urdu-mode');
+        }
+
+        // Update select dropdown to show correct language
+        const langSelect = document.getElementById('languageSelect');
+        if (langSelect) {
+            langSelect.value = lang;
+        }
+    }
+
+    // Function to change language
+    function changeLanguage(lang) {
+        currentLang = lang;
+        translatePage(lang);
+        
+        // Submit the form to persist language on server
+        const form = document.querySelector('.language-form');
+        const formData = new FormData(form);
+        formData.set('language', lang);
+        
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        }).then(() => {
+            // Optionally reload to ensure all server-side text is updated
+            // window.location.reload();
+        }).catch(error => {
+            console.error('Language change error:', error);
+        });
+    }
+
+    // Toggle sidebar
+    function toggleSidebar() {
+        document.querySelector('.mobile-sidebar').classList.toggle('open');
+        document.querySelector('.sidebar-overlay').classList.toggle('open');
+        
+        if (document.querySelector('.mobile-sidebar').classList.contains('open')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+
+    // Close sidebar
+    function closeSidebar() {
+        document.querySelector('.mobile-sidebar').classList.remove('open');
+        document.querySelector('.sidebar-overlay').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(event) {
+        const sidebar = document.querySelector('.mobile-sidebar');
+        const menuToggle = document.querySelector('.menu-toggle');
+        const isMobile = window.innerWidth < 768;
+        
+        if (isMobile && sidebar.classList.contains('open') && 
+            !sidebar.contains(event.target) && 
+            !menuToggle.contains(event.target)) {
+            closeSidebar();
+        }
+    });
+
+    // Handle window resize
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            if (window.innerWidth >= 768) {
+                document.querySelector('.mobile-sidebar').classList.remove('open');
+                document.querySelector('.sidebar-overlay').classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        }, 250);
+    });
+
+    // Add loading state to links
+    document.querySelectorAll('.sidebar-nav a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (this.href && !this.classList.contains('no-loading')) {
+                const icon = this.querySelector('i');
+                if (icon) {
+                    icon.innerHTML = '<span class="loading"></span>';
+                }
+            }
+        });
+    });
+
+    // Prevent zoom on double tap for iOS
+    document.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    // Set active link based on current URL
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentUrl = window.location.pathname;
+        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+            if (link.getAttribute('href') === currentUrl) {
+                link.classList.add('active-link');
+            }
+        });
+        
+        // Store original English text for all translatable elements
+        document.querySelectorAll('[data-trans]').forEach(element => {
+            element.setAttribute('data-original', element.textContent.trim());
+        });
+        
+        // Apply translation based on current language
+        translatePage(currentLang);
+    });
+</script>
+
+<!-- Bootstrap JS for optional components -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

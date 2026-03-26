@@ -1,0 +1,13 @@
+from django import forms
+
+class PaymentForm(forms.Form):
+    admission_number = forms.CharField(label="Admission Number", required=False)  # Not compulsory
+    name = forms.CharField(label="Name", required=True)  # Mandatory field
+    amount_paid = forms.DecimalField(label="Amount Paid", required=True)
+    receipt_number = forms.CharField(label="Receipt Number", required=True)
+    receipt_type = forms.CharField(label="Receipt Type", required=True)  # Mandatory field
+    date = forms.DateField(label="Date", required=True)  # Mandatory field
+    created_by = forms.CharField(label="Created By", required=True)
+    fee_type = forms.CharField(label="Fee Type", required=True)
+    payment_method = forms.CharField(label="Payment Method", required=True)
+    transaction_id = forms.CharField(label="Transaction ID", required=False)

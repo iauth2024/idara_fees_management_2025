@@ -1,0 +1,638 @@
+{% extends "leave_management/base_leave.html" %}
+{% load static %}
+
+{% block title %}Leave Management{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        transition: transform 0.2s;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: inline-block;
+    }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-approved { background: #d4edda; color: #155724; }
+    .status-rejected { background: #f8d7da; color: #721c24; }
+    .status-checked_in { background: #cce5ff; color: #004085; }
+    .filter-btn {
+        margin-right: 5px;
+        border-radius: 20px;
+        padding: 5px 15px;
+    }
+    html[dir="rtl"] .filter-btn {
+        margin-right: 0;
+        margin-left: 5px;
+    }
+    .filter-btn.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(0,123,255,0.05);
+    }
+    .avatar-circle {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+        background-color: #007bff;
+    }
+    .dept-badge {
+        background-color: #e9ecef;
+        color: #495057;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        display: inline-block;
+    }
+    .empty-state {
+        padding: 40px 20px;
+        text-align: center;
+    }
+    .opacity-50 {
+        opacity: 0.5;
+    }
+    .btn-group .btn {
+        margin: 0 2px;
+    }
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+        .table-responsive {
+            font-size: 0.9rem;
+        }
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .btn-group .btn {
+            margin: 2px 0;
+            border-radius: 4px !important;
+        }
+        .filter-btn {
+            margin-bottom: 5px;
+        }
+        .card-header {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn-group[role="group"] {
+            flex-wrap: wrap;
+        }
+    }
+    /* RTL Specific */
+    html[dir="rtl"] .me-1,
+    html[dir="rtl"] .me-2 {
+        margin-left: 0.25rem !important;
+        margin-right: 0 !important;
+    }
+    html[dir="rtl"] .ms-1,
+    html[dir="rtl"] .ms-2 {
+        margin-right: 0.25rem !important;
+        margin-left: 0 !important;
+    }
+    html[dir="rtl"] .avatar-circle {
+        margin-left: 0.5rem !important;
+        margin-right: 0 !important;
+    }
+    html[dir="rtl"] .dept-badge i {
+        margin-left: 0.25rem;
+        margin-right: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-wrap justify-content-between align-items-center bg-white p-4 rounded shadow-sm">
+                <div class="mb-2 mb-md-0">
+                    <h3 class="mb-1 text-primary">
+                        <i class="fas fa-calendar-alt me-2"></i><span data-trans="leave_management">Leave Management</span>
+                    </h3>
+                    <p class="text-muted mb-0" data-trans="manage_track_leaves">Manage and track all leave requests</p>
+                </div>
+                <div>
+                    <a href="{% url 'create_leave' %}" class="btn btn-primary">
+                        <i class="fas fa-plus-circle me-2"></i><span data-trans="create_new_leave">Create New Leave</span>
+                    </a>
+                    <a href="{% url 'leave_reports' %}" class="btn btn-outline-secondary ms-2">
+                        <i class="fas fa-chart-bar me-2"></i><span data-trans="reports">Reports</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0" data-trans="total_leaves">Total Leaves</h6>
+                            <h2 class="mt-2 mb-0">{{ all_leaves|length }}</h2>
+                        </div>
+                        <i class="fas fa-calendar-check fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0" data-trans="pending_for_you">Pending for You</h6>
+                            <h2 class="mt-2 mb-0">{{ pending_for_me|length }}</h2>
+                        </div>
+                        <i class="fas fa-clock fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0" data-trans="on_leave_today">On Leave Today</h6>
+                            <h2 class="mt-2 mb-0">{{ today_approved|length }}</h2>
+                        </div>
+                        <i class="fas fa-users fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0" data-trans="not_checked_in">Not Checked In</h6>
+                            <h2 class="mt-2 mb-0">{{ not_checked_in_count|default:0 }}</h2>
+                        </div>
+                        <i class="fas fa-exclamation-triangle fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Approvals Section -->
+    {% if pending_for_me %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-warning shadow">
+                <div class="card-header bg-warning text-white d-flex align-items-center">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <h5 class="mb-0" data-trans="pending_approvals">Pending Approvals For You</h5>
+                    <span class="badge bg-light text-warning ms-3 rounded-pill">{{ pending_for_me|length }}</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th data-trans="student">Student</th>
+                                    <th data-trans="from">From</th>
+                                    <th data-trans="to">To</th>
+                                    <th data-trans="days">Days</th>
+                                    <th data-trans="reason">Reason</th>
+                                    <th data-trans="actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for leave in pending_for_me %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle bg-warning me-2">
+                                                {{ leave.student.name|first|upper }}
+                                            </div>
+                                            <div>
+                                                <strong>{{ leave.student.name }}</strong>
+                                                <br>
+                                                <small class="text-muted">{{ leave.student.admission_number }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ leave.start_date|date:"d M Y" }}</td>
+                                    <td>{{ leave.end_date|date:"d M Y" }}</td>
+                                    <td><span class="badge bg-secondary">{{ leave.total_days }}</span></td>
+                                    <td>
+                                        <span class="text-truncate" style="max-width: 150px; display: inline-block;" title="{{ leave.reason }}">
+                                            {{ leave.reason|truncatechars:30 }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'approve_leave' leave.id %}" class="btn btn-success btn-sm" title="{% if LANGUAGE_CODE == 'ur' %}منظور کریں{% else %}Approve{% endif %}" onclick="return confirm('{% if LANGUAGE_CODE == 'ur' %}کیا آپ اس چھٹی کو منظور کرنا چاہتے ہیں؟{% else %}Are you sure you want to approve this leave?{% endif %}')">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                        <a href="{% url 'reject_leave' leave.id %}" class="btn btn-danger btn-sm" title="{% if LANGUAGE_CODE == 'ur' %}مسترد کریں{% else %}Reject{% endif %}" onclick="return confirm('{% if LANGUAGE_CODE == 'ur' %}کیا آپ اس چھٹی کو مسترد کرنا چاہتے ہیں؟{% else %}Are you sure you want to reject this leave?{% endif %}')">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                        <a href="{% url 'print_leave_slip' leave.id %}" class="btn btn-info btn-sm" title="{% if LANGUAGE_CODE == 'ur' %}پرنٹ{% else %}Print{% endif %}" target="_blank">
+                                            <i class="fas fa-print"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Today's On Leave Section -->
+    {% if today_approved %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-success shadow">
+                <div class="card-header bg-success text-white d-flex align-items-center">
+                    <i class="fas fa-calendar-day me-2"></i>
+                    <h5 class="mb-0"><span data-trans="students_on_leave">Students On Leave Today</span> ({{ today|date:"d M Y" }})</h5>
+                    <span class="badge bg-light text-success ms-3 rounded-pill">{{ today_approved|length }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th data-trans="admission_no">Admission No</th>
+                                    <th data-trans="student_name">Student Name</th>
+                                    <th data-trans="branch">Branch</th>
+                                    <th data-trans="course">Course</th>
+                                    <th data-trans="section">Section</th>
+                                    <th data-trans="from">From</th>
+                                    <th data-trans="to">To</th>
+                                    <th data-trans="days">Days</th>
+                                    <th data-trans="status">Status</th>
+                                    <th data-trans="actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for leave in today_approved %}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ leave.student.admission_number }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle bg-success me-2">
+                                                {{ leave.student.name|first|upper }}
+                                            </div>
+                                            {{ leave.student.name }}
+                                        </div>
+                                    </td>
+                                    <td>{{ leave.student.branch }}</td>
+                                    <td>{{ leave.student.course|default:"-" }}</td>
+                                    <td>{{ leave.student.section|default:"-" }}</td>
+                                    <td>{{ leave.start_date|date:"d M Y" }}</td>
+                                    <td>{{ leave.end_date|date:"d M Y" }}</td>
+                                    <td>
+                                        <span class="badge bg-info">{{ leave.total_days }}</span>
+                                    </td>
+                                    <td>
+                                        {% if leave.check_in_date %}
+                                            <span class="badge bg-success" data-trans="checked_in">Checked In</span>
+                                        {% else %}
+                                            <span class="badge bg-warning" data-trans="not_returned">Not Returned</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'print_leave_slip' leave.id %}" 
+                                           class="btn btn-sm btn-outline-primary" 
+                                           target="_blank"
+                                           title="{% if LANGUAGE_CODE == 'ur' %}پرنٹ{% else %}Print{% endif %}">
+                                            <i class="fas fa-print"></i>
+                                        </a>
+                                        {% if leave.status == "approved" and not leave.check_in_date %}
+                                        <a href="{% url 'checkin_leave' leave.id %}" 
+                                           class="btn btn-sm btn-outline-warning"
+                                           title="{% if LANGUAGE_CODE == 'ur' %}چیک ان{% else %}Check-in{% endif %}">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- All Leave Requests Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+                    <h5 class="mb-0 text-primary">
+                        <i class="fas fa-list me-2"></i><span data-trans="all_leave_requests">All Leave Requests</span>
+                    </h5>
+                    <div class="btn-group flex-wrap" role="group">
+                        <button type="button" class="btn btn-sm btn-outline-secondary filter-btn active" onclick="filterTable('all')" data-trans="all">All</button>
+                        <button type="button" class="btn btn-sm btn-outline-warning filter-btn" onclick="filterTable('pending')" data-trans="pending">Pending</button>
+                        <button type="button" class="btn btn-sm btn-outline-success filter-btn" onclick="filterTable('approved')" data-trans="approved">Approved</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger filter-btn" onclick="filterTable('rejected')" data-trans="rejected">Rejected</button>
+                        <button type="button" class="btn btn-sm btn-outline-info filter-btn" onclick="filterTable('checked_in')" data-trans="checked_in">Checked In</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Search Bar -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="searchInput" 
+                                       placeholder="{% if LANGUAGE_CODE == 'ur' %}طالب علم کے نام یا داخلہ نمبر سے تلاش کریں...{% else %}Search by student name or admission number...{% endif %}"
+                                       onkeyup="searchTable()">
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                            <span class="text-muted"><span data-trans="total">Total</span>: {{ all_leaves|length }} <span data-trans="records">records</span></span>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="leaveRequestsTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th data-trans="student">Student</th>
+                                    <th data-trans="initiated_by">Initiated By</th>
+                                    <th data-trans="start_date">Start Date</th>
+                                    <th data-trans="end_date">End Date</th>
+                                    <th data-trans="days">Days</th>
+                                    <th data-trans="status">Status</th>
+                                    <th data-trans="pending_dept">Pending Dept</th>
+                                    <th data-trans="checkin">Check-in</th>
+                                    <th data-trans="actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for leave in all_leaves %}
+                                <tr class="leave-row" data-status="{{ leave.status }}">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle me-2" style="background-color: {% cycle '#007bff' '#28a745' '#dc3545' '#ffc107' '#17a2b8' %}">
+                                                {{ leave.student.name|first|upper }}
+                                            </div>
+                                            <div>
+                                                <strong>{{ leave.student.name }}</strong>
+                                                <br>
+                                                <small class="text-muted">{{ leave.student.admission_number }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="dept-badge">
+                                            <i class="fas fa-user-tie me-1"></i>
+                                            {% if leave.initiated_by %}
+                                                {{ leave.initiated_by.user.get_full_name|default:leave.initiated_by }}
+                                            {% else %}
+                                                <span data-trans="system">System</span>
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td>{{ leave.start_date|date:"d M Y" }}<br><small class="text-muted">{{ leave.start_time|time:"H:i" }}</small></td>
+                                    <td>{{ leave.end_date|date:"d M Y" }}<br><small class="text-muted">{{ leave.end_time|time:"H:i" }}</small></td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ leave.total_days }}</span>
+                                    </td>
+                                    <td>
+                                        {% if leave.status == "pending" %}
+                                            <span class="status-badge status-pending">
+                                                <i class="fas fa-clock me-1"></i><span data-trans="pending">Pending</span>
+                                            </span>
+                                        {% elif leave.status == "approved" %}
+                                            <span class="status-badge status-approved">
+                                                <i class="fas fa-check-circle me-1"></i><span data-trans="approved">Approved</span>
+                                            </span>
+                                        {% elif leave.status == "rejected" %}
+                                            <span class="status-badge status-rejected">
+                                                <i class="fas fa-times-circle me-1"></i><span data-trans="rejected">Rejected</span>
+                                            </span>
+                                        {% elif leave.status == "checked_in" %}
+                                            <span class="status-badge status-checked_in">
+                                                <i class="fas fa-check-double me-1"></i><span data-trans="checked_in">Checked In</span>
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if leave.current_pending_department %}
+                                            <span class="dept-badge">
+                                                <i class="fas fa-building me-1"></i>{{ leave.current_pending_department|title }}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if leave.check_in_date %}
+                                            <small class="text-success">
+                                                <i class="fas fa-check-circle"></i>
+                                                {{ leave.check_in_date|date:"d M" }}<br>
+                                                {{ leave.check_in_date|time:"H:i" }}
+                                            </small>
+                                        {% else %}
+                                            <span class="text-muted" data-trans="not_checked_in">Not checked in</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group-vertical btn-group-sm" role="group">
+                                            {% if leave.status == "pending" %}
+                                                <a href="{% url 'approve_leave' leave.id %}" 
+                                                   class="btn btn-success" 
+                                                   title="{% if LANGUAGE_CODE == 'ur' %}منظور کریں{% else %}Approve{% endif %}"
+                                                   onclick="return confirm('{% if LANGUAGE_CODE == 'ur' %}کیا آپ اس چھٹی کو منظور کرنا چاہتے ہیں؟{% else %}Are you sure you want to approve this leave?{% endif %}')">
+                                                    <i class="fas fa-check"></i>
+                                                </a>
+                                                <a href="{% url 'reject_leave' leave.id %}" 
+                                                   class="btn btn-danger" 
+                                                   title="{% if LANGUAGE_CODE == 'ur' %}مسترد کریں{% else %}Reject{% endif %}"
+                                                   onclick="return confirm('{% if LANGUAGE_CODE == 'ur' %}کیا آپ اس چھٹی کو مسترد کرنا چاہتے ہیں؟{% else %}Are you sure you want to reject this leave?{% endif %}')">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            {% endif %}
+
+                                            {% if leave.status == "approved" and not leave.check_in_date %}
+                                                <a href="{% url 'checkin_leave' leave.id %}" 
+                                                   class="btn btn-warning" 
+                                                   title="{% if LANGUAGE_CODE == 'ur' %}چیک ان{% else %}Check-In{% endif %}">
+                                                    <i class="fas fa-sign-in-alt"></i>
+                                                </a>
+                                            {% endif %}
+                                            
+                                            <a href="{% url 'print_leave_slip' leave.id %}" 
+                                               class="btn btn-info" 
+                                               title="{% if LANGUAGE_CODE == 'ur' %}پرنٹ{% else %}Print{% endif %}"
+                                               target="_blank">
+                                                <i class="fas fa-print"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center py-5">
+                                        <div class="empty-state">
+                                            <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+                                            <h5 class="text-muted" data-trans="no_requests">No leave requests found</h5>
+                                            <p class="text-muted" data-trans="click_to_start">Click the "Create New Leave" button to get started</p>
+                                            <a href="{% url 'create_leave' %}" class="btn btn-primary mt-2">
+                                                <i class="fas fa-plus-circle me-2"></i><span data-trans="create_new_leave">Create New Leave</span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Filter table by status
+function filterTable(status) {
+    const rows = document.querySelectorAll('.leave-row');
+    const buttons = document.querySelectorAll('.filter-btn');
+    
+    // Update active button
+    buttons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent.toLowerCase().includes(status) || 
+            (status === 'all' && btn.textContent.toLowerCase().includes('all'))) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Filter rows
+    rows.forEach(row => {
+        if (status === 'all' || row.dataset.status === status) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// Search functionality
+function searchTable() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toUpperCase();
+    const rows = document.querySelectorAll('.leave-row');
+    
+    rows.forEach(row => {
+        if (row.style.display !== 'none') {
+            const studentName = row.querySelector('td:first-child strong').textContent.toUpperCase();
+            const admissionNo = row.querySelector('td:first-child small').textContent.toUpperCase();
+            
+            if (studentName.includes(filter) || admissionNo.includes(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    });
+}
+
+// Initialize tooltips and RTL adjustments
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+    tooltipTriggerList.forEach(function(tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Set active filter button
+    filterTable('all');
+    
+    // RTL adjustments for icons
+    const isRTL = document.documentElement.dir === 'rtl';
+    if (isRTL) {
+        document.querySelectorAll('.me-1, .me-2').forEach(el => {
+            el.classList.add('ms-1');
+            el.classList.remove('me-1');
+        });
+    }
+});
+
+// Export to CSV functionality (optional)
+function exportToCSV() {
+    const rows = document.querySelectorAll('.leave-row');
+    const csv = [];
+    
+    // Headers
+    const headers = [
+        document.documentElement.lang === 'ur' ? 'طالب علم کا نام' : 'Student Name',
+        document.documentElement.lang === 'ur' ? 'داخلہ نمبر' : 'Admission No',
+        document.documentElement.lang === 'ur' ? 'آغاز کی تاریخ' : 'Start Date',
+        document.documentElement.lang === 'ur' ? 'اختتامی تاریخ' : 'End Date',
+        document.documentElement.lang === 'ur' ? 'دن' : 'Days',
+        document.documentElement.lang === 'ur' ? 'حالت' : 'Status',
+        document.documentElement.lang === 'ur' ? 'چیک ان' : 'Check-in'
+    ];
+    csv.push(headers.join(','));
+    
+    // Data
+    rows.forEach(row => {
+        if (row.style.display !== 'none') {
+            const data = [
+                row.querySelector('td:first-child strong').textContent,
+                row.querySelector('td:first-child small').textContent,
+                row.querySelector('td:nth-child(3)').textContent.trim(),
+                row.querySelector('td:nth-child(4)').textContent.trim(),
+                row.querySelector('td:nth-child(5)').textContent.trim(),
+                row.querySelector('td:nth-child(6) .status-badge').textContent.trim(),
+                row.querySelector('td:nth-child(8)').textContent.trim()
+            ];
+            csv.push(data.map(cell => `"${cell}"`).join(','));
+        }
+    });
+    
+    // Download
+    const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = document.documentElement.lang === 'ur' ? 'چھٹی_کی_درخواستیں.csv' : 'leave_requests.csv';
+    a.click();
+}
+</script>
+{% endblock %}

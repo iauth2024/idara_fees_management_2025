@@ -1,0 +1,449 @@
+{% extends "leave_management/base_leave.html" %}
+{% load static %}
+
+{% block title %}Check-In Report{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-title {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    html[dir="rtl"] .page-title {
+        flex-direction: row-reverse;
+    }
+
+    .page-title i {
+        font-size: 2.5rem;
+    }
+
+    .page-title h3 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 30px 0 20px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid;
+    }
+
+    html[dir="rtl"] .section-header {
+        flex-direction: row-reverse;
+    }
+
+    .section-header i {
+        font-size: 1.5rem;
+    }
+
+    .section-header h5 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+    }
+
+    .section-header.text-success {
+        border-bottom-color: #28a745;
+    }
+
+    .section-header.text-danger {
+        border-bottom-color: #dc3545;
+    }
+
+    .section-header.text-info {
+        border-bottom-color: #17a2b8;
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #f8f9fa;
+        padding: 15px;
+        font-weight: 600;
+        color: #495057;
+        text-align: {% if LANGUAGE_CODE == 'ur' %}right{% else %}left{% endif %};
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #e9ecef;
+        color: #212529;
+    }
+
+    tr:hover {
+        background: #f8f9fa;
+    }
+
+    .badge {
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .badge-success {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .badge-warning {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-danger {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .action-btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border: none;
+        cursor: pointer;
+    }
+
+    html[dir="rtl"] .action-btn {
+        flex-direction: row-reverse;
+    }
+
+    .btn-checkin {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+    }
+
+    .btn-checkin:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+        color: white;
+    }
+
+    .btn-view {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    }
+
+    .btn-view:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        color: white;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #6c757d;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: #dee2e6;
+        margin-bottom: 15px;
+    }
+
+    .search-box {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+    .search-box .input-group {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .search-box input {
+        border: 2px solid #e9ecef;
+        border-radius: 10px 0 0 10px;
+        padding: 12px;
+        font-size: 1rem;
+    }
+
+    html[dir="rtl"] .search-box input {
+        border-radius: 0 10px 10px 0;
+    }
+
+    .search-box button {
+        border-radius: 0 10px 10px 0;
+        padding: 12px 25px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        font-weight: 600;
+    }
+
+    html[dir="rtl"] .search-box button {
+        border-radius: 10px 0 0 10px;
+    }
+
+    .search-box button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .page-title h3 {
+            font-size: 1.4rem;
+        }
+
+        .page-title i {
+            font-size: 2rem;
+        }
+
+        .section-header h5 {
+            font-size: 1.1rem;
+        }
+
+        table {
+            font-size: 0.9rem;
+        }
+
+        td, th {
+            padding: 10px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+    }
+
+    /* RTL Specific */
+    html[dir="rtl"] .me-2 {
+        margin-left: 0.5rem !important;
+        margin-right: 0 !important;
+    }
+
+    html[dir="rtl"] .ms-2 {
+        margin-right: 0.5rem !important;
+        margin-left: 0 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Page Title -->
+<div class="page-title">
+    <i class="bi bi-check2-circle"></i>
+    <h3 data-trans="checkin_report">Student Check-In Management</h3>
+</div>
+
+<!-- Search Box -->
+<div class="search-box">
+    <form method="get" class="mb-0">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control"
+                   placeholder="{% if LANGUAGE_CODE == 'ur' %}داخلہ نمبر سے تلاش کریں{% else %}Search by Admission Number{% endif %}"
+                   value="{{ request.GET.search }}">
+            <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i>
+                <span data-trans="search">Search</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- TODAY RETURNS -->
+<div class="section-header text-success">
+    <i class="bi bi-calendar-check"></i>
+    <h5 data-trans="today_returns">Today's Expected Returns</h5>
+    {% if today_returns %}
+    <span class="badge badge-success ms-auto">{{ today_returns|length }}</span>
+    {% endif %}
+</div>
+
+{% if today_returns %}
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th data-trans="admission_no">Admission No</th>
+                <th data-trans="student_name">Student Name</th>
+                <th data-trans="branch">Branch</th>
+                <th data-trans="course">Course</th>
+                <th data-trans="section">Section</th>
+                <th data-trans="leave_dates">Leave Dates</th>
+                <th data-trans="actions">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in today_returns %}
+            <tr>
+                <td>{{ leave.student.admission_number }}</td>
+                <td>{{ leave.student.name }}</td>
+                <td>{{ leave.student.branch }}</td>
+                <td>{{ leave.student.course }}</td>
+                <td>{{ leave.student.section }}</td>
+                <td>
+                    {{ leave.start_date|date:"d/m" }} - {{ leave.end_date|date:"d/m" }}
+                </td>
+                <td>
+                    <a href="{% url 'checkin_leave' leave.id %}" class="action-btn btn-checkin">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        <span data-trans="checkin">Check In</span>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="bi bi-emoji-smile"></i>
+    <p data-trans="no_today_returns">No students expected to return today</p>
+</div>
+{% endif %}
+
+<hr class="my-4">
+
+<!-- OVERDUE -->
+<div class="section-header text-danger">
+    <i class="bi bi-exclamation-triangle"></i>
+    <h5 data-trans="overdue_students">Overdue Students</h5>
+    {% if overdue %}
+    <span class="badge badge-danger ms-auto">{{ overdue|length }}</span>
+    {% endif %}
+</div>
+
+{% if overdue %}
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th data-trans="admission_no">Admission No</th>
+                <th data-trans="student_name">Student Name</th>
+                <th data-trans="branch">Branch</th>
+                <th data-trans="course">Course</th>
+                <th data-trans="section">Section</th>
+                <th data-trans="return_date">Return Date</th>
+                <th data-trans="days_overdue">Days Overdue</th>
+                <th data-trans="actions">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in overdue %}
+            <tr>
+                <td>{{ leave.student.admission_number }}</td>
+                <td>{{ leave.student.name }}</td>
+                <td>{{ leave.student.branch }}</td>
+                <td>{{ leave.student.course }}</td>
+                <td>{{ leave.student.section }}</td>
+                <td>
+                    {{ leave.end_date|date:"d M Y" }}
+                    <small class="text-muted">{{ leave.end_time|time:"H:i" }}</small>
+                </td>
+                <td>
+                    <span class="badge badge-danger">{{ leave.end_date|timesince }}</span>
+                </td>
+                <td>
+                    <a href="{% url 'checkin_leave' leave.id %}" class="action-btn btn-checkin">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        <span data-trans="checkin_now">Check In Now</span>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="bi bi-check-circle"></i>
+    <p data-trans="no_overdue">No overdue students</p>
+</div>
+{% endif %}
+
+<hr class="my-4">
+
+<!-- FUTURE -->
+<div class="section-header text-info">
+    <i class="bi bi-calendar-event"></i>
+    <h5 data-trans="future_returns">Future Return Students</h5>
+    {% if future %}
+    <span class="badge badge-info ms-auto">{{ future|length }}</span>
+    {% endif %}
+</div>
+
+{% if future %}
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th data-trans="admission_no">Admission No</th>
+                <th data-trans="student_name">Student Name</th>
+                <th data-trans="branch">Branch</th>
+                <th data-trans="course">Course</th>
+                <th data-trans="section">Section</th>
+                <th data-trans="return_date">Return Date</th>
+                <th data-trans="actions">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in future %}
+            <tr>
+                <td>{{ leave.student.admission_number }}</td>
+                <td>{{ leave.student.name }}</td>
+                <td>{{ leave.student.branch }}</td>
+                <td>{{ leave.student.course }}</td>
+                <td>{{ leave.student.section }}</td>
+                <td>
+                    {{ leave.end_date|date:"d M Y" }}
+                    <small class="text-muted">{{ leave.end_time|time:"H:i" }}</small>
+                </td>
+                <td>
+                    <a href="{% url 'leave_list' %}" class="action-btn btn-view">
+                        <i class="bi bi-eye"></i>
+                        <span data-trans="view_details">View Details</span>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="bi bi-calendar"></i>
+    <p data-trans="no_future">No future returns scheduled</p>
+</div>
+{% endif %}
+
+{% endblock %}

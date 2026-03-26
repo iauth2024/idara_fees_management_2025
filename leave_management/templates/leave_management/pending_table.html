@@ -1,0 +1,181 @@
+{% load static %}
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead class="table-primary">
+            <tr>
+                <th scope="col">
+                    <i class="bi bi-person me-1"></i>
+                    <span data-trans="student">Student</span>
+                </th>
+                <th scope="col">
+                    <i class="bi bi-calendar-plus me-1"></i>
+                    <span data-trans="start">Start</span>
+                </th>
+                <th scope="col">
+                    <i class="bi bi-calendar-minus me-1"></i>
+                    <span data-trans="end">End</span>
+                </th>
+                <th scope="col" class="text-center">
+                    <i class="bi bi-gear me-1"></i>
+                    <span data-trans="action">Action</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in leaves %}
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="student-avatar me-2">
+                            {{ leave.student.name|first|upper }}
+                        </div>
+                        <div>
+                            <strong>{{ leave.student.name }}</strong>
+                            <br>
+                            <small class="text-muted">{{ leave.student.admission_number }}</small>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <i class="bi bi-calendar3 text-primary me-1"></i>
+                        {{ leave.start_date|date:"d M Y" }}
+                    </div>
+                    {% if leave.start_time %}
+                    <small class="text-muted">
+                        <i class="bi bi-clock me-1"></i>
+                        {{ leave.start_time|time:"H:i" }}
+                    </small>
+                    {% endif %}
+                </td>
+                <td>
+                    <div>
+                        <i class="bi bi-calendar3 text-danger me-1"></i>
+                        {{ leave.end_date|date:"d M Y" }}
+                    </div>
+                    {% if leave.end_time %}
+                    <small class="text-muted">
+                        <i class="bi bi-clock me-1"></i>
+                        {{ leave.end_time|time:"H:i" }}
+                    </small>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'approve_leave' leave.id %}" 
+                           class="btn btn-success btn-sm"
+                           title="{% if LANGUAGE_CODE == 'ur' %}منظور کریں{% else %}Approve{% endif %}"
+                           onclick="return confirm('{% if LANGUAGE_CODE == 'ur' %}کیا آپ اس چھٹی کو منظور کرنا چاہتے ہیں؟{% else %}Are you sure you want to approve this leave?{% endif %}')">
+                            <i class="bi bi-check-circle"></i>
+                            <span data-trans="approve">Approve</span>
+                        </a>
+                        <a href="{% url 'reject_leave' leave.id %}" 
+                           class="btn btn-danger btn-sm"
+                           title="{% if LANGUAGE_CODE == 'ur' %}مسترد کریں{% else %}Reject{% endif %}"
+                           onclick="return confirm('{% if LANGUAGE_CODE == 'ur' %}کیا آپ اس چھٹی کو مسترد کرنا چاہتے ہیں؟{% else %}Are you sure you want to reject this leave?{% endif %}')">
+                            <i class="bi bi-x-circle"></i>
+                            <span data-trans="reject">Reject</span>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem; color: #dee2e6; display: block; margin-bottom: 10px;"></i>
+                    <p class="text-muted mb-0" data-trans="no_pending">No pending approvals.</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .student-avatar {
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        box-shadow: 0 2px 5px rgba(102, 126, 234, 0.3);
+    }
+
+    .table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border: none !important;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .table tbody tr:hover {
+        background: linear-gradient(135deg, #f5f7ff 0%, #f3e8ff 100%);
+        transition: all 0.3s ease;
+    }
+
+    .btn-group .btn {
+        margin: 0 2px;
+        border-radius: 20px !important;
+        padding: 5px 15px;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-group .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #dc3545 0%, #f15a5a 100%);
+        border: none;
+    }
+
+    /* RTL Specific */
+    html[dir="rtl"] .me-1,
+    html[dir="rtl"] .me-2 {
+        margin-left: 0.25rem !important;
+        margin-right: 0 !important;
+    }
+
+    html[dir="rtl"] .ms-1,
+    html[dir="rtl"] .ms-2 {
+        margin-right: 0.25rem !important;
+        margin-left: 0 !important;
+    }
+
+    html[dir="rtl"] .student-avatar {
+        margin-left: 0.5rem !important;
+        margin-right: 0 !important;
+    }
+
+    @media (max-width: 768px) {
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .btn-group .btn {
+            width: 100%;
+        }
+    }
+</style>

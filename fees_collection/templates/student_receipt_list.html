@@ -1,0 +1,152 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Receipt List</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative; /* Position relative to allow absolute positioning of the button */
+        }
+        h1 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        /* Highlight styles */
+        .highlight {
+            background-color: red;
+            color: white;
+        }
+        /* Select styles */
+        select {
+            padding: 8px;
+            margin: 0 10px 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        /* Button styles */
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        /* Home button styles */
+        .home-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+            text-align: center;
+        }
+        .home-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'homepage' %}">
+            <button type="button" class="home-button">Home</button>
+        </a>
+
+        <h1>Student Receipt List</h1>
+
+        <form method="get" action="">
+            <label for="organization">Organization:</label>
+            <select name="organization" id="organization">
+                <option value="">All Organizations</option>
+                {% for org in organizations %}
+                    <option value="{{ org }}" {% if org == selected_organization %}selected{% endif %}>{{ org }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="year">Year:</label>
+            <select name="year" id="year">
+                <option value="">All Years</option>
+                {% for year in years %}
+                    <option value="{{ year }}" {% if year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Filter</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>S.No</th> <!-- Serial Number Column -->
+                    <th>Name</th>
+                    {% for receipt_type in receipt_types %}
+                        <th>{{ receipt_type }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for name, amounts in student_data.items %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td> <!-- Serial Number -->
+                        <td>{{ name }}</td>
+                        {% for receipt_type in receipt_types %}
+                            {% if amounts|get_item:receipt_type|to_float > allowed_receipt_types|get_item:receipt_type %}
+                                <td class="highlight">
+                                    {{ amounts|get_item:receipt_type|indian_number_format }}
+                                </td>
+                            {% else %}
+                                <td>
+                                    {{ amounts|get_item:receipt_type|indian_number_format }}
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="{{ receipt_types|length|add:1 }}">No data available</td> <!-- Adjust colspan to include S.No column -->
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
