@@ -3,7 +3,10 @@
 <html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_CODE == 'ur' %}rtl{% else %}ltr{% endif %}">
 <head>
     <title>{% block title %}Leave Management{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -97,7 +100,7 @@
         .mobile-header {
             background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
             color: white;
-            padding: 15px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -107,42 +110,57 @@
             right: 0;
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .brand {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .brand i {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
 
-        /* Language Toggle */
+        /* Language Toggle - Mobile Optimized */
         .language-form select {
             background: rgba(255,255,255,0.2);
             border: 2px solid rgba(255,255,255,0.3);
             color: white;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            padding: 8px 16px;
+            padding: 8px 12px;
             border-radius: 30px;
             cursor: pointer;
             min-height: 40px;
-            min-width: 100px;
+            min-width: 85px;
+            backdrop-filter: blur(5px);
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 20px;
+            padding-right: 32px;
         }
 
-        .language-form select:hover {
-            background: rgba(255,255,255,0.3);
+        html[dir="rtl"] .language-form select {
+            background-position: left 8px center;
+            padding-right: 12px;
+            padding-left: 32px;
+        }
+
+        .language-form select:hover, .language-form select:active {
+            background-color: rgba(255,255,255,0.3);
         }
 
         .language-form select option {
@@ -159,18 +177,20 @@
             background: rgba(255,255,255,0.2);
             border: none;
             color: white;
-            font-size: 1.5rem;
-            width: 45px;
-            height: 45px;
-            border-radius: 10px;
+            font-size: 1.4rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .menu-toggle:hover, .menu-toggle:active {
+        .menu-toggle:active {
+            transform: scale(0.95);
             background: rgba(255,255,255,0.3);
         }
 
@@ -184,14 +204,24 @@
             background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
             color: white;
             z-index: 1001;
-            transition: all 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow-y: auto;
             padding-top: 70px;
             box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            will-change: transform;
         }
 
         .mobile-sidebar.open {
-            left: 0;
+            transform: translateX(280px);
+        }
+
+        html[dir="rtl"] .mobile-sidebar {
+            left: auto;
+            right: -280px;
+        }
+
+        html[dir="rtl"] .mobile-sidebar.open {
+            transform: translateX(-280px);
         }
 
         .sidebar-overlay {
@@ -203,10 +233,13 @@
             background: rgba(0,0,0,0.5);
             z-index: 1000;
             display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .sidebar-overlay.open {
             display: block;
+            opacity: 1;
         }
 
         .sidebar-header {
@@ -217,7 +250,7 @@
 
         .sidebar-header h5 {
             margin: 0;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -225,7 +258,7 @@
         }
 
         .sidebar-header h5 i {
-            font-size: 2rem;
+            font-size: 1.8rem;
         }
 
         .sidebar-nav {
@@ -235,7 +268,7 @@
         }
 
         .sidebar-nav li {
-            margin: 5px 10px;
+            margin: 4px 12px;
         }
 
         .sidebar-nav a {
@@ -244,20 +277,21 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            padding: 15px 20px;
+            padding: 14px 18px;
             border-radius: 12px;
-            transition: all 0.3s ease;
-            font-size: 1rem;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .sidebar-nav a i {
-            font-size: 1.3rem;
-            width: 25px;
+            font-size: 1.2rem;
+            width: 24px;
         }
 
-        .sidebar-nav a:hover, .sidebar-nav a:active {
+        .sidebar-nav a:active {
             background: rgba(255,255,255,0.2);
-            transform: translateX(5px);
+            transform: scale(0.98);
         }
 
         .sidebar-nav .active-link {
@@ -268,12 +302,12 @@
         .sidebar-divider {
             height: 1px;
             background: rgba(255,255,255,0.1);
-            margin: 15px 10px;
+            margin: 12px 12px;
         }
 
         .fees-link {
             background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-            margin: 10px !important;
+            margin: 8px 12px !important;
             border-radius: 12px !important;
         }
 
@@ -281,14 +315,13 @@
             color: white !important;
         }
 
-        .fees-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+        .fees-link:active {
+            transform: scale(0.98);
         }
 
         /* Main Content */
         .main-content {
-            padding: 80px 15px 20px 15px;
+            padding: 80px 16px 20px 16px;
             min-height: 100vh;
             background-color: #f8f9fa;
             transition: all 0.3s ease;
@@ -298,20 +331,26 @@
         .alert {
             border: none;
             border-radius: 12px;
-            padding: 15px;
+            padding: 14px 16px;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             animation: slideDown 0.3s ease;
-            font-size: 0.95rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            font-size: 0.9rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            word-break: break-word;
         }
 
         .alert-info {
             background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
             color: #0369a1;
             border-left: 4px solid #0284c7;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+            flex-shrink: 0;
         }
 
         @keyframes slideDown {
@@ -325,42 +364,208 @@
             }
         }
 
+        /* ========== ENHANCED RESPONSIVE STYLES ========== */
+        
+        /* Responsive Tables */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 1rem;
+        }
+        
+        .table {
+            min-width: 600px;
+        }
+        
+        /* Card-based table for very small screens */
+        @media (max-width: 576px) {
+            .table-card-view {
+                display: block;
+            }
+            
+            .table-card-view thead {
+                display: none;
+            }
+            
+            .table-card-view tbody tr {
+                display: block;
+                margin-bottom: 1rem;
+                background: white;
+                border-radius: 12px;
+                padding: 1rem;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            }
+            
+            .table-card-view tbody td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 0;
+                border: none;
+                text-align: right;
+            }
+            
+            .table-card-view tbody td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                margin-left: 1rem;
+                color: #6c757d;
+            }
+            
+            html[dir="rtl"] .table-card-view tbody td:before {
+                margin-left: 0;
+                margin-right: 1rem;
+            }
+        }
+        
+        /* Form Improvements for Mobile */
+        input, select, textarea, button {
+            font-size: 16px !important; /* Prevents zoom on iOS */
+            border-radius: 12px;
+        }
+        
+        input, select, textarea {
+            padding: 12px 16px;
+            border: 1px solid #dee2e6;
+            transition: all 0.2s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            outline: none;
+        }
+        
+        /* Better spacing for forms on mobile */
+        @media (max-width: 768px) {
+            .form-group, .mb-3 {
+                margin-bottom: 1.25rem !important;
+            }
+            
+            .row {
+                margin-left: -8px;
+                margin-right: -8px;
+            }
+            
+            .col, [class*="col-"] {
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+        }
+        
+        /* Card Improvements */
+        .card {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 1rem;
+        }
+        
+        .card-body {
+            padding: 1.25rem;
+        }
+        
+        @media (max-width: 576px) {
+            .card-body {
+                padding: 1rem;
+            }
+        }
+        
+        /* Button Improvements for Touch */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn:active {
+            transform: scale(0.97);
+        }
+        
+        /* Grid Layout Improvements */
+        .row {
+            margin-left: -12px;
+            margin-right: -12px;
+        }
+        
+        [class*="col-"] {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+        
+        /* Stats Cards - Better on Mobile */
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+        
+        .stat-card:active {
+            transform: scale(0.98);
+        }
+        
         /* Tablet and Desktop Styles */
         @media (min-width: 768px) {
             .mobile-header {
                 display: none;
             }
-
+            
             .mobile-sidebar {
+                transform: none !important;
                 left: 0;
                 width: 250px;
                 box-shadow: none;
             }
-
+            
             html[dir="rtl"] .mobile-sidebar {
                 left: auto;
                 right: 0;
             }
-
+            
             .sidebar-overlay {
                 display: none !important;
             }
-
+            
             .main-content {
                 margin-left: 250px;
-                padding: 20px;
+                padding: 24px;
             }
-
+            
             html[dir="rtl"] .main-content {
                 margin-left: 0;
                 margin-right: 250px;
             }
-
+            
             .menu-toggle {
                 display: none;
             }
+            
+            .stat-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
         }
-
+        
+        /* Large Desktop */
+        @media (min-width: 1200px) {
+            .main-content {
+                padding: 32px;
+            }
+            
+            .container {
+                max-width: 1140px;
+            }
+        }
+        
         /* Loading States */
         .loading {
             display: inline-block;
@@ -371,48 +576,66 @@
             border-top-color: white;
             animation: spin 1s ease-in-out infinite;
         }
-
+        
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
+        
         /* Touch-friendly improvements */
-        button, a, select {
+        button, a, select, .clickable {
             min-height: 44px;
             min-width: 44px;
+            cursor: pointer;
         }
-
-        input, select, textarea {
-            font-size: 16px !important;
-        }
-
+        
         /* Smooth scrolling */
         * {
             -webkit-overflow-scrolling: touch;
         }
-
+        
         /* Custom scrollbar for sidebar */
         .mobile-sidebar::-webkit-scrollbar {
             width: 4px;
         }
-
+        
         .mobile-sidebar::-webkit-scrollbar-track {
             background: rgba(255,255,255,0.1);
         }
-
+        
         .mobile-sidebar::-webkit-scrollbar-thumb {
             background: rgba(255,255,255,0.3);
             border-radius: 4px;
         }
-
+        
         /* Language transition */
         body, .mobile-header, .sidebar-nav a, .alert {
             transition: all 0.3s ease;
         }
-
+        
         /* Elements with data-trans attribute */
         [data-trans] {
             transition: all 0.2s ease;
+        }
+        
+        /* Prevent text selection on buttons for better UX */
+        .btn, .menu-toggle, .sidebar-nav a {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        
+        /* Better modal on mobile */
+        @media (max-width: 576px) {
+            .modal-dialog {
+                margin: 1rem;
+            }
+            
+            .modal-content {
+                border-radius: 20px;
+            }
+            
+            .modal-body {
+                padding: 1.25rem;
+            }
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -876,10 +1099,13 @@ const translations = {
 
     // Toggle sidebar
     function toggleSidebar() {
-        document.querySelector('.mobile-sidebar').classList.toggle('open');
-        document.querySelector('.sidebar-overlay').classList.toggle('open');
+        const sidebar = document.querySelector('.mobile-sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
         
-        if (document.querySelector('.mobile-sidebar').classList.contains('open')) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+        
+        if (sidebar.classList.contains('open')) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = '';
@@ -888,8 +1114,11 @@ const translations = {
 
     // Close sidebar
     function closeSidebar() {
-        document.querySelector('.mobile-sidebar').classList.remove('open');
-        document.querySelector('.sidebar-overlay').classList.remove('open');
+        const sidebar = document.querySelector('.mobile-sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
         document.body.style.overflow = '';
     }
 
@@ -912,8 +1141,10 @@ const translations = {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function() {
             if (window.innerWidth >= 768) {
-                document.querySelector('.mobile-sidebar').classList.remove('open');
-                document.querySelector('.sidebar-overlay').classList.remove('open');
+                const sidebar = document.querySelector('.mobile-sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                sidebar.classList.remove('open');
+                if (overlay) overlay.classList.remove('open');
                 document.body.style.overflow = '';
             }
         }, 250);
@@ -925,18 +1156,15 @@ const translations = {
             if (this.href && !this.classList.contains('no-loading')) {
                 const icon = this.querySelector('i');
                 if (icon) {
+                    const originalIcon = icon.innerHTML;
                     icon.innerHTML = '<span class="loading"></span>';
+                    setTimeout(() => {
+                        if (icon) icon.innerHTML = originalIcon;
+                    }, 1000);
                 }
             }
         });
     });
-
-    // Prevent zoom on double tap for iOS
-    document.addEventListener('touchstart', (e) => {
-        if (e.touches.length > 1) {
-            e.preventDefault();
-        }
-    }, { passive: false });
 
     // Set active link based on current URL
     document.addEventListener('DOMContentLoaded', function() {
@@ -949,12 +1177,50 @@ const translations = {
         
         // Store original English text for all translatable elements
         document.querySelectorAll('[data-trans]').forEach(element => {
-            element.setAttribute('data-original', element.textContent.trim());
+            if (!element.hasAttribute('data-original')) {
+                element.setAttribute('data-original', element.textContent.trim());
+            }
         });
         
         // Apply translation based on current language
         translatePage(currentLang);
+        
+        // Add table responsive wrapper for all tables
+        document.querySelectorAll('table:not(.table-responsive table)').forEach(table => {
+            if (!table.closest('.table-responsive')) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'table-responsive';
+                table.parentNode.insertBefore(wrapper, table);
+                wrapper.appendChild(table);
+            }
+        });
+        
+        // Add data-label attributes for card view tables
+        document.querySelectorAll('table').forEach(table => {
+            const headers = [];
+            table.querySelectorAll('thead th').forEach(th => {
+                headers.push(th.textContent.trim());
+            });
+            
+            table.querySelectorAll('tbody tr').forEach(row => {
+                row.querySelectorAll('td').forEach((td, index) => {
+                    if (headers[index]) {
+                        td.setAttribute('data-label', headers[index]);
+                    }
+                });
+            });
+        });
     });
+    
+    // Prevent zoom on double tap for iOS
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
 </script>
 
 <!-- Bootstrap JS for optional components -->

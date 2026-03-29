@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_CODE == 'ur' %}rtl{% else %}ltr{% endif %}">
 <head>
@@ -43,18 +44,19 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 14px 32px;
             border-radius: 50px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             margin-bottom: 20px;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
             border: 2px solid white;
+            min-height: 52px;
         }
 
         html[dir="rtl"] .print-btn {
@@ -71,7 +73,7 @@
         }
 
         .print-btn i {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
 
         /* A5 Leave Pass Card */
@@ -80,14 +82,14 @@
             width: 100%;
             background: white;
             border-radius: 20px;
-            padding: 15px;
+            padding: 18px;
             margin: auto;
             box-shadow: 0 30px 60px rgba(0,0,0,0.3);
             border: none;
             position: relative;
             overflow: hidden;
             animation: slideUp 0.5s ease-out;
-            font-size: 11px; /* Base font size for A5 */
+            font-size: 12px; /* Base font size for A5 */
         }
 
         html[dir="rtl"] .slip {
@@ -102,7 +104,7 @@
                 border: 1px solid #333;
                 padding: 12px;
                 margin: 0 auto;
-                font-size: 10px;
+                font-size: 11px;
             }
         }
 
@@ -131,16 +133,16 @@
         /* Header */
         .pass-header {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
             position: relative;
         }
 
         .pass-header h3 {
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             color: #333;
             font-weight: 700;
             letter-spacing: 0.5px;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             text-transform: uppercase;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
@@ -150,11 +152,11 @@
 
         .pass-header .subtitle {
             color: #666;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 5px;
         }
 
         html[dir="rtl"] .pass-header .subtitle {
@@ -163,7 +165,7 @@
 
         .pass-header .subtitle i {
             color: #667eea;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
 
         .watermark {
@@ -172,7 +174,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             opacity: 0.03;
-            font-size: 3.5rem;
+            font-size: 4rem;
             color: #667eea;
             font-weight: 900;
             pointer-events: none;
@@ -183,15 +185,15 @@
             border: none;
             height: 1px;
             background: linear-gradient(90deg, transparent, #667eea, #764ba2, transparent);
-            margin: 12px 0;
+            margin: 15px 0;
         }
 
         /* Student Info Section */
         .info-section {
             background: linear-gradient(135deg, #f8f9ff 0%, #f0f3ff 100%);
             border-radius: 15px;
-            padding: 12px;
-            margin-bottom: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
             position: relative;
             z-index: 1;
         }
@@ -199,10 +201,10 @@
         .section-title {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 1rem;
+            gap: 8px;
+            font-size: 1.1rem;
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-weight: 600;
         }
 
@@ -212,13 +214,13 @@
 
         .section-title i {
             color: #667eea;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
 
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
+            gap: 10px;
         }
 
         .info-item {
@@ -227,15 +229,15 @@
         }
 
         .info-label {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: #666;
             text-transform: uppercase;
             letter-spacing: 0.3px;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
 
         .info-value {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #333;
             word-break: break-word;
@@ -250,16 +252,16 @@
             background: white;
             border: 1px solid #e9ecef;
             border-radius: 15px;
-            padding: 12px;
-            margin-bottom: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
         }
 
         .date-range {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 10px;
+            margin-bottom: 12px;
             flex-wrap: nowrap;
         }
 
@@ -272,31 +274,31 @@
             text-align: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 10px 5px;
+            padding: 12px 5px;
             border-radius: 12px;
             min-width: 100px;
         }
 
         .date-box .label {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             opacity: 0.9;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
         }
 
         .date-box .date {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 700;
         }
 
         .date-box .time {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             opacity: 0.9;
-            margin-top: 3px;
+            margin-top: 4px;
             font-weight: 500;
         }
 
         .date-arrow {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             color: #667eea;
         }
 
@@ -307,17 +309,17 @@
         .reason-box {
             background: #f8f9fa;
             border-radius: 12px;
-            padding: 10px;
-            margin-top: 10px;
+            padding: 12px;
+            margin-top: 12px;
         }
 
         .reason-box .label {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             color: #666;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
         }
 
         html[dir="rtl"] .reason-box .label {
@@ -325,13 +327,13 @@
         }
 
         .reason-box .label i {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
         }
 
         .reason-box .reason {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #333;
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         /* Time Details */
@@ -341,8 +343,8 @@
             justify-content: space-between;
             background: #e8f0fe;
             border-radius: 10px;
-            padding: 8px 12px;
-            margin: 10px 0;
+            padding: 10px 14px;
+            margin: 12px 0;
         }
 
         html[dir="rtl"] .time-details {
@@ -352,7 +354,7 @@
         .time-item {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         html[dir="rtl"] .time-item {
@@ -361,16 +363,16 @@
 
         .time-item i {
             color: #667eea;
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
 
         .time-item .time-label {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: #666;
         }
 
         .time-item .time-value {
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: #333;
         }
@@ -379,18 +381,18 @@
         .approvals-section {
             background: linear-gradient(135deg, #f8f9ff 0%, #f0f3ff 100%);
             border-radius: 15px;
-            padding: 12px;
-            margin-bottom: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
         }
 
         .approval-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px;
+            padding: 10px;
             border-bottom: 1px dashed #d1d5db;
             flex-wrap: wrap;
-            gap: 5px;
+            gap: 8px;
         }
 
         html[dir="rtl"] .approval-item {
@@ -404,10 +406,10 @@
         .approval-dept {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             font-weight: 600;
             color: #495057;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
         }
 
         html[dir="rtl"] .approval-dept {
@@ -416,16 +418,16 @@
 
         .approval-dept i {
             color: #28a745;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
         }
 
         .approval-person {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             color: #667eea;
             font-weight: 500;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
         }
 
         html[dir="rtl"] .approval-person {
@@ -434,53 +436,53 @@
 
         .approval-person i {
             color: #764ba2;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
         }
 
         .empty-approvals {
             text-align: center;
             color: #999;
-            padding: 15px;
+            padding: 20px;
             font-style: italic;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .empty-approvals i {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             color: #ddd;
         }
 
         .empty-approvals small {
-            font-size: 0.7rem;
+            font-size: 0.8rem;
         }
 
         /* Signatures */
         .signatures {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 15px;
+            gap: 15px;
+            margin-top: 18px;
         }
 
         .signature-box {
             background: white;
             border: 1px dashed #667eea;
             border-radius: 12px;
-            padding: 12px;
+            padding: 14px;
             text-align: center;
         }
 
         .signature-box .label {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: #495057;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 5px;
         }
 
         html[dir="rtl"] .signature-box .label {
@@ -489,32 +491,32 @@
 
         .signature-box .label i {
             color: #667eea;
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
 
         .signature-line {
             width: 100%;
-            height: 30px;
+            height: 35px;
             border-bottom: 1px solid #333;
-            margin-top: 8px;
+            margin-top: 10px;
         }
 
         .signature-date {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: #999;
-            margin-top: 5px;
+            margin-top: 6px;
         }
 
         /* Footer */
         .pass-footer {
-            margin-top: 15px;
+            margin-top: 18px;
             text-align: center;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             color: #999;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 5px;
         }
 
         html[dir="rtl"] .pass-footer {
@@ -523,7 +525,7 @@
 
         .pass-footer i {
             color: #667eea;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
         }
 
         /* QR Code Placeholder */
@@ -531,8 +533,8 @@
             position: absolute;
             bottom: 15px;
             right: 15px;
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             background: #f8f9fa;
             border: 1px solid #e9ecef;
             border-radius: 8px;
@@ -548,8 +550,148 @@
         }
 
         .qr-placeholder i {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             color: #999;
+        }
+
+        /* ========== STATUS HIGHLIGHTING ========== */
+        
+        /* Main Status Banner */
+        .status-banner {
+            margin-bottom: 15px;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            animation: pulse 0.5s ease;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .status-approved-banner {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3);
+        }
+        
+        .status-rejected-banner {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(220, 53, 69, 0.3);
+        }
+        
+        .status-pending-banner {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 193, 7, 0.3);
+        }
+        
+        .status-banner i {
+            font-size: 1.3rem;
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        html[dir="rtl"] .status-badge {
+            margin-left: 0;
+            margin-right: 8px;
+        }
+        
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+            border-left: 3px solid #28a745;
+        }
+        
+        html[dir="rtl"] .status-approved {
+            border-left: none;
+            border-right: 3px solid #28a745;
+        }
+        
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 3px solid #dc3545;
+        }
+        
+        html[dir="rtl"] .status-rejected {
+            border-left: none;
+            border-right: 3px solid #dc3545;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 3px solid #ffc107;
+        }
+        
+        html[dir="rtl"] .status-pending {
+            border-left: none;
+            border-right: 3px solid #ffc107;
+        }
+        
+        /* Status Highlight on Student Name */
+        .student-name-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        /* Rejected Leave Overlay Effect */
+        .slip.rejected-leave {
+            opacity: 0.95;
+            border: 2px solid #dc3545;
+        }
+        
+        .rejected-stamp {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-25deg);
+            font-size: 4rem;
+            font-weight: 900;
+            color: rgba(220, 53, 69, 0.15);
+            pointer-events: none;
+            z-index: 10;
+            white-space: nowrap;
+        }
+        
+        /* Duration Badge */
+        .duration-badge {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #667eea;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+        }
+        
+        html[dir="rtl"] .duration-badge {
+            flex-direction: row-reverse;
+        }
+        
+        .duration-badge i {
+            font-size: 0.8rem;
         }
 
         /* Print Styles for A5 */
@@ -574,7 +716,7 @@
                 margin: 0 auto;
                 page-break-after: avoid;
                 page-break-inside: avoid;
-                font-size: 10px;
+                font-size: 11px;
             }
 
             .slip::before {
@@ -594,7 +736,7 @@
                 print-color-adjust: exact;
             }
 
-            .info-section, .approvals-section, .time-details {
+            .info-section, .approvals-section, .time-details, .status-banner {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
@@ -605,18 +747,40 @@
             body {
                 padding: 10px;
             }
+            
+            .print-btn {
+                padding: 12px 24px;
+                font-size: 1rem;
+                min-height: 48px;
+            }
 
             .slip {
-                padding: 12px;
+                padding: 14px;
             }
 
             .pass-header h3 {
-                font-size: 1.2rem;
+                font-size: 1.4rem;
+            }
+            
+            html[dir="rtl"] .pass-header h3 {
+                font-size: 1.6rem;
+            }
+            
+            .pass-header .subtitle {
+                font-size: 0.75rem;
             }
 
             .info-grid {
                 grid-template-columns: 1fr;
-                gap: 8px;
+                gap: 10px;
+            }
+            
+            .info-value {
+                font-size: 0.95rem;
+            }
+            
+            html[dir="rtl"] .info-value {
+                font-size: 1rem;
             }
 
             .date-range {
@@ -634,68 +798,110 @@
             html[dir="rtl"] .date-arrow {
                 transform: rotate(270deg);
             }
+            
+            .date-box .date {
+                font-size: 0.9rem;
+            }
+            
+            .date-box .time {
+                font-size: 0.8rem;
+            }
 
             .signatures {
                 grid-template-columns: 1fr;
-                gap: 10px;
+                gap: 12px;
             }
 
             .approval-item {
                 flex-direction: column;
                 align-items: flex-start;
             }
+            
+            .approval-dept, .approval-person {
+                width: 100%;
+            }
 
             .time-details {
                 flex-direction: column;
-                gap: 8px;
+                gap: 10px;
                 align-items: flex-start;
             }
+            
+            .time-item {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .status-banner {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+            
+            .status-banner i {
+                font-size: 1.1rem;
+            }
+            
+            .rejected-stamp {
+                font-size: 2.5rem;
+            }
         }
-
-        /* Status Badge */
-        .status-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 50px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-left: 6px;
+        
+        /* Tablet Responsive */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .slip {
+                max-width: 90%;
+            }
+            
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
-
+        
+        /* RTL Specific */
+        html[dir="rtl"] .me-2 {
+            margin-left: 0.5rem !important;
+            margin-right: 0 !important;
+        }
+        
+        html[dir="rtl"] .ms-2 {
+            margin-right: 0.5rem !important;
+            margin-left: 0 !important;
+        }
+        
+        /* Urdu Font Enhancements */
+        html[dir="rtl"] .status-banner {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
         html[dir="rtl"] .status-badge {
-            margin-left: 0;
-            margin-right: 6px;
+            font-size: 0.9rem;
+            padding: 6px 14px;
         }
-
-        .status-approved {
-            background: #d4edda;
-            color: #155724;
+        
+        html[dir="rtl"] .section-title {
+            font-size: 1.2rem;
         }
-
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
+        
+        html[dir="rtl"] .info-label {
+            font-size: 0.85rem;
         }
-
-        /* Duration Badge */
-        .duration-badge {
-            background: rgba(102, 126, 234, 0.1);
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            color: #667eea;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 5px;
+        
+        html[dir="rtl"] .info-value {
+            font-size: 1.05rem;
         }
-
-        html[dir="rtl"] .duration-badge {
-            flex-direction: row-reverse;
+        
+        html[dir="rtl"] .reason-box .reason {
+            font-size: 1.05rem;
         }
-
-        .duration-badge i {
-            font-size: 0.7rem;
+        
+        html[dir="rtl"] .time-item .time-value {
+            font-size: 1rem;
+        }
+        
+        html[dir="rtl"] .approval-dept,
+        html[dir="rtl"] .approval-person {
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -711,8 +917,19 @@
         {% endif %}
     </button>
 
-    <!-- A5 Leave Pass Card -->
-    <div class="slip">
+    <!-- A5 Leave Pass Card with Status Class -->
+    <div class="slip {% if leave.status == 'rejected' %}rejected-leave{% endif %}">
+        <!-- Rejected Stamp Overlay -->
+        {% if leave.status == 'rejected' %}
+        <div class="rejected-stamp">
+            {% if LANGUAGE_CODE == 'ur' %}
+                مسترد شدہ
+            {% else %}
+                REJECTED
+            {% endif %}
+        </div>
+        {% endif %}
+        
         <!-- Watermark -->
         <div class="watermark">
             {% if LANGUAGE_CODE == 'ur' %}چھٹی پاس{% else %}LEAVE PASS{% endif %}
@@ -721,6 +938,24 @@
         <!-- QR Code Placeholder (optional) -->
         <div class="qr-placeholder">
             <i class="fas fa-qrcode"></i>
+        </div>
+
+        <!-- Status Banner - HIGHLIGHTED BASED ON STATUS -->
+        <div class="status-banner 
+            {% if leave.status == 'approved' %}status-approved-banner
+            {% elif leave.status == 'rejected' %}status-rejected-banner
+            {% else %}status-pending-banner{% endif %}">
+            <i class="fas 
+                {% if leave.status == 'approved' %}fa-check-circle
+                {% elif leave.status == 'rejected' %}fa-times-circle
+                {% else %}fa-clock{% endif %}"></i>
+            {% if leave.status == 'approved' %}
+                {% if LANGUAGE_CODE == 'ur' %}✅ چھٹی منظور شدہ{% else %}✅ LEAVE APPROVED{% endif %}
+            {% elif leave.status == 'rejected' %}
+                {% if LANGUAGE_CODE == 'ur' %}❌ چھٹی مسترد شدہ{% else %}❌ LEAVE REJECTED{% endif %}
+            {% else %}
+                {% if LANGUAGE_CODE == 'ur' %}⏳ چھٹی زیر التواء{% else %}⏳ LEAVE PENDING{% endif %}
+            {% endif %}
         </div>
 
         <!-- Header -->
@@ -760,7 +995,28 @@
                     <span class="info-label">
                         {% if LANGUAGE_CODE == 'ur' %}مکمل نام{% else %}Full Name{% endif %}
                     </span>
-                    <span class="info-value highlight">{{ leave.student.name }}</span>
+                    <span class="info-value highlight">
+                        <div class="student-name-status">
+                            {{ leave.student.name }}
+                            <!-- Status Badge next to name -->
+                            <span class="status-badge 
+                                {% if leave.status == 'approved' %}status-approved
+                                {% elif leave.status == 'rejected' %}status-rejected
+                                {% else %}status-pending{% endif %}">
+                                <i class="fas 
+                                    {% if leave.status == 'approved' %}fa-check
+                                    {% elif leave.status == 'rejected' %}fa-times
+                                    {% else %}fa-hourglass-half{% endif %}"></i>
+                                {% if leave.status == 'approved' %}
+                                    {% if LANGUAGE_CODE == 'ur' %}منظور شدہ{% else %}Approved{% endif %}
+                                {% elif leave.status == 'rejected' %}
+                                    {% if LANGUAGE_CODE == 'ur' %}مسترد شدہ{% else %}Rejected{% endif %}
+                                {% else %}
+                                    {% if LANGUAGE_CODE == 'ur' %}زیر التواء{% else %}Pending{% endif %}
+                                {% endif %}
+                            </span>
+                        </div>
+                    </span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">
@@ -885,7 +1141,7 @@
                     </span>
                 </div>
                 {% if h.action_time %}
-                <small style="color: #999; font-size: 0.65rem; width: 100%; text-align: {% if LANGUAGE_CODE == 'ur' %}left{% else %}right{% endif %};">
+                <small style="color: #999; font-size: 0.7rem; width: 100%; text-align: {% if LANGUAGE_CODE == 'ur' %}left{% else %}right{% endif %};">
                     <i class="fas fa-clock"></i> {{ h.action_time|time:"h:i A" }}
                 </small>
                 {% endif %}
@@ -951,6 +1207,17 @@
                 e.preventDefault();
             }
         }, { passive: false });
+        
+        // Add touch feedback for print button
+        const printBtn = document.querySelector('.print-btn');
+        if (printBtn) {
+            printBtn.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.97)';
+            });
+            printBtn.addEventListener('touchend', function() {
+                this.style.transform = '';
+            });
+        }
     </script>
 </body>
 </html>

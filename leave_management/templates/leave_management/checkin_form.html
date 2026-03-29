@@ -1,6 +1,6 @@
 {% extends "leave_management/base_leave.html" %}
 {% load static %}
-
+{% load i18n %} 
 {% block title %}Check-In Student{% endblock %}
 
 {% block content %}
@@ -36,7 +36,7 @@
 
     .page-header h4 {
         margin: 0;
-        font-size: 1.6rem;
+        font-size: 1.8rem;
         font-weight: 600;
         display: flex;
         align-items: center;
@@ -51,7 +51,7 @@
     .student-card {
         background: white;
         border-radius: 20px;
-        padding: 20px;
+        padding: 24px;
         margin-bottom: 25px;
         box-shadow: 0 5px 20px rgba(0,0,0,0.05);
         border-left: 5px solid #667eea;
@@ -73,15 +73,15 @@
     }
 
     .student-avatar {
-        width: 60px;
-        height: 60px;
+        width: 70px;
+        height: 70px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 1.8rem;
+        font-size: 2rem;
         font-weight: 600;
         box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
     }
@@ -91,19 +91,19 @@
     }
 
     .student-details h5 {
-        margin: 0 0 5px 0;
-        font-size: 1.2rem;
+        margin: 0 0 8px 0;
+        font-size: 1.4rem;
         font-weight: 600;
         color: #333;
     }
 
     .student-details p {
-        margin: 5px 0;
+        margin: 8px 0;
         color: #666;
-        font-size: 0.95rem;
+        font-size: 1.05rem;
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 8px;
     }
 
     html[dir="rtl"] .student-details p {
@@ -112,13 +112,18 @@
 
     .student-details i {
         color: #667eea;
-        font-size: 1rem;
-        width: 20px;
+        font-size: 1.1rem;
+        width: 24px;
+    }
+
+    .student-details strong {
+        font-weight: 600;
+        margin-right: 5px;
     }
 
     .leave-dates {
-        margin-top: 15px;
-        padding-top: 15px;
+        margin-top: 18px;
+        padding-top: 18px;
         border-top: 1px dashed #e9ecef;
         display: flex;
         gap: 20px;
@@ -131,12 +136,12 @@
 
     .date-badge {
         background: #f8f9fa;
-        padding: 8px 15px;
+        padding: 10px 18px;
         border-radius: 12px;
-        font-size: 0.9rem;
+        font-size: 1rem;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
     }
 
     html[dir="rtl"] .date-badge {
@@ -145,11 +150,13 @@
 
     .date-badge i {
         color: #667eea;
+        font-size: 1.1rem;
     }
 
     .date-badge strong {
         color: #333;
         margin-right: 5px;
+        font-weight: 600;
     }
 
     html[dir="rtl"] .date-badge strong {
@@ -160,23 +167,23 @@
     .form-card {
         background: white;
         border-radius: 20px;
-        padding: 25px 20px;
+        padding: 28px 24px;
         box-shadow: 0 5px 20px rgba(0,0,0,0.05);
         margin-bottom: 20px;
     }
 
     .form-group {
-        margin-bottom: 25px;
+        margin-bottom: 28px;
     }
 
     .form-label {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         font-weight: 600;
         color: #495057;
-        font-size: 1rem;
-        margin-bottom: 10px;
+        font-size: 1.1rem;
+        margin-bottom: 12px;
     }
 
     html[dir="rtl"] .form-label {
@@ -185,15 +192,15 @@
 
     .form-label i {
         color: #667eea;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
 
     .form-control {
         width: 100%;
-        padding: 15px;
+        padding: 16px 18px;
         border: 2px solid #e9ecef;
         border-radius: 15px;
-        font-size: 16px;
+        font-size: 1rem;
         transition: all 0.3s ease;
         background: #f8f9fa;
     }
@@ -214,12 +221,12 @@
     }
 
     .helper-text {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         color: #6c757d;
-        margin-top: 8px;
+        margin-top: 10px;
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 6px;
     }
 
     html[dir="rtl"] .helper-text {
@@ -228,18 +235,20 @@
 
     .helper-text i {
         color: #667eea;
-        font-size: 0.9rem;
+        font-size: 1rem;
     }
 
     textarea.form-control {
-        min-height: 120px;
+        min-height: 130px;
         resize: vertical;
+        font-size: 1rem;
+        line-height: 1.6;
     }
 
     .action-buttons {
         display: flex;
         gap: 15px;
-        margin-top: 30px;
+        margin-top: 35px;
     }
 
     .btn-checkin {
@@ -247,18 +256,18 @@
         background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         color: white;
         border: none;
-        padding: 16px;
+        padding: 18px;
         border-radius: 15px;
-        font-size: 1.1rem;
+        font-size: 1.15rem;
         font-weight: 600;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
+        gap: 12px;
         cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
-        min-height: 55px;
+        min-height: 60px;
         border: none;
     }
 
@@ -278,7 +287,7 @@
     }
 
     .btn-checkin i {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
 
     .btn-cancel {
@@ -286,18 +295,18 @@
         background: #6c757d;
         color: white;
         border: none;
-        padding: 16px 25px;
+        padding: 18px 25px;
         border-radius: 15px;
-        font-size: 1.1rem;
+        font-size: 1.15rem;
         font-weight: 600;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 10px;
         cursor: pointer;
         transition: all 0.3s ease;
         text-decoration: none;
-        min-height: 55px;
+        min-height: 60px;
     }
 
     .btn-cancel:hover {
@@ -313,32 +322,32 @@
 
     .quick-times {
         display: flex;
-        gap: 10px;
+        gap: 12px;
         flex-wrap: wrap;
-        margin: 15px 0;
+        margin: 20px 0 25px;
     }
 
     .quick-time-btn {
         background: #f8f9fa;
         border: 2px solid #e9ecef;
         border-radius: 12px;
-        padding: 12px 15px;
-        font-size: 0.9rem;
+        padding: 14px 18px;
+        font-size: 1rem;
         font-weight: 600;
         color: #495057;
         cursor: pointer;
         transition: all 0.3s ease;
         flex: 1 1 auto;
-        min-width: 70px;
+        min-width: 80px;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 5px;
+        gap: 8px;
     }
 
     .quick-time-btn i {
         color: #667eea;
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
 
     .quick-time-btn:hover {
@@ -381,12 +390,13 @@
     }
 
     .alert {
-        padding: 15px;
+        padding: 16px 18px;
         border-radius: 12px;
         margin-bottom: 20px;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        font-size: 1rem;
     }
 
     html[dir="rtl"] .alert {
@@ -416,7 +426,88 @@
     }
 
     .alert i {
+        font-size: 1.3rem;
+    }
+
+    /* ========== ENHANCED URDU FONT SIZES ========== */
+    /* RTL/Urdu Specific - Increased Font Sizes */
+    html[dir="rtl"] body,
+    html[dir="rtl"] .student-details,
+    html[dir="rtl"] .student-details p,
+    html[dir="rtl"] .date-badge,
+    html[dir="rtl"] .form-label,
+    html[dir="rtl"] .form-control,
+    html[dir="rtl"] .helper-text,
+    html[dir="rtl"] .quick-time-btn,
+    html[dir="rtl"] .alert {
+        font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', -apple-system, BlinkMacSystemFont, serif;
+        line-height: 1.8;
+    }
+
+    /* Increased base font size for Urdu */
+    html[dir="rtl"] .student-details h5 {
+        font-size: 1.6rem;
+        line-height: 1.6;
+    }
+
+    html[dir="rtl"] .student-details p {
+        font-size: 1.15rem;
+        line-height: 1.7;
+    }
+
+    html[dir="rtl"] .date-badge {
+        font-size: 1.05rem;
+        padding: 12px 20px;
+    }
+
+    html[dir="rtl"] .form-label {
         font-size: 1.2rem;
+    }
+
+    html[dir="rtl"] .form-control {
+        font-size: 1.1rem;
+        padding: 18px 20px;
+    }
+
+    html[dir="rtl"] textarea.form-control {
+        font-size: 1.1rem;
+        line-height: 1.7;
+    }
+
+    html[dir="rtl"] .helper-text {
+        font-size: 1rem;
+    }
+
+    html[dir="rtl"] .quick-time-btn {
+        font-size: 1.05rem;
+        padding: 16px 20px;
+    }
+
+    html[dir="rtl"] .alert {
+        font-size: 1.05rem;
+        line-height: 1.6;
+    }
+
+    html[dir="rtl"] .btn-checkin,
+    html[dir="rtl"] .btn-cancel {
+        font-size: 1.2rem;
+        padding: 20px;
+    }
+
+    html[dir="rtl"] .page-header h4 {
+        font-size: 1.9rem;
+    }
+
+    html[dir="rtl"] .student-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 2.2rem;
+    }
+
+    /* Urdu specific text rendering improvements */
+    html[dir="rtl"] * {
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
     }
 
     @media (max-width: 480px) {
@@ -425,22 +516,44 @@
         }
 
         .page-header h4 {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
+        }
+        
+        html[dir="rtl"] .page-header h4 {
+            font-size: 1.7rem;
         }
 
         .student-avatar {
-            width: 50px;
-            height: 50px;
-            font-size: 1.5rem;
+            width: 55px;
+            height: 55px;
+            font-size: 1.6rem;
+        }
+        
+        html[dir="rtl"] .student-avatar {
+            width: 65px;
+            height: 65px;
+            font-size: 1.9rem;
         }
 
         .student-details h5 {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+        }
+        
+        html[dir="rtl"] .student-details h5 {
+            font-size: 1.4rem;
+        }
+
+        .student-details p {
+            font-size: 0.95rem;
+        }
+        
+        html[dir="rtl"] .student-details p {
+            font-size: 1.05rem;
         }
 
         .leave-dates {
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .action-buttons {
@@ -450,16 +563,59 @@
         .btn-cancel {
             text-align: center;
         }
+        
+        html[dir="rtl"] .btn-checkin,
+        html[dir="rtl"] .btn-cancel {
+            font-size: 1.1rem;
+            padding: 16px;
+        }
 
         .quick-times {
             flex-wrap: nowrap;
             overflow-x: auto;
-            padding-bottom: 10px;
+            padding-bottom: 12px;
             -webkit-overflow-scrolling: touch;
         }
 
         .quick-time-btn {
             flex: 0 0 auto;
+        }
+        
+        html[dir="rtl"] .quick-time-btn {
+            font-size: 0.95rem;
+            padding: 14px 16px;
+        }
+        
+        .form-card {
+            padding: 20px 16px;
+        }
+        
+        html[dir="rtl"] .form-control {
+            font-size: 1rem;
+            padding: 16px 18px;
+        }
+    }
+
+    /* Tablet adjustments */
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .checkin-container {
+            max-width: 700px;
+        }
+        
+        html[dir="rtl"] .student-details h5 {
+            font-size: 1.7rem;
+        }
+        
+        html[dir="rtl"] .student-details p {
+            font-size: 1.2rem;
+        }
+        
+        html[dir="rtl"] .form-label {
+            font-size: 1.25rem;
+        }
+        
+        html[dir="rtl"] .form-control {
+            font-size: 1.15rem;
         }
     }
 
@@ -477,6 +633,12 @@
     html[dir="rtl"] .ms-2 {
         margin-right: 0.5rem !important;
         margin-left: 0 !important;
+    }
+    
+    /* Better spacing for Urdu text */
+    html[dir="rtl"] .student-card,
+    html[dir="rtl"] .form-card {
+        letter-spacing: 0.3px;
     }
 </style>
 
@@ -561,8 +723,8 @@
         </div>
 
         {% if leave.reason %}
-        <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 12px;">
-            <p style="margin: 0; color: #666; font-size: 0.95rem;">
+        <div style="margin-top: 18px; padding: 12px; background: #f8f9fa; border-radius: 12px;">
+            <p style="margin: 0; color: #666; font-size: 1rem; line-height: 1.6;">
                 <i class="bi bi-chat-dots" style="color: #667eea; margin-right: 8px;"></i>
                 <strong data-trans="reason">Reason:</strong> {{ leave.reason }}
             </p>
@@ -647,16 +809,16 @@
 
             {% else %}
             <!-- Disabled Form Message -->
-            <div style="text-align: center; padding: 20px;">
-                <i class="bi bi-info-circle" style="font-size: 3rem; color: #6c757d;"></i>
-                <h5 style="margin-top: 15px; color: #6c757d;">
+            <div style="text-align: center; padding: 25px;">
+                <i class="bi bi-info-circle" style="font-size: 3.5rem; color: #6c757d;"></i>
+                <h5 style="margin-top: 18px; color: #6c757d; font-size: 1.3rem;">
                     {% if leave.check_in_date %}
                         <span data-trans="already_checked_in_title">Student already checked in</span>
                     {% else %}
                         <span data-trans="checkin_not_available">Check-in not available</span>
                     {% endif %}
                 </h5>
-                <a href="{% url 'leave_list' %}" class="btn btn-primary mt-3">
+                <a href="{% url 'leave_list' %}" class="btn btn-primary mt-3" style="padding: 12px 24px; font-size: 1rem;">
                     <i class="bi bi-arrow-left"></i> <span data-trans="back_to_list">Back to List</span>
                 </a>
             </div>

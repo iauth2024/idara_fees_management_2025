@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <div class="table-responsive">
     <table class="table table-bordered table-hover">
@@ -24,38 +25,38 @@
         </thead>
         <tbody>
             {% for leave in leaves %}
-            <tr>
+            <tr class="leave-row">
                 <td>
                     <div class="d-flex align-items-center">
                         <div class="student-avatar me-2">
                             {{ leave.student.name|first|upper }}
                         </div>
                         <div>
-                            <strong>{{ leave.student.name }}</strong>
+                            <strong class="student-name">{{ leave.student.name }}</strong>
                             <br>
-                            <small class="text-muted">{{ leave.student.admission_number }}</small>
+                            <small class="text-muted admission-number">{{ leave.student.admission_number }}</small>
                         </div>
                     </div>
                 </td>
                 <td>
-                    <div>
+                    <div class="date-display start-date">
                         <i class="bi bi-calendar3 text-primary me-1"></i>
                         {{ leave.start_date|date:"d M Y" }}
                     </div>
                     {% if leave.start_time %}
-                    <small class="text-muted">
+                    <small class="text-muted time-display">
                         <i class="bi bi-clock me-1"></i>
                         {{ leave.start_time|time:"H:i" }}
                     </small>
                     {% endif %}
                 </td>
                 <td>
-                    <div>
+                    <div class="date-display end-date">
                         <i class="bi bi-calendar3 text-danger me-1"></i>
                         {{ leave.end_date|date:"d M Y" }}
                     </div>
                     {% if leave.end_time %}
-                    <small class="text-muted">
+                    <small class="text-muted time-display">
                         <i class="bi bi-clock me-1"></i>
                         {{ leave.end_time|time:"H:i" }}
                     </small>
@@ -64,14 +65,14 @@
                 <td class="text-center">
                     <div class="btn-group" role="group">
                         <a href="{% url 'approve_leave' leave.id %}" 
-                           class="btn btn-success btn-sm"
+                           class="btn btn-success btn-sm approve-btn"
                            title="{% if LANGUAGE_CODE == 'ur' %}منظور کریں{% else %}Approve{% endif %}"
                            onclick="return confirm('{% if LANGUAGE_CODE == 'ur' %}کیا آپ اس چھٹی کو منظور کرنا چاہتے ہیں؟{% else %}Are you sure you want to approve this leave?{% endif %}')">
                             <i class="bi bi-check-circle"></i>
                             <span data-trans="approve">Approve</span>
                         </a>
                         <a href="{% url 'reject_leave' leave.id %}" 
-                           class="btn btn-danger btn-sm"
+                           class="btn btn-danger btn-sm reject-btn"
                            title="{% if LANGUAGE_CODE == 'ur' %}مسترد کریں{% else %}Reject{% endif %}"
                            onclick="return confirm('{% if LANGUAGE_CODE == 'ur' %}کیا آپ اس چھٹی کو مسترد کرنا چاہتے ہیں؟{% else %}Are you sure you want to reject this leave?{% endif %}')">
                             <i class="bi bi-x-circle"></i>
@@ -83,8 +84,10 @@
             {% empty %}
             <tr>
                 <td colspan="4" class="text-center py-5">
-                    <i class="bi bi-inbox" style="font-size: 3rem; color: #dee2e6; display: block; margin-bottom: 10px;"></i>
-                    <p class="text-muted mb-0" data-trans="no_pending">No pending approvals.</p>
+                    <div class="empty-state">
+                        <i class="bi bi-inbox" style="font-size: 3.5rem; color: #dee2e6; display: block; margin-bottom: 15px;"></i>
+                        <p class="text-muted mb-0" data-trans="no_pending">No pending approvals.</p>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
@@ -94,8 +97,8 @@
 
 <style>
     .student-avatar {
-        width: 35px;
-        height: 35px;
+        width: 40px;
+        height: 40px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-radius: 50%;
         display: flex;
@@ -105,6 +108,7 @@
         font-weight: 600;
         font-size: 1rem;
         box-shadow: 0 2px 5px rgba(102, 126, 234, 0.3);
+        flex-shrink: 0;
     }
 
     .table th {
@@ -112,13 +116,16 @@
         color: white;
         font-weight: 600;
         text-transform: uppercase;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         letter-spacing: 0.5px;
         border: none !important;
+        padding: 14px 12px;
     }
 
     .table td {
         vertical-align: middle;
+        padding: 14px 12px;
+        font-size: 0.9rem;
     }
 
     .table tbody tr:hover {
@@ -126,17 +133,48 @@
         transition: all 0.3s ease;
     }
 
+    .student-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    .admission-number {
+        font-size: 0.8rem;
+    }
+
+    .date-display {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .time-display {
+        font-size: 0.75rem;
+    }
+
+    .btn-group {
+        display: inline-flex;
+        gap: 8px;
+    }
+
     .btn-group .btn {
-        margin: 0 2px;
-        border-radius: 20px !important;
-        padding: 5px 15px;
+        margin: 0;
+        border-radius: 25px !important;
+        padding: 6px 18px;
         font-size: 0.85rem;
         transition: all 0.3s ease;
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .btn-group .btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn-group .btn:active {
+        transform: scale(0.97);
     }
 
     .btn-success {
@@ -149,6 +187,259 @@
         border: none;
     }
 
+    .empty-state {
+        text-align: center;
+        padding: 30px 20px;
+    }
+
+    /* ========== ENHANCED URDU FONT SIZES ========== */
+    html[dir="rtl"] {
+        font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', -apple-system, BlinkMacSystemFont, serif;
+    }
+
+    html[dir="rtl"] .table th {
+        font-size: 1rem;
+        padding: 16px 14px;
+        letter-spacing: 0.8px;
+    }
+
+    html[dir="rtl"] .table td {
+        font-size: 1rem;
+        padding: 16px 14px;
+        line-height: 1.6;
+    }
+
+    html[dir="rtl"] .student-avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 1.2rem;
+    }
+
+    html[dir="rtl"] .student-name {
+        font-size: 1.1rem;
+    }
+
+    html[dir="rtl"] .admission-number {
+        font-size: 0.9rem;
+    }
+
+    html[dir="rtl"] .date-display {
+        font-size: 1rem;
+    }
+
+    html[dir="rtl"] .time-display {
+        font-size: 0.85rem;
+    }
+
+    html[dir="rtl"] .btn-group .btn {
+        font-size: 0.95rem;
+        padding: 8px 20px;
+        min-height: 42px;
+    }
+
+    html[dir="rtl"] .btn-group .btn i {
+        font-size: 1rem;
+    }
+
+    /* ========== MOBILE RESPONSIVE ========== */
+    @media (max-width: 768px) {
+        .table th {
+            font-size: 0.8rem;
+            padding: 10px 8px;
+            white-space: nowrap;
+        }
+        
+        .table td {
+            padding: 10px 8px;
+            font-size: 0.8rem;
+        }
+        
+        html[dir="rtl"] .table th {
+            font-size: 0.9rem;
+        }
+        
+        html[dir="rtl"] .table td {
+            font-size: 0.9rem;
+        }
+        
+        .student-avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .student-avatar {
+            width: 38px;
+            height: 38px;
+            font-size: 0.95rem;
+        }
+        
+        .student-name {
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .student-name {
+            font-size: 0.95rem;
+        }
+        
+        .admission-number {
+            font-size: 0.7rem;
+        }
+        
+        html[dir="rtl"] .admission-number {
+            font-size: 0.8rem;
+        }
+        
+        .date-display {
+            font-size: 0.8rem;
+        }
+        
+        html[dir="rtl"] .date-display {
+            font-size: 0.9rem;
+        }
+        
+        .time-display {
+            font-size: 0.7rem;
+        }
+        
+        html[dir="rtl"] .time-display {
+            font-size: 0.8rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+        
+        .btn-group .btn {
+            width: 100%;
+            justify-content: center;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            min-height: 34px;
+        }
+        
+        html[dir="rtl"] .btn-group .btn {
+            font-size: 0.9rem;
+            padding: 8px 16px;
+        }
+        
+        .empty-state i {
+            font-size: 2.5rem !important;
+        }
+        
+        .empty-state p {
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .empty-state p {
+            font-size: 0.95rem;
+        }
+    }
+    
+    /* Small Mobile */
+    @media (max-width: 576px) {
+        .table th {
+            font-size: 0.7rem;
+            padding: 8px 6px;
+        }
+        
+        .table td {
+            padding: 8px 6px;
+            font-size: 0.75rem;
+        }
+        
+        html[dir="rtl"] .table th {
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .table td {
+            font-size: 0.85rem;
+        }
+        
+        .student-avatar {
+            width: 28px;
+            height: 28px;
+            font-size: 0.75rem;
+        }
+        
+        html[dir="rtl"] .student-avatar {
+            width: 34px;
+            height: 34px;
+            font-size: 0.85rem;
+        }
+        
+        .student-name {
+            font-size: 0.75rem;
+        }
+        
+        html[dir="rtl"] .student-name {
+            font-size: 0.85rem;
+        }
+        
+        .btn-group .btn span {
+            display: none;
+        }
+        
+        .btn-group .btn i {
+            margin: 0;
+            font-size: 1rem;
+        }
+        
+        .btn-group .btn {
+            padding: 6px 8px;
+            min-width: 40px;
+            justify-content: center;
+        }
+        
+        html[dir="rtl"] .btn-group .btn {
+            padding: 8px 12px;
+        }
+        
+        .date-display i {
+            display: none;
+        }
+        
+        .time-display i {
+            display: none;
+        }
+        
+        .table th i {
+            display: none;
+        }
+    }
+    
+    /* Tablet Responsive */
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .table th {
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .table th {
+            font-size: 0.95rem;
+        }
+        
+        .student-avatar {
+            width: 36px;
+            height: 36px;
+        }
+        
+        html[dir="rtl"] .student-avatar {
+            width: 42px;
+            height: 42px;
+        }
+        
+        .btn-group .btn {
+            padding: 5px 15px;
+        }
+        
+        html[dir="rtl"] .btn-group .btn {
+            font-size: 0.9rem;
+        }
+    }
+    
     /* RTL Specific */
     html[dir="rtl"] .me-1,
     html[dir="rtl"] .me-2 {
@@ -166,16 +457,70 @@
         margin-left: 0.5rem !important;
         margin-right: 0 !important;
     }
-
-    @media (max-width: 768px) {
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+    
+    html[dir="rtl"] .date-display i,
+    html[dir="rtl"] .time-display i {
+        margin-left: 0.25rem;
+        margin-right: 0;
+    }
+    
+    /* Touch-friendly improvements */
+    .btn-group .btn, .table tbody tr {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .btn-group .btn:active {
+        transform: scale(0.97);
+    }
+    
+    .table tbody tr:active {
+        background: linear-gradient(135deg, #eceeff 0%, #e8dcff 100%);
+    }
+    
+    /* Animation */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-10px);
         }
-        
-        .btn-group .btn {
-            width: 100%;
+        to {
+            opacity: 1;
+            transform: translateX(0);
         }
+    }
+    
+    tbody tr {
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    /* Scrollbar for table on mobile */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 12px;
+    }
+    
+    .table-responsive::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 3px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+    
+    /* Prevent zoom on input focus */
+    input, select, textarea, button {
+        font-size: 16px !important;
     }
 </style>

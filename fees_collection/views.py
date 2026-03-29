@@ -1434,6 +1434,16 @@ from django.contrib.auth.decorators import login_required
 
 
 
+import json
+import requests
+from decimal import Decimal
+from django.db import models
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+
+
+
 @login_required
 @staff_member_required
 def send_fee_due_sms(request):
@@ -1448,64 +1458,95 @@ def send_fee_due_sms(request):
         if not student_ids:
             return JsonResponse({"error": "No students selected"}, status=400)
 
-        students = Student.objects.filter(id__in=student_ids)
+        # Get students with payment calculations
+        students = Student.objects.filter(id__in=student_ids).annotate(
+            total_paid=Coalesce(Sum('payment__amount'), Decimal('0'))
+        ).annotate(
+            expected_fee=ExpressionWrapper(
+                F('monthly_fees') * months_due,
+                output_field=DecimalField()
+            )
+        ).annotate(
+            total_due=ExpressionWrapper(
+                F('expected_fee') - F('total_paid'),
+                output_field=DecimalField()
+            )
+        )
+
+        # Initialize SMS API
+        sms_api = SMSAPI()
+        
+        # Check balance first
+        balance_check = sms_api.check_balance()
+        if not balance_check.get('success'):
+            return JsonResponse({
+                "status": "error",
+                "message": f"Cannot send SMS: {balance_check.get('error', 'API connection failed')}"
+            }, status=500)
 
         results = []
+        failed_count = 0
+        skipped_count = 0
 
         for student in students:
+            # Skip if no phone
             if not student.phone:
+                skipped_count += 1
                 continue
 
-            # 🔹 Calculate paid
-            if hasattr(student, 'payments'):
-                total_paid = student.payments.aggregate(
-                    total=models.Sum('amount')
-                )['total'] or Decimal('0')
-            else:
-                total_paid = student.payment_set.aggregate(
-                    total=models.Sum('amount')
-                )['total'] or Decimal('0')
+            # Get calculated due amount
+            due_amount = student.total_due
 
-            monthly_fee = student.monthly_fees or Decimal('0')
-            expected_amount = monthly_fee * months_due
-            due_amount = expected_amount - total_paid
-
+            # Skip if no due
             if due_amount <= 0:
+                skipped_count += 1
                 continue
 
-            admission_no = student.admission_number or 'N/A'
+            admission_no = student.admission_number or '0'
+            
+            # Format message using template
+            message = SMSTemplates.fee_due_reminder(
+                student_name=student.name,
+                due_amount=due_amount,
+                months_due=months_due,
+                admission_no=admission_no
+            )
 
-            # ✅ EXACT TEMPLATE MATCH (DLT REQUIRED)
-            message = f"Fee due of Rs {int(due_amount)} for {student.name} (Adm No:{admission_no}) pending. Ignore if paid. Idara Ashraful Uloom Trust"
-
-            url = "https://smslogin.co/v3/api.php"
-
-            params = {
-                "username": "AUTHYD1",
-                "apikey": "333e1783fe5aae5fd76d",
-                "senderid": "AUTHYD",  # ✅ must match DLT
-                "mobile": student.phone,
-                "message": message,
-                "templateid": "1707177381044708917"  # ✅ your template ID
-            }
-
-            response = requests.get(url, params=params)
+            # Send SMS
+            sms_result = sms_api.send_sms(student.phone, message)
 
             results.append({
                 "name": student.name,
                 "mobile": student.phone,
                 "due": int(due_amount),
-                "response": response.text
+                "branch": student.branch,
+                "course": student.course,
+                "section": student.section,
+                "message": message,
+                "success": sms_result.get('success', False),
+                "response": sms_result.get('response', ''),
+                "message_id": sms_result.get('message_id', '')
             })
+            
+            if not sms_result.get('success'):
+                failed_count += 1
 
         return JsonResponse({
             "status": "success",
-            "sent_count": len(results),
+            "sent_count": len(results) - failed_count,
+            "failed_count": failed_count,
+            "skipped_count": skipped_count,
+            "total_selected": len(student_ids),
+            "balance_remaining": balance_check.get('credits', 'Unknown'),
             "results": results
         })
 
     except Exception as e:
+        logger.exception("Error in send_fee_due_sms")
         return JsonResponse({
             "status": "error",
             "message": str(e)
         }, status=500)
+# Import your SMS utilities
+from .sms_utils import SMSAPI
+from .sms_templates import SMSTemplates

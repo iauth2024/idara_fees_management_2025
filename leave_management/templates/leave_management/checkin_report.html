@@ -1,5 +1,6 @@
 {% extends "leave_management/base_leave.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}Check-In Report{% endblock %}
 
@@ -8,8 +9,8 @@
     .page-title {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 20px;
-        border-radius: 15px;
+        padding: 25px;
+        border-radius: 20px;
         margin-bottom: 25px;
         box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         display: flex;
@@ -22,7 +23,7 @@
     }
 
     .page-title i {
-        font-size: 2.5rem;
+        font-size: 2.8rem;
     }
 
     .page-title h3 {
@@ -37,7 +38,7 @@
         gap: 10px;
         margin: 30px 0 20px 0;
         padding-bottom: 10px;
-        border-bottom: 2px solid;
+        border-bottom: 3px solid;
     }
 
     html[dir="rtl"] .section-header {
@@ -45,12 +46,12 @@
     }
 
     .section-header i {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
     }
 
     .section-header h5 {
         margin: 0;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         font-weight: 600;
     }
 
@@ -78,6 +79,7 @@
     table {
         width: 100%;
         border-collapse: collapse;
+        min-width: 600px;
     }
 
     th {
@@ -87,16 +89,19 @@
         color: #495057;
         text-align: {% if LANGUAGE_CODE == 'ur' %}right{% else %}left{% endif %};
         border-bottom: 2px solid #dee2e6;
+        font-size: 0.9rem;
     }
 
     td {
         padding: 12px 15px;
         border-bottom: 1px solid #e9ecef;
         color: #212529;
+        font-size: 0.9rem;
     }
 
     tr:hover {
         background: #f8f9fa;
+        transition: all 0.3s ease;
     }
 
     .badge {
@@ -122,18 +127,24 @@
         color: #721c24;
     }
 
+    .badge-info {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
     .action-btn {
-        padding: 8px 16px;
-        border-radius: 8px;
+        padding: 8px 18px;
+        border-radius: 10px;
         font-size: 0.9rem;
         font-weight: 600;
         text-decoration: none;
         transition: all 0.3s ease;
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: 8px;
         border: none;
         cursor: pointer;
+        min-height: 40px;
     }
 
     html[dir="rtl"] .action-btn {
@@ -152,6 +163,10 @@
         color: white;
     }
 
+    .btn-checkin:active {
+        transform: scale(0.97);
+    }
+
     .btn-view {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
@@ -168,10 +183,13 @@
         text-align: center;
         padding: 40px 20px;
         color: #6c757d;
+        background: white;
+        border-radius: 15px;
+        margin-bottom: 30px;
     }
 
     .empty-state i {
-        font-size: 3rem;
+        font-size: 3.5rem;
         color: #dee2e6;
         margin-bottom: 15px;
     }
@@ -179,7 +197,7 @@
     .search-box {
         background: white;
         border-radius: 15px;
-        padding: 20px;
+        padding: 25px;
         margin-bottom: 30px;
         box-shadow: 0 5px 20px rgba(0,0,0,0.05);
     }
@@ -192,12 +210,19 @@
     .search-box input {
         border: 2px solid #e9ecef;
         border-radius: 10px 0 0 10px;
-        padding: 12px;
+        padding: 12px 15px;
         font-size: 1rem;
+        transition: all 0.3s ease;
     }
 
     html[dir="rtl"] .search-box input {
         border-radius: 0 10px 10px 0;
+    }
+
+    .search-box input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        outline: none;
     }
 
     .search-box button {
@@ -206,6 +231,7 @@
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
         font-weight: 600;
+        min-height: 48px;
     }
 
     html[dir="rtl"] .search-box button {
@@ -217,33 +243,315 @@
         box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
     }
 
+    /* ========== ENHANCED URDU FONT SIZES ========== */
+    html[dir="rtl"] {
+        font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', -apple-system, BlinkMacSystemFont, serif;
+    }
+
+    html[dir="rtl"] .page-title h3 {
+        font-size: 2rem;
+        line-height: 1.6;
+    }
+
+    html[dir="rtl"] .section-header h5 {
+        font-size: 1.6rem;
+    }
+
+    html[dir="rtl"] th {
+        font-size: 1rem;
+        padding: 16px;
+    }
+
+    html[dir="rtl"] td {
+        font-size: 1rem;
+        padding: 14px 16px;
+        line-height: 1.6;
+    }
+
+    html[dir="rtl"] .badge {
+        font-size: 0.95rem;
+        padding: 7px 14px;
+    }
+
+    html[dir="rtl"] .action-btn {
+        font-size: 1rem;
+        padding: 10px 20px;
+        min-height: 44px;
+    }
+
+    html[dir="rtl"] .search-box input {
+        font-size: 1rem;
+        padding: 14px 18px;
+    }
+
+    html[dir="rtl"] .search-box button {
+        font-size: 1rem;
+        padding: 14px 28px;
+    }
+
+    html[dir="rtl"] .empty-state p {
+        font-size: 1.05rem;
+    }
+
+    /* ========== MOBILE RESPONSIVE ========== */
     @media (max-width: 768px) {
+        .page-title {
+            padding: 18px;
+        }
+        
         .page-title h3 {
             font-size: 1.4rem;
+        }
+        
+        html[dir="rtl"] .page-title h3 {
+            font-size: 1.6rem;
         }
 
         .page-title i {
             font-size: 2rem;
         }
 
-        .section-header h5 {
-            font-size: 1.1rem;
+        .section-header {
+            margin: 20px 0 15px 0;
         }
-
+        
+        .section-header h5 {
+            font-size: 1.2rem;
+        }
+        
+        html[dir="rtl"] .section-header h5 {
+            font-size: 1.4rem;
+        }
+        
+        .section-header i {
+            font-size: 1.3rem;
+        }
+        
+        .table-container {
+            padding: 12px;
+        }
+        
         table {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            min-width: 550px;
         }
 
         td, th {
-            padding: 10px;
+            padding: 10px 8px;
+        }
+        
+        html[dir="rtl"] td, 
+        html[dir="rtl"] th {
+            padding: 12px 10px;
         }
 
         .action-btn {
             padding: 6px 12px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            min-height: 36px;
+        }
+        
+        html[dir="rtl"] .action-btn {
+            font-size: 0.95rem;
+            padding: 8px 16px;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+        }
+        
+        html[dir="rtl"] .badge {
+            font-size: 0.85rem;
+        }
+        
+        .search-box {
+            padding: 20px;
+        }
+        
+        .search-box input {
+            padding: 10px 12px;
+            font-size: 0.9rem;
+        }
+        
+        .search-box button {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+        
+        .empty-state i {
+            font-size: 2.5rem;
+        }
+        
+        .empty-state p {
+            font-size: 0.9rem;
+        }
+        
+        html[dir="rtl"] .empty-state p {
+            font-size: 1rem;
         }
     }
-
+    
+    /* Small Mobile */
+    @media (max-width: 576px) {
+        .page-title {
+            padding: 15px;
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .page-title i {
+            font-size: 1.8rem;
+        }
+        
+        .page-title h3 {
+            font-size: 1.3rem;
+        }
+        
+        html[dir="rtl"] .page-title h3 {
+            font-size: 1.5rem;
+        }
+        
+        .section-header {
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .section-header .badge {
+            margin-top: 5px;
+        }
+        
+        .action-btn span {
+            display: none;
+        }
+        
+        .action-btn i {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        
+        .action-btn {
+            padding: 8px 12px;
+            min-width: 40px;
+            justify-content: center;
+        }
+        
+        html[dir="rtl"] .action-btn {
+            padding: 8px 12px;
+        }
+        
+        .search-box .input-group {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .search-box input {
+            border-radius: 10px !important;
+            text-align: center;
+        }
+        
+        .search-box button {
+            border-radius: 10px !important;
+            width: 100%;
+        }
+        
+        table {
+            font-size: 0.75rem;
+            min-width: 500px;
+        }
+        
+        td, th {
+            padding: 8px 6px;
+        }
+        
+        .badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+        }
+    }
+    
+    /* Tablet Responsive */
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .page-title h3 {
+            font-size: 1.6rem;
+        }
+        
+        html[dir="rtl"] .page-title h3 {
+            font-size: 1.8rem;
+        }
+        
+        .section-header h5 {
+            font-size: 1.3rem;
+        }
+        
+        html[dir="rtl"] .section-header h5 {
+            font-size: 1.5rem;
+        }
+        
+        th, td {
+            font-size: 0.9rem;
+        }
+        
+        html[dir="rtl"] th, 
+        html[dir="rtl"] td {
+            font-size: 1rem;
+        }
+    }
+    
+    /* Touch-friendly improvements */
+    .action-btn, .search-box button, tr {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .action-btn:active {
+        transform: scale(0.97);
+    }
+    
+    tr:active {
+        background: #f0f0f0;
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .page-title, .search-box, .table-container, .empty-state {
+        animation: fadeInUp 0.4s ease-out;
+    }
+    
+    /* Scrollbar for table on mobile */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table-container::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+    
+    .table-container::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 3px;
+    }
+    
+    .table-container::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+    
     /* RTL Specific */
     html[dir="rtl"] .me-2 {
         margin-left: 0.5rem !important;
@@ -253,6 +561,22 @@
     html[dir="rtl"] .ms-2 {
         margin-right: 0.5rem !important;
         margin-left: 0 !important;
+    }
+    
+    html[dir="rtl"] .ms-auto {
+        margin-right: auto !important;
+        margin-left: 0 !important;
+    }
+    
+    /* Prevent zoom on input focus */
+    input, select, textarea, button {
+        font-size: 16px !important;
+    }
+    
+    hr {
+        margin: 2rem 0;
+        border: 0;
+        border-top: 2px solid #e9ecef;
     }
 </style>
 {% endblock %}
@@ -291,39 +615,47 @@
 
 {% if today_returns %}
 <div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th data-trans="admission_no">Admission No</th>
-                <th data-trans="student_name">Student Name</th>
-                <th data-trans="branch">Branch</th>
-                <th data-trans="course">Course</th>
-                <th data-trans="section">Section</th>
-                <th data-trans="leave_dates">Leave Dates</th>
-                <th data-trans="actions">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for leave in today_returns %}
-            <tr>
-                <td>{{ leave.student.admission_number }}</td>
-                <td>{{ leave.student.name }}</td>
-                <td>{{ leave.student.branch }}</td>
-                <td>{{ leave.student.course }}</td>
-                <td>{{ leave.student.section }}</td>
-                <td>
-                    {{ leave.start_date|date:"d/m" }} - {{ leave.end_date|date:"d/m" }}
-                </td>
-                <td>
-                    <a href="{% url 'checkin_leave' leave.id %}" class="action-btn btn-checkin">
-                        <i class="bi bi-box-arrow-in-right"></i>
-                        <span data-trans="checkin">Check In</span>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+         <table>
+            <thead>
+                 <tr>
+                    <th data-trans="admission_no">Admission No</th>
+                    <th data-trans="student_name">Student Name</th>
+                    <th data-trans="branch">Branch</th>
+                    <th data-trans="course">Course</th>
+                    <th data-trans="section">Section</th>
+                    <th data-trans="leave_dates">Leave Dates</th>
+                    <th data-trans="actions">Actions</th>
+                 </tr>
+            </thead>
+            <tbody>
+                {% for leave in today_returns %}
+                <tr>
+                    <td><span class="badge bg-secondary">{{ leave.student.admission_number }}</span></td>
+                    <td>
+                        <strong>{{ leave.student.name }}</strong>
+                        {% if leave.student.branch %}
+                        <br><small class="text-muted">{{ leave.student.branch }}</small>
+                        {% endif %}
+                    </td>
+                    <td>{{ leave.student.branch }}</td>
+                    <td>{{ leave.student.course|default:"-" }}</td>
+                    <td>{{ leave.student.section|default:"-" }}</td>
+                    <td>
+                        <i class="bi bi-calendar3"></i>
+                        {{ leave.start_date|date:"d/m" }} - {{ leave.end_date|date:"d/m" }}
+                    </td>
+                    <td>
+                        <a href="{% url 'checkin_leave' leave.id %}" class="action-btn btn-checkin">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span data-trans="checkin">Check In</span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% else %}
 <div class="empty-state">
@@ -345,44 +677,52 @@
 
 {% if overdue %}
 <div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th data-trans="admission_no">Admission No</th>
-                <th data-trans="student_name">Student Name</th>
-                <th data-trans="branch">Branch</th>
-                <th data-trans="course">Course</th>
-                <th data-trans="section">Section</th>
-                <th data-trans="return_date">Return Date</th>
-                <th data-trans="days_overdue">Days Overdue</th>
-                <th data-trans="actions">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for leave in overdue %}
-            <tr>
-                <td>{{ leave.student.admission_number }}</td>
-                <td>{{ leave.student.name }}</td>
-                <td>{{ leave.student.branch }}</td>
-                <td>{{ leave.student.course }}</td>
-                <td>{{ leave.student.section }}</td>
-                <td>
-                    {{ leave.end_date|date:"d M Y" }}
-                    <small class="text-muted">{{ leave.end_time|time:"H:i" }}</small>
-                </td>
-                <td>
-                    <span class="badge badge-danger">{{ leave.end_date|timesince }}</span>
-                </td>
-                <td>
-                    <a href="{% url 'checkin_leave' leave.id %}" class="action-btn btn-checkin">
-                        <i class="bi bi-box-arrow-in-right"></i>
-                        <span data-trans="checkin_now">Check In Now</span>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                 <tr>
+                    <th data-trans="admission_no">Admission No</th>
+                    <th data-trans="student_name">Student Name</th>
+                    <th data-trans="branch">Branch</th>
+                    <th data-trans="course">Course</th>
+                    <th data-trans="section">Section</th>
+                    <th data-trans="return_date">Return Date</th>
+                    <th data-trans="days_overdue">Days Overdue</th>
+                    <th data-trans="actions">Actions</th>
+                 </tr>
+            </thead>
+            <tbody>
+                {% for leave in overdue %}
+                <tr>
+                    <td><span class="badge bg-secondary">{{ leave.student.admission_number }}</span></td>
+                    <td>
+                        <strong>{{ leave.student.name }}</strong>
+                        {% if leave.student.branch %}
+                        <br><small class="text-muted">{{ leave.student.branch }}</small>
+                        {% endif %}
+                    </td>
+                    <td>{{ leave.student.branch }}</td>
+                    <td>{{ leave.student.course|default:"-" }}</td>
+                    <td>{{ leave.student.section|default:"-" }}</td>
+                    <td>
+                        <i class="bi bi-calendar3 text-danger"></i>
+                        {{ leave.end_date|date:"d M Y" }}
+                        <br><small class="text-muted">{{ leave.end_time|time:"H:i" }}</small>
+                    </td>
+                    <td>
+                        <span class="badge badge-danger">{{ leave.end_date|timesince }} ago</span>
+                    </td>
+                    <td>
+                        <a href="{% url 'checkin_leave' leave.id %}" class="action-btn btn-checkin">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span data-trans="checkin_now">Check In Now</span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% else %}
 <div class="empty-state">
@@ -404,40 +744,48 @@
 
 {% if future %}
 <div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th data-trans="admission_no">Admission No</th>
-                <th data-trans="student_name">Student Name</th>
-                <th data-trans="branch">Branch</th>
-                <th data-trans="course">Course</th>
-                <th data-trans="section">Section</th>
-                <th data-trans="return_date">Return Date</th>
-                <th data-trans="actions">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for leave in future %}
-            <tr>
-                <td>{{ leave.student.admission_number }}</td>
-                <td>{{ leave.student.name }}</td>
-                <td>{{ leave.student.branch }}</td>
-                <td>{{ leave.student.course }}</td>
-                <td>{{ leave.student.section }}</td>
-                <td>
-                    {{ leave.end_date|date:"d M Y" }}
-                    <small class="text-muted">{{ leave.end_time|time:"H:i" }}</small>
-                </td>
-                <td>
-                    <a href="{% url 'leave_list' %}" class="action-btn btn-view">
-                        <i class="bi bi-eye"></i>
-                        <span data-trans="view_details">View Details</span>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                 <tr>
+                    <th data-trans="admission_no">Admission No</th>
+                    <th data-trans="student_name">Student Name</th>
+                    <th data-trans="branch">Branch</th>
+                    <th data-trans="course">Course</th>
+                    <th data-trans="section">Section</th>
+                    <th data-trans="return_date">Return Date</th>
+                    <th data-trans="actions">Actions</th>
+                 </tr>
+            </thead>
+            <tbody>
+                {% for leave in future %}
+                <tr>
+                    <td><span class="badge bg-secondary">{{ leave.student.admission_number }}</span></td>
+                    <td>
+                        <strong>{{ leave.student.name }}</strong>
+                        {% if leave.student.branch %}
+                        <br><small class="text-muted">{{ leave.student.branch }}</small>
+                        {% endif %}
+                    </td>
+                    <td>{{ leave.student.branch }}</td>
+                    <td>{{ leave.student.course|default:"-" }}</td>
+                    <td>{{ leave.student.section|default:"-" }}</td>
+                    <td>
+                        <i class="bi bi-calendar3 text-info"></i>
+                        {{ leave.end_date|date:"d M Y" }}
+                        <br><small class="text-muted">{{ leave.end_time|time:"H:i" }}</small>
+                    </td>
+                    <td>
+                        <a href="{% url 'leave_list' %}" class="action-btn btn-view">
+                            <i class="bi bi-eye"></i>
+                            <span data-trans="view_details">View Details</span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% else %}
 <div class="empty-state">
@@ -445,5 +793,32 @@
     <p data-trans="no_future">No future returns scheduled</p>
 </div>
 {% endif %}
+
+<script>
+// Add touch feedback for mobile
+document.addEventListener('DOMContentLoaded', function() {
+    const touchElements = document.querySelectorAll('.action-btn, .search-box button');
+    touchElements.forEach(el => {
+        el.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.98)';
+        });
+        el.addEventListener('touchend', function() {
+            this.style.transform = '';
+        });
+        el.addEventListener('touchcancel', function() {
+            this.style.transform = '';
+        });
+    });
+    
+    // RTL-aware icon adjustments
+    const isRTL = document.documentElement.dir === 'rtl';
+    if (isRTL) {
+        document.querySelectorAll('.badge.ms-auto').forEach(badge => {
+            badge.classList.add('me-auto');
+            badge.classList.remove('ms-auto');
+        });
+    }
+});
+</script>
 
 {% endblock %}

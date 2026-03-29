@@ -3,124 +3,307 @@
 <head>
     <title>Fee Due Reminders</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            margin-top: 0;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .filter-form {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .filter-form label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .filter-form input, .filter-form select {
+            padding: 8px;
+            margin-right: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .filter-form button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .filter-form button:hover {
+            background: #45a049;
+        }
+        .summary-bar {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .summary-info {
+            font-size: 16px;
+        }
+        .summary-info strong {
+            color: #2196F3;
+        }
+        .action-buttons button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        #sendSelectedBtn {
+            background: #ff9800;
+            color: white;
+        }
+        #sendSelectedBtn:hover {
+            background: #f57c00;
+        }
+        #sendAllBtn {
+            background: #2196F3;
+            color: white;
+        }
+        #sendAllBtn:hover {
+            background: #0b7dda;
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 10px;
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px;
             text-align: center;
         }
         th {
             background: #f2f2f2;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
         }
-        button {
-            padding: 8px 15px;
-            margin: 5px;
-            cursor: pointer;
+        tr:hover {
+            background: #f5f5f5;
         }
-        .top-bar {
-            margin-bottom: 15px;
+        .due-amount {
+            color: red;
+            font-weight: bold;
+        }
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none;
+        }
+        .status-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .status-success {
+            background: #4CAF50;
+            color: white;
+        }
+        .status-error {
+            background: #f44336;
+            color: white;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        @media (max-width: 768px) {
+            .filter-form input, .filter-form select {
+                display: block;
+                margin-bottom: 10px;
+                width: 100%;
+            }
+            .summary-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 6px;
+            }
         }
     </style>
 </head>
 <body>
+<div class="container">
+    <h2>💰 Fee Due Reminders</h2>
 
-<h2>Fee Due Reminders</h2>
+    <!-- ✅ FILTER FORM -->
+    <div class="filter-form">
+        <form method="get" id="filterForm">
+            <label>Months Due:</label>
+            <input type="number" id="months_due" name="months_due" value="{{ months_due }}" min="1" required>
+            
+            <label>Branch:</label>
+            <select name="branch">
+                <option value="">All Branches</option>
+                {% for b in branches %}
+                <option value="{{ b }}" {% if b == selected_branch %}selected{% endif %}>{{ b }}</option>
+                {% endfor %}
+            </select>
+            
+            <label>Course:</label>
+            <select name="course">
+                <option value="">All Courses</option>
+                {% for c in courses %}
+                <option value="{{ c }}" {% if c == selected_course %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+            
+            <label>Section:</label>
+            <select name="section">
+                <option value="">All Sections</option>
+                {% for s in sections %}
+                <option value="{{ s }}" {% if s == selected_section %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+            </select>
+            
+            <button type="submit">🔍 Apply Filters</button>
+            <button type="button" onclick="resetFilters()">🔄 Reset</button>
+        </form>
+    </div>
 
-<!-- ✅ FILTER FORM -->
-<form method="get">
+    <!-- ✅ SUMMARY BAR -->
+    <div class="summary-bar">
+        <div class="summary-info">
+            📊 <strong>Total Students:</strong> {{ students|length }} | 
+            💰 <strong>Total Due Amount:</strong> <span style="color:#f44336; font-weight:bold;">₹{{ total_due_amount|floatformat:2 }}</span>
+        </div>
+        <div class="action-buttons">
+            <button id="sendSelectedBtn" onclick="sendSelectedSMS()">📱 Send Selected SMS</button>
+            <button id="sendAllBtn" onclick="sendAllSMS()">📱 Send All SMS</button>
+        </div>
+    </div>
 
-    Months Due:
-    <input type="number" name="months_due" value="{{ months_due }}" min="1">
-
-    Branch:
-    <select name="branch">
-        <option value="">All</option>
-        {% for b in branches %}
-        <option value="{{ b }}" {% if b == selected_branch %}selected{% endif %}>{{ b }}</option>
-        {% endfor %}
-    </select>
-
-    Course:
-    <select name="course">
-        <option value="">All</option>
-        {% for c in courses %}
-        <option value="{{ c }}" {% if c == selected_course %}selected{% endif %}>{{ c }}</option>
-        {% endfor %}
-    </select>
-
-    Section:
-    <select name="section">
-        <option value="">All</option>
-        {% for s in sections %}
-        <option value="{{ s }}" {% if s == selected_section %}selected{% endif %}>{{ s }}</option>
-        {% endfor %}
-    </select>
-
-    <button type="submit">Filter</button>
-
-</form>
-
-<!-- ✅ SUMMARY -->
-<div class="top-bar">
-    <strong>Total Students:</strong> {{ students|length }} |
-    <strong>Total Due:</strong> ₹{{ total_due_amount }}
-    <br><br>
-
-    <button onclick="sendSelectedSMS()">Send Selected SMS</button>
-    <button onclick="sendAllSMS()">Send All SMS</button>
+    <!-- ✅ STUDENTS TABLE -->
+    <div style="overflow-x: auto;">
+        <table id="studentsTable">
+            <thead>
+                <tr>
+                    <th style="width: 40px;"><input type="checkbox" onclick="toggleAll(this)"></th>
+                    <th>Name</th>
+                    <th>Adm No</th>
+                    <th>Father's Name</th>
+                    <th>Phone</th>
+                    <th>Monthly Fee</th>
+                    <th>Total Paid</th>
+                    <th>Due Amount</th>
+                    <th>Months</th>
+                    <th>Branch</th>
+                    <th>Course</th>
+                    <th>Section</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>
+                        <input type="checkbox" class="student-checkbox" value="{{ student.id }}" data-phone="{{ student.phone }}">
+                    </td>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.admission_number|default:"-" }}</td>
+                    <td>{{ student.father_name|default:"-" }}</td>
+                    <td>{{ student.phone|default:"-" }}</td>
+                    <td>₹{{ student.monthly_fees|floatformat:2 }}</td>
+                    <td>₹{{ student.total_paid|floatformat:2 }}</td>
+                    <td class="due-amount">₹{{ student.total_due|floatformat:2 }}</td>
+                    <td>{{ months_due }}</td>
+                    <td>{{ student.branch|default:"-" }}</td>
+                    <td>{{ student.course|default:"-" }}</td>
+                    <td>{{ student.section|default:"-" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="12" style="text-align: center; padding: 40px;">
+                        😊 No due students found for the selected filters
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<!-- ✅ TABLE -->
-<table>
-    <thead>
-        <tr>
-            <th><input type="checkbox" onclick="toggleAll(this)"></th>
-            <th>Name</th>
-            <th>Adm No</th>
-            <th>Father</th>
-            <th>Phone</th>
-            <th>Monthly Fee</th>
-            <th>Paid</th>
-            <th>Due</th>
-            <th>Months</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for student in students %}
-        <tr>
-            <td>
-                <input type="checkbox" class="student-checkbox" value="{{ student.id }}">
-            </td>
-            <td>{{ student.name }}</td>
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading">
+    <div>📱 Sending SMS... Please wait</div>
+</div>
 
-            <!-- ✅ FIXED FIELD NAMES -->
-            <td>{{ student.admission_number }}</td>
-            <td>{{ student.father_name }}</td>
-
-            <td>{{ student.phone }}</td>
-
-            <!-- ✅ USE ANNOTATED VALUES -->
-            <td>{{ student.monthly_fees }}</td>
-            <td>{{ student.total_paid }}</td>
-            <td><strong style="color:red;">{{ student.total_due }}</strong></td>
-
-            <td>{{ months_due }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="9">No due students found</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<!-- Status Message -->
+<div id="statusMessage" class="status-message"></div>
 
 <script>
+// Get CSRF token from cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
 function toggleAll(source) {
-    document.querySelectorAll('.student-checkbox')
-        .forEach(cb => cb.checked = source.checked);
+    const checkboxes = document.querySelectorAll('.student-checkbox');
+    checkboxes.forEach(cb => cb.checked = source.checked);
 }
 
 function getSelectedStudents() {
@@ -131,53 +314,169 @@ function getSelectedStudents() {
     return ids;
 }
 
+function getMonths() {
+    let months = document.getElementById("months_due").value;
+    if (!months || months <= 0) {
+        showStatus("Please enter valid months (minimum 1)", "error");
+        return null;
+    }
+    return parseInt(months);
+}
+
+function disableButtons(disabled = true) {
+    document.getElementById("sendSelectedBtn").disabled = disabled;
+    document.getElementById("sendAllBtn").disabled = disabled;
+}
+
+function showLoading(show = true) {
+    const overlay = document.getElementById("loadingOverlay");
+    overlay.style.display = show ? "block" : "none";
+}
+
+function showStatus(message, type = "success") {
+    const statusDiv = document.getElementById("statusMessage");
+    statusDiv.textContent = message;
+    statusDiv.className = `status-message status-${type}`;
+    statusDiv.style.display = "block";
+    
+    setTimeout(() => {
+        statusDiv.style.display = "none";
+    }, 5000);
+}
+
 function sendSelectedSMS() {
     let ids = getSelectedStudents();
+    let months = getMonths();
+
+    if (!months) return;
 
     if (ids.length === 0) {
-        alert("Please select students");
+        showStatus("Please select at least one student", "error");
         return;
     }
 
-    sendSMS(ids);
+    // Check if selected students have phone numbers
+    let studentsWithoutPhone = [];
+    ids.forEach(id => {
+        let checkbox = document.querySelector(`.student-checkbox[value="${id}"]`);
+        if (checkbox && !checkbox.dataset.phone) {
+            studentsWithoutPhone.push(id);
+        }
+    });
+    
+    if (studentsWithoutPhone.length > 0) {
+        showStatus(`${studentsWithoutPhone.length} student(s) don't have phone numbers. SMS will be skipped for them.`, "error");
+    }
+
+    if (!confirm(`Send SMS to ${ids.length} selected student(s)?`)) return;
+
+    sendSMS(ids, months);
 }
 
 function sendAllSMS() {
     let ids = [];
+    let months = getMonths();
+
+    if (!months) return;
+
     document.querySelectorAll('.student-checkbox').forEach(cb => {
         ids.push(parseInt(cb.value));
     });
 
     if (ids.length === 0) {
-        alert("No students available");
+        showStatus("No students available to send SMS", "error");
         return;
     }
 
-    sendSMS(ids);
+    // Count students without phone
+    let studentsWithoutPhone = 0;
+    document.querySelectorAll('.student-checkbox').forEach(cb => {
+        if (!cb.dataset.phone) studentsWithoutPhone++;
+    });
+    
+    let message = `Send SMS to all ${ids.length} student(s)?`;
+    if (studentsWithoutPhone > 0) {
+        message += `\n\n⚠️ Note: ${studentsWithoutPhone} student(s) don't have phone numbers and will be skipped.`;
+    }
+    
+    if (!confirm(message)) return;
+
+    sendSMS(ids, months);
 }
 
-function sendSMS(ids) {
+function sendSMS(ids, months) {
+    disableButtons(true);
+    showLoading(true);
+
     fetch("{% url 'send_fee_due_sms' %}", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "X-CSRFToken": "{{ csrf_token }}"
+            "X-CSRFToken": csrftoken
         },
         body: JSON.stringify({
             student_ids: ids,
-            months_due: "{{ months_due }}"
+            months_due: months
         })
     })
-    .then(res => res.json())
+    .then(async res => {
+        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(data.message || "Failed to send SMS");
+        }
+        return data;
+    })
     .then(data => {
-        alert("SMS Sent: " + data.sent_count);
-        console.log(data);
+        if (data.status === "success") {
+            let message = `✅ SMS Sent Successfully!\n\n`;
+            message += `Sent to: ${data.sent_count} student(s)`;
+            if (data.sent_count < ids.length) {
+                message += `\n⚠️ Skipped: ${ids.length - data.sent_count} student(s) (no phone or no due)`;
+            }
+            showStatus(message, "success");
+            console.log("SMS Results:", data.results);
+        } else {
+            throw new Error(data.message || "Unknown error occurred");
+        }
     })
     .catch(err => {
-        alert("Error sending SMS");
-        console.error(err);
+        console.error("Error:", err);
+        showStatus(`❌ Error: ${err.message}`, "error");
+    })
+    .finally(() => {
+        disableButtons(false);
+        showLoading(false);
     });
 }
+
+function resetFilters() {
+    window.location.href = window.location.pathname;
+}
+
+// Add phone number validation indicator
+document.addEventListener('DOMContentLoaded', function() {
+    // Highlight rows without phone numbers
+    document.querySelectorAll('.student-checkbox').forEach(cb => {
+        if (!cb.dataset.phone) {
+            let row = cb.closest('tr');
+            if (row) {
+                row.style.backgroundColor = '#fff3cd';
+                row.title = 'No phone number available';
+            }
+        }
+    });
+    
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl+A to select all
+        if (e.ctrlKey && e.key === 'a') {
+            e.preventDefault();
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !allChecked);
+        }
+    });
+});
 </script>
 
 </body>

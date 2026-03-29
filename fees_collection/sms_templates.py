@@ -4,16 +4,15 @@ from decimal import Decimal
 
 class SMSTemplates:
     
-    # Institute name constant for easy updates
-    INSTITUTE_NAME = "Institute"  # Change this to your actual institute name
+    # Institute name
+    INSTITUTE_NAME = "Idara Ashraful Uloom"
     
     @staticmethod
     def donation_due_reminder(admission_no, student_name, due_amount, institute_name=None):
         """
-        Template for donation due reminder
+        Template for donation due reminder (Non-DLT - can be flexible)
         """
         inst = institute_name or SMSTemplates.INSTITUTE_NAME
-        # Format amount with commas for thousands
         amount_formatted = f"{int(due_amount):,}"
         
         message = (f"Dear Parent, Donation due for Admission No: {admission_no}, "
@@ -22,31 +21,29 @@ class SMSTemplates:
         return message
     
     @staticmethod
-    def fee_due_reminder(student_name, due_amount, months_due, due_date=None, institute_name=None):
+    def fee_due_reminder(student_name, due_amount, months_due, admission_no):
         """
-        Template for fee due reminder
-        """
-        inst = institute_name or SMSTemplates.INSTITUTE_NAME
-        amount_formatted = f"{due_amount:,.0f}"
+        ✅ DLT APPROVED TEMPLATE (STRICT - DO NOT MODIFY TEXT)
         
-        if due_date:
-            if isinstance(due_date, str):
-                date_str = due_date
-            else:
-                date_str = due_date.strftime('%d-%m-%Y')
-                
-            message = (f"Dear {student_name}, your fee of Rs. {amount_formatted} is due "
-                      f"for {months_due} month(s). Please pay by {date_str} to avoid late fee. - {inst}")
-        else:
-            message = (f"Dear {student_name}, your fee of Rs. {amount_formatted} is due "
-                      f"for {months_due} month(s). Please clear your dues at earliest. - {inst}")
+        Template:
+        Fee due of Rs {#var#} for {#var#} month(s) for {#var#} (Adm No:{#var#}) pending. Ignore if paid. Idara Ashraful Uloom
+        """
+        # ⚠️ DLT SAFE FORMATTING - No commas, no special characters
+        amount = int(due_amount)  # No commas
+        months = int(months_due)
+        
+        message = (
+            f"Fee due of Rs {amount} for {months} month(s) "
+            f"for {student_name} (Adm No:{admission_no}) pending. "
+            f"Ignore if paid. Idara Ashraful Uloom"
+        )
         
         return message
     
     @staticmethod
     def urgent_reminder(student_name, due_amount, months_due, institute_name=None):
         """
-        Urgent reminder for long overdue
+        Urgent reminder (Non-DLT)
         """
         inst = institute_name or SMSTemplates.INSTITUTE_NAME
         amount_formatted = f"{due_amount:,.0f}"
@@ -58,7 +55,7 @@ class SMSTemplates:
     @staticmethod
     def payment_confirmation(student_name, amount_paid, month, institute_name=None):
         """
-        Payment confirmation template
+        Payment confirmation (Non-DLT unless approved separately)
         """
         inst = institute_name or SMSTemplates.INSTITUTE_NAME
         amount_formatted = f"{amount_paid:,.0f}"
@@ -69,16 +66,12 @@ class SMSTemplates:
     
     @staticmethod
     def get_message_length(message):
-        """
-        Helper method to check SMS length (useful for debugging)
-        """
+        """Get message length"""
         return len(message)
     
     @staticmethod
     def validate_message(message, max_length=160):
-        """
-        Validate if message exceeds SMS character limit
-        """
+        """Validate message length"""
         length = len(message)
         return {
             'valid': length <= max_length,

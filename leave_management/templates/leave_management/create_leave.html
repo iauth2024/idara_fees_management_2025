@@ -1,5 +1,6 @@
 {% extends "leave_management/base_leave.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}Apply for Leave{% endblock %}
 
@@ -38,7 +39,7 @@
     }
 
     .page-header {
-        background: var(--primary);
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
         color: white;
         padding: 2rem 2.5rem;
         display: flex;
@@ -56,6 +57,11 @@
         font-weight: 600;
     }
 
+    .page-header small {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
     .form-body {
         padding: 2.5rem;
     }
@@ -66,6 +72,7 @@
         background: var(--primary-soft);
         border-radius: var(--radius);
         border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
     }
 
     .section-title {
@@ -144,6 +151,10 @@
         color: white;
         font-weight: 600;
         transition: all 0.2s;
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .btn-primary:hover {
@@ -151,20 +162,37 @@
         transform: translateY(-1px);
     }
 
+    .btn-primary:active {
+        transform: scale(0.98);
+    }
+
     .btn-secondary {
         background: #6b7280;
         border: none;
         color: white;
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .btn-secondary:hover {
         background: #4b5563;
+        transform: translateY(-1px);
+    }
+
+    .btn-outline-secondary {
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .alert {
         border-radius: var(--radius);
         padding: 1rem 1.25rem;
         margin-bottom: 1.5rem;
+        font-size: 0.95rem;
     }
 
     .time-quick-buttons {
@@ -186,6 +214,7 @@
         font-size: 0.9rem;
         cursor: pointer;
         transition: all 0.15s;
+        min-height: 38px;
     }
 
     .time-quick-btn:hover {
@@ -194,13 +223,289 @@
         border-color: var(--primary);
     }
 
-    @media (max-width: 768px) {
-        .form-body { padding: 1.5rem; }
-        .form-section { padding: 1.25rem; }
-        .page-header { padding: 1.5rem; }
-        .page-header h4 { font-size: 1.5rem; }
+    .time-quick-btn:active {
+        transform: scale(0.95);
     }
 
+    /* ========== ENHANCED URDU FONT SIZES ========== */
+    html[dir="rtl"] {
+        font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', -apple-system, BlinkMacSystemFont, serif;
+    }
+
+    html[dir="rtl"] .page-header h4 {
+        font-size: 2rem;
+        line-height: 1.6;
+    }
+
+    html[dir="rtl"] .page-header small {
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+
+    html[dir="rtl"] .section-title {
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+    }
+
+    html[dir="rtl"] .form-label {
+        font-size: 1.05rem;
+        margin-bottom: 0.75rem;
+    }
+
+    html[dir="rtl"] .form-control,
+    html[dir="rtl"] .form-select {
+        font-size: 1.05rem;
+        padding: 0.9rem 1.2rem;
+    }
+
+    html[dir="rtl"] .auto-fill-group .form-control {
+        font-size: 1rem;
+    }
+
+    html[dir="rtl"] .duration-display {
+        font-size: 1.2rem;
+        padding: 1.4rem;
+    }
+
+    html[dir="rtl"] .duration-display strong {
+        font-size: 1.3rem;
+    }
+
+    html[dir="rtl"] .time-quick-btn {
+        font-size: 1rem;
+        padding: 0.7rem 1.2rem;
+    }
+
+    html[dir="rtl"] .alert {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    html[dir="rtl"] .btn-primary,
+    html[dir="rtl"] .btn-secondary,
+    html[dir="rtl"] .btn-outline-secondary {
+        font-size: 1.05rem;
+        padding: 0.9rem 2rem;
+    }
+
+    html[dir="rtl"] .form-text {
+        font-size: 0.95rem;
+    }
+
+    /* ========== MOBILE RESPONSIVE ========== */
+    @media (max-width: 768px) {
+        .form-body {
+            padding: 1.5rem;
+        }
+        
+        .form-section {
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .page-header {
+            padding: 1.5rem;
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .page-header h4 {
+            font-size: 1.5rem;
+        }
+        
+        html[dir="rtl"] .page-header h4 {
+            font-size: 1.7rem;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+        }
+        
+        html[dir="rtl"] .section-title {
+            font-size: 1.25rem;
+        }
+        
+        .auto-fill-group {
+            padding: 1rem;
+        }
+        
+        .row {
+            margin-left: -0.5rem;
+            margin-right: -0.5rem;
+        }
+        
+        .col-md-3, .col-md-6, .col-12 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+        
+        .time-quick-buttons {
+            flex-wrap: wrap;
+        }
+        
+        .time-quick-btn {
+            flex: 1 0 auto;
+            text-align: center;
+        }
+        
+        .text-center.d-flex {
+            flex-direction: column;
+        }
+        
+        .text-center.d-flex .btn {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .duration-display {
+            font-size: 1rem;
+            padding: 1rem;
+        }
+        
+        html[dir="rtl"] .duration-display {
+            font-size: 1.1rem;
+        }
+        
+        html[dir="rtl"] .duration-display strong {
+            font-size: 1.2rem;
+        }
+    }
+    
+    /* Tablet Responsive */
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .form-body {
+            padding: 2rem;
+        }
+        
+        .page-header h4 {
+            font-size: 1.6rem;
+        }
+        
+        html[dir="rtl"] .page-header h4 {
+            font-size: 1.8rem;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+        }
+        
+        html[dir="rtl"] .section-title {
+            font-size: 1.35rem;
+        }
+    }
+    
+    /* Small Mobile */
+    @media (max-width: 480px) {
+        .form-container {
+            margin: 1rem auto;
+        }
+        
+        .form-body {
+            padding: 1rem;
+        }
+        
+        .form-section {
+            padding: 1rem;
+        }
+        
+        .page-header {
+            padding: 1.25rem;
+        }
+        
+        .page-header h4 {
+            font-size: 1.3rem;
+        }
+        
+        html[dir="rtl"] .page-header h4 {
+            font-size: 1.5rem;
+        }
+        
+        .section-title i {
+            font-size: 1rem;
+        }
+        
+        .form-label {
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .form-label {
+            font-size: 0.95rem;
+        }
+        
+        .form-control,
+        .form-select {
+            padding: 0.6rem 0.8rem;
+            font-size: 0.9rem;
+        }
+        
+        html[dir="rtl"] .form-control,
+        html[dir="rtl"] .form-select {
+            font-size: 0.95rem;
+        }
+        
+        .time-quick-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+        
+        html[dir="rtl"] .time-quick-btn {
+            font-size: 0.9rem;
+        }
+        
+        .btn-primary,
+        .btn-secondary,
+        .btn-outline-secondary {
+            padding: 0.7rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        html[dir="rtl"] .btn-primary,
+        html[dir="rtl"] .btn-secondary,
+        html[dir="rtl"] .btn-outline-secondary {
+            font-size: 0.95rem;
+        }
+        
+        .duration-display {
+            font-size: 0.9rem;
+            padding: 0.8rem;
+        }
+        
+        html[dir="rtl"] .duration-display {
+            font-size: 1rem;
+        }
+    }
+    
+    /* Touch-friendly improvements */
+    button, .btn, .time-quick-btn {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    button:active, .btn:active, .time-quick-btn:active {
+        transform: scale(0.97);
+    }
+    
+    /* Prevent zoom on input focus */
+    input, select, textarea, button {
+        font-size: 16px !important;
+    }
+    
+    /* Animation */
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .form-card {
+        animation: slideUp 0.4s ease-out;
+    }
+    
     /* RTL Specific */
     html[dir="rtl"] .me-2 {
         margin-left: 0.5rem !important;
@@ -215,6 +520,11 @@
     html[dir="rtl"] .spinner-border {
         margin-right: 0.5rem;
         margin-left: 0;
+    }
+    
+    html[dir="rtl"] .alert .btn-close {
+        margin-left: 0;
+        margin-right: auto;
     }
 </style>
 {% endblock %}
@@ -274,10 +584,13 @@
                             <span data-trans="admission_number">Admission Number</span>
                         </label>
                         {{ form.admission_number }}
-                        <small class="form-text text-muted mt-1">
+                        <small class="form-text text-muted mt-1 d-block">
+                            <i class="fas fa-info-circle me-1"></i>
                             <span data-trans="admission_help">Enter your admission number and press Tab to auto-fill details</span>
                         </small>
-                        <div class="spinner-border text-primary spinner-border-sm mt-2" id="loadingSpinner" style="display:none;" role="status"></div>
+                        <div class="spinner-border text-primary spinner-border-sm mt-2" id="loadingSpinner" style="display:none;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
                     </div>
 
                     <div class="auto-fill-group">
@@ -324,13 +637,13 @@
                             {{ form.start_time }}
                             <div class="time-quick-buttons">
                                 <button type="button" class="time-quick-btn" onclick="document.getElementById('id_start_time').value='08:00'">
-                                    <span data-trans="eight_am">8:00 AM</span>
+                                    <i class="fas fa-sun"></i> <span data-trans="eight_am">8:00 AM</span>
                                 </button>
                                 <button type="button" class="time-quick-btn" onclick="document.getElementById('id_start_time').value='09:00'">
-                                    <span data-trans="nine_am">9:00 AM</span>
+                                    <i class="fas fa-sun"></i> <span data-trans="nine_am">9:00 AM</span>
                                 </button>
                                 <button type="button" class="time-quick-btn" onclick="document.getElementById('id_start_time').value='14:00'">
-                                    <span data-trans="two_pm">2:00 PM</span>
+                                    <i class="fas fa-sun"></i> <span data-trans="two_pm">2:00 PM</span>
                                 </button>
                             </div>
                         </div>
@@ -340,13 +653,13 @@
                             {{ form.end_time }}
                             <div class="time-quick-buttons">
                                 <button type="button" class="time-quick-btn" onclick="document.getElementById('id_end_time').value='16:00'">
-                                    <span data-trans="four_pm">4:00 PM</span>
+                                    <i class="fas fa-moon"></i> <span data-trans="four_pm">4:00 PM</span>
                                 </button>
                                 <button type="button" class="time-quick-btn" onclick="document.getElementById('id_end_time').value='17:00'">
-                                    <span data-trans="five_pm">5:00 PM</span>
+                                    <i class="fas fa-moon"></i> <span data-trans="five_pm">5:00 PM</span>
                                 </button>
                                 <button type="button" class="time-quick-btn" onclick="document.getElementById('id_end_time').value='18:00'">
-                                    <span data-trans="six_pm">6:00 PM</span>
+                                    <i class="fas fa-moon"></i> <span data-trans="six_pm">6:00 PM</span>
                                 </button>
                             </div>
                         </div>
@@ -373,6 +686,10 @@
                     <div class="mb-3">
                         <label class="form-label"><span data-trans="additional_notes">Additional Notes</span></label>
                         {{ form.notes }}
+                        <small class="form-text text-muted mt-1 d-block">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <span data-trans="optional_remarks">Optional: Add any additional information</span>
+                        </small>
                     </div>
                 </div>
 
@@ -396,43 +713,46 @@
 
 <script>
 // Auto-fill student info
-document.getElementById('id_admission_number')?.addEventListener('blur', function() {
-    const val = this.value.trim();
-    if (!val) return;
+const admissionInput = document.getElementById('id_admission_number');
+if (admissionInput) {
+    admissionInput.addEventListener('blur', function() {
+        const val = this.value.trim();
+        if (!val) return;
 
-    const spinner = document.getElementById('loadingSpinner');
-    spinner.style.display = 'inline-block';
+        const spinner = document.getElementById('loadingSpinner');
+        spinner.style.display = 'inline-block';
 
-    fetch(`/leave/student-details/?admission_number=${encodeURIComponent(val)}`)
-        .then(r => r.json())
-        .then(data => {
-            spinner.style.display = 'none';
-            if (data.error) {
-                // Use bilingual alert
+        fetch(`/leave/student-details/?admission_number=${encodeURIComponent(val)}`)
+            .then(r => r.json())
+            .then(data => {
+                spinner.style.display = 'none';
+                if (data.error) {
+                    const message = document.documentElement.lang === 'ur' 
+                        ? 'طالب علم نہیں ملا'
+                        : 'Student not found.';
+                    alert(message);
+                    clearFields();
+                } else {
+                    document.getElementById('student_name').value = data.name || '';
+                    document.getElementById('course').value     = data.course || '';
+                    document.getElementById('section').value    = data.section || '';
+                    document.getElementById('branch').value     = data.branch || '';
+                }
+            })
+            .catch(() => {
+                spinner.style.display = 'none';
                 const message = document.documentElement.lang === 'ur' 
-                    ? 'طالب علم نہیں ملا'
-                    : 'Student not found.';
+                    ? 'طالب علم کی تفصیلات لوڈ کرنے میں خرابی'
+                    : 'Error loading student details.';
                 alert(message);
-                clearFields();
-            } else {
-                document.getElementById('student_name').value = data.name || '';
-                document.getElementById('course').value     = data.course || '';
-                document.getElementById('section').value    = data.section || '';
-                document.getElementById('branch').value     = data.branch || '';
-            }
-        })
-        .catch(() => {
-            spinner.style.display = 'none';
-            const message = document.documentElement.lang === 'ur' 
-                ? 'طالب علم کی تفصیلات لوڈ کرنے میں خرابی'
-                : 'Error loading student details.';
-            alert(message);
-        });
-});
+            });
+    });
+}
 
 function clearFields() {
     ['student_name','course','section','branch'].forEach(id => {
-        document.getElementById(id).value = '';
+        const el = document.getElementById(id);
+        if (el) el.value = '';
     });
 }
 
@@ -444,7 +764,7 @@ function calculateDuration() {
     const daysEl  = document.getElementById('totalDays');
 
     if (!start || !end) {
-        display.style.display = 'none';
+        if (display) display.style.display = 'none';
         return;
     }
 
@@ -456,40 +776,75 @@ function calculateDuration() {
             ? 'اختتامی تاریخ آغاز کی تاریخ سے پہلے نہیں ہو سکتی'
             : 'End date cannot be before start date.';
         alert(message);
-        display.style.display = 'none';
+        if (display) display.style.display = 'none';
         return;
     }
 
     const diff = Math.abs(d2 - d1);
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1;
 
-    daysEl.textContent = days;
-    display.style.display = 'block';
+    if (daysEl) daysEl.textContent = days;
+    if (display) display.style.display = 'block';
 }
 
 ['id_start_date', 'id_end_date'].forEach(id => {
-    document.getElementById(id)?.addEventListener('change', calculateDuration);
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', calculateDuration);
 });
 
 // Run once on load
 calculateDuration();
 
 // Basic submit confirmation
-document.getElementById('leaveForm')?.addEventListener('submit', e => {
-    const name = document.getElementById('student_name').value.trim();
-    if (!name) {
-        e.preventDefault();
-        const message = document.documentElement.lang === 'ur' 
-            ? 'براہ کرم پہلے ایک درست داخلہ نمبر درج کریں'
-            : 'Please enter a valid admission number first.';
-        alert(message);
-    }
+const leaveForm = document.getElementById('leaveForm');
+if (leaveForm) {
+    leaveForm.addEventListener('submit', function(e) {
+        const name = document.getElementById('student_name').value.trim();
+        if (!name) {
+            e.preventDefault();
+            const message = document.documentElement.lang === 'ur' 
+                ? 'براہ کرم پہلے ایک درست داخلہ نمبر درج کریں'
+                : 'Please enter a valid admission number first.';
+            alert(message);
+            return;
+        }
+        
+        // Show loading state on submit button
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+            const originalHtml = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span> Processing...';
+            submitBtn.disabled = true;
+            
+            // Re-enable after 10 seconds if something goes wrong
+            setTimeout(() => {
+                if (submitBtn.disabled) {
+                    submitBtn.innerHTML = originalHtml;
+                    submitBtn.disabled = false;
+                }
+            }, 10000);
+        }
+    });
+}
+
+// Add touch feedback for mobile
+const touchElements = document.querySelectorAll('.btn, .time-quick-btn');
+touchElements.forEach(el => {
+    el.addEventListener('touchstart', function() {
+        this.style.transform = 'scale(0.98)';
+    });
+    el.addEventListener('touchend', function() {
+        this.style.transform = '';
+    });
+    el.addEventListener('touchcancel', function() {
+        this.style.transform = '';
+    });
 });
 
 // Update icon positions for RTL
 function updateIconPositions() {
     const isRTL = document.documentElement.dir === 'rtl';
-    document.querySelectorAll('.section-title i, .btn i').forEach(icon => {
+    document.querySelectorAll('.section-title i, .btn i, .time-quick-btn i').forEach(icon => {
         if (isRTL) {
             icon.style.marginLeft = '0.5rem';
             icon.style.marginRight = '0';
@@ -502,6 +857,16 @@ function updateIconPositions() {
 
 // Call on load and when language changes
 document.addEventListener('DOMContentLoaded', updateIconPositions);
+
+// Set min date to today for date inputs
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    const startDate = document.getElementById('id_start_date');
+    const endDate = document.getElementById('id_end_date');
+    
+    if (startDate) startDate.min = today;
+    if (endDate) endDate.min = today;
+});
 </script>
 
 {% endblock %}

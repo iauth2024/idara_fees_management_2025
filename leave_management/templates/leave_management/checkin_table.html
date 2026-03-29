@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <div class="table-responsive">
     <table class="table table-bordered table-sm table-hover">
@@ -30,7 +31,7 @@
             {% for leave in leaves %}
                 <tr class="align-middle">
                     <td>
-                        <span class="badge bg-secondary">{{ leave.student.admission_number }}</span>
+                        <span class="badge bg-secondary admission-badge">{{ leave.student.admission_number }}</span>
                     </td>
                     <td>
                         <div class="d-flex align-items-center">
@@ -38,10 +39,10 @@
                                 {{ leave.student.name|first|upper }}
                             </div>
                             <div>
-                                <strong>{{ leave.student.name }}</strong>
+                                <strong class="student-name">{{ leave.student.name }}</strong>
                                 {% if leave.student.branch %}
                                 <br>
-                                <small class="text-muted">{{ leave.student.branch }}</small>
+                                <small class="text-muted branch-name">{{ leave.student.branch }}</small>
                                 {% endif %}
                             </div>
                         </div>
@@ -64,7 +65,7 @@
                         </div>
                         {% if leave.end_time %}
                         <br>
-                        <small class="text-muted">
+                        <small class="text-muted time-display">
                             <i class="bi bi-clock me-1"></i>
                             {{ leave.end_time|time:"H:i" }}
                         </small>
@@ -96,8 +97,8 @@
 
 <style>
     .student-avatar {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
         border-radius: 50%;
         display: flex;
@@ -105,7 +106,7 @@
         justify-content: center;
         color: white;
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 1rem;
         box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
         flex-shrink: 0;
     }
@@ -115,25 +116,33 @@
         color: #495057;
         padding: 4px 10px;
         border-radius: 20px;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         display: inline-block;
         border: 1px solid #e9ecef;
     }
 
     .date-display {
         color: #495057;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
+    }
+
+    .time-display {
+        font-size: 0.85rem;
     }
 
     .checkin-btn {
         border-radius: 20px;
-        padding: 4px 15px;
-        font-size: 0.85rem;
+        padding: 6px 18px;
+        font-size: 0.9rem;
         transition: all 0.3s ease;
         background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
         border: none;
         color: white;
         box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+        min-height: 38px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .checkin-btn:hover {
@@ -142,24 +151,30 @@
         color: white;
     }
 
+    .checkin-btn:active {
+        transform: scale(0.97);
+    }
+
     .checkin-btn i {
-        font-size: 0.9rem;
+        font-size: 1rem;
     }
 
     .table th {
         background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
         color: white;
         font-weight: 600;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         text-transform: uppercase;
         letter-spacing: 0.3px;
         border: none !important;
         white-space: nowrap;
+        padding: 12px 10px;
     }
 
     .table td {
         vertical-align: middle;
-        padding: 12px 8px;
+        padding: 12px 10px;
+        font-size: 0.9rem;
     }
 
     .table tbody tr:hover {
@@ -172,12 +187,253 @@
         text-align: center;
     }
 
-    .badge.bg-secondary {
+    .admission-badge {
         background: #6c757d !important;
-        padding: 5px 8px;
+        padding: 6px 10px;
+        font-size: 0.85rem;
+        border-radius: 20px;
+    }
+
+    .student-name {
+        font-size: 0.95rem;
+    }
+
+    .branch-name {
         font-size: 0.8rem;
     }
 
+    /* ========== ENHANCED URDU FONT SIZES ========== */
+    html[dir="rtl"] {
+        font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', -apple-system, BlinkMacSystemFont, serif;
+    }
+
+    html[dir="rtl"] .table th {
+        font-size: 1rem;
+        padding: 14px 12px;
+        letter-spacing: 0.5px;
+    }
+
+    html[dir="rtl"] .table td {
+        font-size: 1rem;
+        padding: 14px 12px;
+        line-height: 1.6;
+    }
+
+    html[dir="rtl"] .student-avatar {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+    }
+
+    html[dir="rtl"] .student-name {
+        font-size: 1.05rem;
+    }
+
+    html[dir="rtl"] .branch-name {
+        font-size: 0.9rem;
+    }
+
+    html[dir="rtl"] .dept-badge {
+        font-size: 1rem;
+        padding: 6px 12px;
+    }
+
+    html[dir="rtl"] .date-display {
+        font-size: 1.05rem;
+    }
+
+    html[dir="rtl"] .time-display {
+        font-size: 0.95rem;
+    }
+
+    html[dir="rtl"] .admission-badge {
+        font-size: 0.95rem;
+        padding: 7px 12px;
+    }
+
+    html[dir="rtl"] .checkin-btn {
+        font-size: 1rem;
+        padding: 8px 20px;
+        min-height: 44px;
+    }
+
+    html[dir="rtl"] .checkin-btn i {
+        font-size: 1.1rem;
+    }
+
+    /* ========== MOBILE RESPONSIVE ========== */
+    @media (max-width: 768px) {
+        .table th {
+            font-size: 0.8rem;
+            padding: 10px 6px;
+            white-space: normal;
+            word-break: break-word;
+        }
+        
+        .table td {
+            font-size: 0.8rem;
+            padding: 10px 6px;
+        }
+        
+        html[dir="rtl"] .table th {
+            font-size: 0.9rem;
+        }
+        
+        html[dir="rtl"] .table td {
+            font-size: 0.9rem;
+        }
+        
+        .student-avatar {
+            width: 30px;
+            height: 30px;
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .student-avatar {
+            width: 36px;
+            height: 36px;
+            font-size: 0.95rem;
+        }
+        
+        .student-name {
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .student-name {
+            font-size: 0.95rem;
+        }
+        
+        .branch-name {
+            font-size: 0.7rem;
+        }
+        
+        html[dir="rtl"] .branch-name {
+            font-size: 0.85rem;
+        }
+        
+        .checkin-btn {
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            min-height: 32px;
+        }
+        
+        html[dir="rtl"] .checkin-btn {
+            font-size: 0.9rem;
+            padding: 6px 16px;
+        }
+        
+        .dept-badge {
+            padding: 3px 8px;
+            font-size: 0.8rem;
+        }
+        
+        html[dir="rtl"] .dept-badge {
+            font-size: 0.9rem;
+        }
+        
+        .date-display {
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .date-display {
+            font-size: 0.95rem;
+        }
+        
+        .time-display {
+            font-size: 0.75rem;
+        }
+        
+        html[dir="rtl"] .time-display {
+            font-size: 0.85rem;
+        }
+        
+        .admission-badge {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+        }
+        
+        html[dir="rtl"] .admission-badge {
+            font-size: 0.85rem;
+        }
+    }
+    
+    /* Small Mobile */
+    @media (max-width: 576px) {
+        .table th, .table td {
+            padding: 6px 4px;
+        }
+        
+        .checkin-btn span {
+            display: none;
+        }
+        
+        .checkin-btn i {
+            margin: 0;
+        }
+        
+        .checkin-btn {
+            padding: 6px 8px;
+            min-width: 36px;
+        }
+        
+        .student-avatar {
+            width: 28px;
+            height: 28px;
+            font-size: 0.75rem;
+        }
+        
+        html[dir="rtl"] .student-avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 0.85rem;
+        }
+        
+        .dept-badge i {
+            display: none;
+        }
+        
+        .date-display i {
+            display: none;
+        }
+        
+        .table th i {
+            display: none;
+        }
+        
+        .table th {
+            text-align: center;
+        }
+    }
+    
+    /* Tablet Responsive */
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .table th {
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .table th {
+            font-size: 0.95rem;
+        }
+        
+        .table td {
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .table td {
+            font-size: 0.95rem;
+        }
+        
+        .student-avatar {
+            width: 34px;
+            height: 34px;
+        }
+        
+        html[dir="rtl"] .student-avatar {
+            width: 40px;
+            height: 40px;
+        }
+    }
+    
     /* RTL Specific */
     html[dir="rtl"] .me-1 {
         margin-left: 0.25rem !important;
@@ -204,28 +460,59 @@
         margin-left: 0.25rem;
         margin-right: 0;
     }
-
-    /* Mobile Responsive */
-    @media (max-width: 576px) {
-        .table td, .table th {
-            font-size: 0.8rem;
-            padding: 8px 4px;
+    
+    /* Touch-friendly improvements */
+    .checkin-btn, .table tbody tr {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .checkin-btn:active {
+        transform: scale(0.97);
+    }
+    
+    .table tbody tr:active {
+        background: linear-gradient(135deg, #fff0df 0%, #ffe6d4 100%);
+    }
+    
+    /* Animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
         }
-        
-        .student-avatar {
-            width: 28px;
-            height: 28px;
-            font-size: 0.8rem;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
-        
-        .checkin-btn {
-            padding: 3px 10px;
-            font-size: 0.75rem;
-        }
-        
-        .dept-badge {
-            padding: 2px 6px;
-            font-size: 0.75rem;
-        }
+    }
+    
+    tbody tr {
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    /* Scrollbar for table on mobile */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 12px;
+    }
+    
+    .table-responsive::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 3px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: #555;
     }
 </style>

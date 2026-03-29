@@ -86,7 +86,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'idara_fees_management.wsgi.application'
 
-# Database
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',

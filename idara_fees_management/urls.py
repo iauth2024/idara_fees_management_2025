@@ -11,3 +11,4 @@ urlpatterns += i18n_patterns(
     path('', include('fees_collection.urls')),
     path('leave/', include('leave_management.urls')),
 )
+

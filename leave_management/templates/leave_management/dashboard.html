@@ -1,10 +1,610 @@
 {% extends "leave_management/base_leave.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}Leave Dashboard{% endblock %}
 
 {% block extra_css %}
-<!-- Your CSS remains exactly the same -->
+<style>
+    /* ========== ENHANCED RESPONSIVE STYLES ========== */
+    
+    /* Language Switcher - Mobile Optimized */
+    .language-switcher {
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+    }
+    
+    .btn-group {
+        gap: 0.5rem;
+    }
+    
+    .btn-group .btn {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+        border-radius: 25px !important;
+        min-height: 44px;
+    }
+    
+    /* Dashboard Header */
+    .dashboard-header {
+        background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    
+    .dashboard-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .dashboard-header-content h3 {
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .dashboard-header-content p {
+        margin-bottom: 0;
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+    
+    .logout-btn {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 12px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        font-weight: 500;
+        min-height: 44px;
+    }
+    
+    .logout-btn:hover {
+        background: rgba(255,255,255,0.3);
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    /* Stats Cards - Mobile First */
+    .stats-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .stats-card:active {
+        transform: translateY(-2px);
+    }
+    
+    .stats-card .card-body {
+        padding: 1.5rem;
+        position: relative;
+    }
+    
+    .stats-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+        display: inline-block;
+    }
+    
+    .stats-card h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #6c757d;
+        margin-bottom: 0.75rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .stats-card h3 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .trend-indicator {
+        font-size: 0.85rem;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin: 2rem 0;
+    }
+    
+    .action-buttons .btn {
+        flex: 1;
+        min-width: 180px;
+        padding: 12px 20px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        min-height: 48px;
+    }
+    
+    .action-buttons .btn:active {
+        transform: scale(0.97);
+    }
+    
+    /* Section Title */
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 2rem 0 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #333;
+    }
+    
+    /* Department Cards */
+    .dept-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .dept-card .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    .dept-card .card-header i {
+        margin-right: 8px;
+    }
+    
+    .badge-light {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+    }
+    
+    .dept-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .dept-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .dept-list li:last-child {
+        border-bottom: none;
+    }
+    
+    .dept-list li span:first-child {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1rem;
+    }
+    
+    .dept-list .badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #6c757d;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+    
+    .empty-state p {
+        margin-bottom: 0;
+        font-size: 0.95rem;
+    }
+    
+    /* Super Admin Card */
+    .super-admin-card {
+        background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        margin: 1.5rem 0;
+    }
+    
+    .super-admin-card .card-body {
+        padding: 2rem;
+    }
+    
+    .super-admin-card h6 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .super-admin-card h3 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .super-admin-card .btn-light {
+        background: white;
+        color: #f97316;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        min-height: 44px;
+    }
+    
+    .super-admin-card .btn-light:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    /* Table Responsive */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table {
+        margin-bottom: 0;
+        min-width: 500px;
+    }
+    
+    .table thead th {
+        background: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+        padding: 1rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+    
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        font-size: 0.95rem;
+    }
+    
+    .badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+    
+    /* ========== ENHANCED URDU FONT SIZES ========== */
+    html[dir="rtl"] {
+        font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', -apple-system, BlinkMacSystemFont, serif;
+    }
+    
+    /* Dashboard Header - Urdu */
+    html[dir="rtl"] .dashboard-header-content h3 {
+        font-size: 1.8rem;
+        line-height: 1.6;
+    }
+    
+    html[dir="rtl"] .dashboard-header-content p {
+        font-size: 1.1rem;
+        line-height: 1.7;
+    }
+    
+    html[dir="rtl"] .logout-btn {
+        font-size: 1.1rem;
+        padding: 12px 24px;
+    }
+    
+    /* Stats Cards - Urdu */
+    html[dir="rtl"] .stats-card h6 {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    
+    html[dir="rtl"] .stats-card h3 {
+        font-size: 2.5rem;
+    }
+    
+    html[dir="rtl"] .trend-indicator {
+        font-size: 0.95rem;
+    }
+    
+    /* Action Buttons - Urdu */
+    html[dir="rtl"] .action-buttons .btn {
+        font-size: 1.1rem;
+        padding: 14px 24px;
+    }
+    
+    /* Section Title - Urdu */
+    html[dir="rtl"] .section-title {
+        font-size: 1.7rem;
+    }
+    
+    /* Department Cards - Urdu */
+    html[dir="rtl"] .dept-card .card-header {
+        font-size: 1.2rem;
+        padding: 1.25rem;
+    }
+    
+    html[dir="rtl"] .dept-list li span:first-child {
+        font-size: 1.1rem;
+        gap: 10px;
+    }
+    
+    html[dir="rtl"] .dept-list .badge {
+        font-size: 0.95rem;
+        padding: 6px 14px;
+    }
+    
+    html[dir="rtl"] .empty-state p {
+        font-size: 1.05rem;
+    }
+    
+    /* Super Admin Card - Urdu */
+    html[dir="rtl"] .super-admin-card h6 {
+        font-size: 1.3rem;
+    }
+    
+    html[dir="rtl"] .super-admin-card h3 {
+        font-size: 3.5rem;
+    }
+    
+    html[dir="rtl"] .super-admin-card p {
+        font-size: 1rem;
+    }
+    
+    /* Table - Urdu */
+    html[dir="rtl"] .table thead th {
+        font-size: 1.05rem;
+        padding: 1.2rem;
+    }
+    
+    html[dir="rtl"] .table tbody td {
+        font-size: 1.05rem;
+        padding: 1.2rem;
+        line-height: 1.6;
+    }
+    
+    html[dir="rtl"] .badge {
+        font-size: 0.95rem;
+        padding: 8px 14px;
+    }
+    
+    /* RTL Specific Adjustments */
+    html[dir="rtl"] .dashboard-header-content {
+        flex-direction: row-reverse;
+    }
+    
+    html[dir="rtl"] .action-buttons .btn i {
+        margin-left: 8px;
+        margin-right: 0;
+    }
+    
+    html[dir="rtl"] .section-title i {
+        margin-left: 10px;
+        margin-right: 0;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .dashboard-header {
+            padding: 1.25rem;
+        }
+        
+        .dashboard-header-content {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .dashboard-header-content h3 {
+            font-size: 1.4rem;
+        }
+        
+        html[dir="rtl"] .dashboard-header-content h3 {
+            font-size: 1.6rem;
+        }
+        
+        .dashboard-header-content p {
+            font-size: 0.9rem;
+        }
+        
+        html[dir="rtl"] .dashboard-header-content p {
+            font-size: 1rem;
+        }
+        
+        .stats-card .card-body {
+            padding: 1.25rem;
+        }
+        
+        .stats-icon {
+            font-size: 2rem;
+        }
+        
+        .stats-card h6 {
+            font-size: 0.9rem;
+        }
+        
+        html[dir="rtl"] .stats-card h6 {
+            font-size: 1rem;
+        }
+        
+        .stats-card h3 {
+            font-size: 1.8rem;
+        }
+        
+        html[dir="rtl"] .stats-card h3 {
+            font-size: 2rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .action-buttons .btn {
+            width: 100%;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+        }
+        
+        html[dir="rtl"] .section-title {
+            font-size: 1.5rem;
+        }
+        
+        .dept-card .card-header {
+            font-size: 1rem;
+        }
+        
+        html[dir="rtl"] .dept-card .card-header {
+            font-size: 1.1rem;
+        }
+        
+        .super-admin-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .super-admin-card h3 {
+            font-size: 2.5rem;
+        }
+        
+        html[dir="rtl"] .super-admin-card h3 {
+            font-size: 3rem;
+        }
+    }
+    
+    /* Tablet Responsive */
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .dashboard-header-content h3 {
+            font-size: 1.5rem;
+        }
+        
+        html[dir="rtl"] .dashboard-header-content h3 {
+            font-size: 1.7rem;
+        }
+        
+        .stats-card h3 {
+            font-size: 2rem;
+        }
+        
+        html[dir="rtl"] .stats-card h3 {
+            font-size: 2.2rem;
+        }
+        
+        .action-buttons .btn {
+            font-size: 0.95rem;
+        }
+        
+        html[dir="rtl"] .action-buttons .btn {
+            font-size: 1.05rem;
+        }
+    }
+    
+    /* Small Mobile */
+    @media (max-width: 480px) {
+        .btn-group {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .btn-group .btn {
+            width: 100%;
+        }
+        
+        .stats-card h3 {
+            font-size: 1.6rem;
+        }
+        
+        html[dir="rtl"] .stats-card h3 {
+            font-size: 1.8rem;
+        }
+        
+        .table thead th,
+        .table tbody td {
+            padding: 0.75rem;
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .table thead th,
+        html[dir="rtl"] .table tbody td {
+            font-size: 0.95rem;
+        }
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .stats-card, .dept-card, .super-admin-card {
+        animation: fadeInUp 0.4s ease-out;
+    }
+    
+    /* Touch-friendly improvements */
+    button, .btn, .stats-card, .logout-btn {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Prevent zoom on input focus */
+    input, select, textarea, button {
+        font-size: 16px !important;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -45,10 +645,7 @@
     </div>
 </div>
 
-<!-- Quick Stats Row - These use dynamic data, so no translation needed for the numbers -->
-<!-- But the labels need translation -->
-
-<!-- Main Stats Cards -->
+<!-- Quick Stats Row -->
 <div class="row">
     <!-- Total Students -->
     <div class="col-lg-4 col-md-6 mb-4">
@@ -293,7 +890,6 @@
 
 {% block extra_js %}
 <script>
-// Your existing JavaScript remains exactly the same
 document.addEventListener('DOMContentLoaded', function() {
     // Add smooth scrolling
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -324,10 +920,26 @@ document.addEventListener('DOMContentLoaded', function() {
         item.addEventListener('mouseenter', function() {
             if (isRTL) {
                 this.style.transform = 'translateX(-5px)';
+            } else {
+                this.style.transform = 'translateX(5px)';
             }
         });
         item.addEventListener('mouseleave', function() {
             this.style.transform = 'translateX(0)';
+        });
+    });
+    
+    // Add touch feedback for mobile
+    const touchElements = document.querySelectorAll('.stats-card, .btn, .logout-btn');
+    touchElements.forEach(el => {
+        el.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.98)';
+        });
+        el.addEventListener('touchend', function() {
+            this.style.transform = '';
+        });
+        el.addEventListener('touchcancel', function() {
+            this.style.transform = '';
         });
     });
 });
@@ -341,12 +953,26 @@ function formatNumber(num) {
 function updateIconPositions() {
     const isRTL = document.documentElement.dir === 'rtl';
     document.querySelectorAll('.stats-icon').forEach(icon => {
-        icon.style.right = isRTL ? 'auto' : '15px';
-        icon.style.left = isRTL ? '15px' : 'auto';
+        if (isRTL) {
+            icon.style.right = 'auto';
+            icon.style.left = '15px';
+        } else {
+            icon.style.right = '15px';
+            icon.style.left = 'auto';
+        }
     });
 }
 
 // Call on load and when language changes
 document.addEventListener('DOMContentLoaded', updateIconPositions);
+
+// Handle window resize for responsive adjustments
+let resizeTimer;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+        updateIconPositions();
+    }, 250);
+});
 </script>
 {% endblock %}

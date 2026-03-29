@@ -1,5 +1,6 @@
 {% extends "leave_management/base_leave.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}Leave Management{% endblock %}
 
@@ -29,7 +30,9 @@
     .filter-btn {
         margin-right: 5px;
         border-radius: 20px;
-        padding: 5px 15px;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        min-height: 40px;
     }
     html[dir="rtl"] .filter-btn {
         margin-right: 0;
@@ -44,23 +47,27 @@
         background-color: rgba(0,123,255,0.05);
     }
     .avatar-circle {
-        width: 35px;
-        height: 35px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: bold;
+        font-size: 1rem;
         color: white;
         background-color: #007bff;
+        flex-shrink: 0;
     }
     .dept-badge {
         background-color: #e9ecef;
         color: #495057;
-        padding: 3px 8px;
+        padding: 4px 10px;
         border-radius: 12px;
-        font-size: 0.75rem;
-        display: inline-block;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
     }
     .empty-state {
         padding: 40px 20px;
@@ -69,34 +76,380 @@
     .opacity-50 {
         opacity: 0.5;
     }
-    .btn-group .btn {
-        margin: 0 2px;
+    
+    /* ========== ENHANCED RESPONSIVE STYLES ========== */
+    
+    /* Header Section */
+    .header-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        color: white;
     }
-    /* Mobile optimizations */
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .action-buttons .btn {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+        border-radius: 12px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    /* Card Headers */
+    .card-header {
+        padding: 1rem 1.25rem;
+    }
+    
+    .card-header h5 {
+        font-size: 1.1rem;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    /* Table Responsive */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table {
+        margin-bottom: 0;
+        min-width: 700px;
+    }
+    
+    .table thead th {
+        background: #f8f9fa;
+        padding: 1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border-bottom: 2px solid #dee2e6;
+    }
+    
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+    
+    /* Button Group */
+    .btn-group-vertical {
+        gap: 5px;
+    }
+    
+    .btn-group-vertical .btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        min-width: 36px;
+    }
+    
+    /* Search Input */
+    .input-group-text {
+        background: white;
+        border-right: none;
+    }
+    
+    #searchInput {
+        border-left: none;
+        padding: 12px 15px;
+        font-size: 0.95rem;
+    }
+    
+    #searchInput:focus {
+        border-color: #667eea;
+        box-shadow: none;
+    }
+    
+    /* ========== ENHANCED URDU FONT SIZES ========== */
+    html[dir="rtl"] {
+        font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', -apple-system, BlinkMacSystemFont, serif;
+    }
+    
+    /* Header - Urdu */
+    html[dir="rtl"] .header-section h3 {
+        font-size: 1.8rem;
+        line-height: 1.6;
+    }
+    
+    html[dir="rtl"] .header-section p {
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+    
+    /* Stat Cards - Urdu */
+    html[dir="rtl"] .stat-card h6 {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    html[dir="rtl"] .stat-card h2 {
+        font-size: 2.2rem;
+    }
+    
+    /* Card Headers - Urdu */
+    html[dir="rtl"] .card-header h5 {
+        font-size: 1.2rem;
+    }
+    
+    /* Table - Urdu */
+    html[dir="rtl"] .table thead th {
+        font-size: 1rem;
+        padding: 1.2rem;
+    }
+    
+    html[dir="rtl"] .table tbody td {
+        font-size: 1rem;
+        padding: 1.2rem;
+        line-height: 1.6;
+    }
+    
+    /* Status Badges - Urdu */
+    html[dir="rtl"] .status-badge {
+        font-size: 0.95rem;
+        padding: 6px 12px;
+    }
+    
+    /* Department Badges - Urdu */
+    html[dir="rtl"] .dept-badge {
+        font-size: 0.9rem;
+        padding: 5px 12px;
+    }
+    
+    /* Avatar - Urdu */
+    html[dir="rtl"] .avatar-circle {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    
+    /* Filter Buttons - Urdu */
+    html[dir="rtl"] .filter-btn {
+        font-size: 1rem;
+        padding: 8px 18px;
+    }
+    
+    /* Action Buttons - Urdu */
+    html[dir="rtl"] .action-buttons .btn {
+        font-size: 1.05rem;
+        padding: 12px 24px;
+    }
+    
+    /* Search Input - Urdu */
+    html[dir="rtl"] #searchInput {
+        font-size: 1rem;
+        padding: 14px 18px;
+    }
+    
+    html[dir="rtl"] .input-group-text i {
+        font-size: 1.1rem;
+    }
+    
+    /* Empty State - Urdu */
+    html[dir="rtl"] .empty-state h5 {
+        font-size: 1.3rem;
+    }
+    
+    html[dir="rtl"] .empty-state p {
+        font-size: 1.05rem;
+    }
+    
+    /* ========== MOBILE RESPONSIVE ========== */
     @media (max-width: 768px) {
-        .table-responsive {
+        .header-section {
+            padding: 1.25rem;
+        }
+        
+        .header-section h3 {
+            font-size: 1.3rem;
+        }
+        
+        html[dir="rtl"] .header-section h3 {
+            font-size: 1.5rem;
+        }
+        
+        .header-section p {
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .header-section p {
+            font-size: 0.95rem;
+        }
+        
+        .stat-card h2 {
+            font-size: 1.5rem;
+        }
+        
+        html[dir="rtl"] .stat-card h2 {
+            font-size: 1.7rem;
+        }
+        
+        .stat-card h6 {
+            font-size: 0.8rem;
+        }
+        
+        html[dir="rtl"] .stat-card h6 {
             font-size: 0.9rem;
         }
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .btn-group .btn {
-            margin: 2px 0;
-            border-radius: 4px !important;
-        }
-        .filter-btn {
-            margin-bottom: 5px;
-        }
+        
         .card-header {
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
-        .btn-group[role="group"] {
+        
+        .card-header h5 {
+            font-size: 1rem;
+        }
+        
+        html[dir="rtl"] .card-header h5 {
+            font-size: 1.1rem;
+        }
+        
+        .btn-group {
+            display: flex;
             flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .filter-btn {
+            margin: 2px;
+            flex: 1 0 auto;
+            text-align: center;
+        }
+        
+        html[dir="rtl"] .filter-btn {
+            font-size: 0.9rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .action-buttons .btn {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .table thead th {
+            font-size: 0.8rem;
+            padding: 0.75rem;
+        }
+        
+        .table tbody td {
+            font-size: 0.8rem;
+            padding: 0.75rem;
+        }
+        
+        html[dir="rtl"] .table thead th {
+            font-size: 0.9rem;
+        }
+        
+        html[dir="rtl"] .table tbody td {
+            font-size: 0.9rem;
+        }
+        
+        .avatar-circle {
+            width: 32px;
+            height: 32px;
+            font-size: 0.8rem;
+        }
+        
+        html[dir="rtl"] .avatar-circle {
+            width: 38px;
+            height: 38px;
+            font-size: 0.95rem;
+        }
+        
+        .btn-group-vertical {
+            flex-direction: row;
+            gap: 5px;
+        }
+        
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+        }
+        
+        html[dir="rtl"] .status-badge {
+            font-size: 0.85rem;
+        }
+        
+        .dept-badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+        }
+        
+        html[dir="rtl"] .dept-badge {
+            font-size: 0.85rem;
         }
     }
-    /* RTL Specific */
+    
+    /* Tablet Responsive */
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .stat-card h2 {
+            font-size: 1.8rem;
+        }
+        
+        html[dir="rtl"] .stat-card h2 {
+            font-size: 2rem;
+        }
+        
+        .table thead th {
+            font-size: 0.85rem;
+        }
+        
+        html[dir="rtl"] .table thead th {
+            font-size: 0.95rem;
+        }
+    }
+    
+    /* Small Mobile */
+    @media (max-width: 480px) {
+        .stat-card .card-body {
+            padding: 1rem;
+        }
+        
+        .stat-card h2 {
+            font-size: 1.3rem;
+        }
+        
+        html[dir="rtl"] .stat-card h2 {
+            font-size: 1.5rem;
+        }
+        
+        .filter-btn {
+            font-size: 0.75rem;
+            padding: 6px 12px;
+        }
+        
+        html[dir="rtl"] .filter-btn {
+            font-size: 0.85rem;
+        }
+        
+        .table thead th,
+        .table tbody td {
+            padding: 0.5rem;
+        }
+        
+        .btn-group-vertical .btn {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+        }
+    }
+    
+    /* RTL Specific Adjustments */
     html[dir="rtl"] .me-1,
     html[dir="rtl"] .me-2 {
         margin-left: 0.25rem !important;
@@ -115,6 +468,31 @@
         margin-left: 0.25rem;
         margin-right: 0;
     }
+    
+    /* Touch-friendly improvements */
+    button, .btn, .filter-btn, .stat-card {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    button:active, .btn:active {
+        transform: scale(0.97);
+    }
+    
+    /* Prevent zoom on input focus */
+    input, select, textarea, button {
+        font-size: 16px !important;
+    }
+    
+    /* Animation */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .stat-card, .card {
+        animation: fadeIn 0.3s ease-out;
+    }
 </style>
 {% endblock %}
 
@@ -123,20 +501,22 @@
     <!-- Header Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex flex-wrap justify-content-between align-items-center bg-white p-4 rounded shadow-sm">
-                <div class="mb-2 mb-md-0">
-                    <h3 class="mb-1 text-primary">
-                        <i class="fas fa-calendar-alt me-2"></i><span data-trans="leave_management">Leave Management</span>
-                    </h3>
-                    <p class="text-muted mb-0" data-trans="manage_track_leaves">Manage and track all leave requests</p>
-                </div>
-                <div>
-                    <a href="{% url 'create_leave' %}" class="btn btn-primary">
-                        <i class="fas fa-plus-circle me-2"></i><span data-trans="create_new_leave">Create New Leave</span>
-                    </a>
-                    <a href="{% url 'leave_reports' %}" class="btn btn-outline-secondary ms-2">
-                        <i class="fas fa-chart-bar me-2"></i><span data-trans="reports">Reports</span>
-                    </a>
+            <div class="header-section">
+                <div class="d-flex flex-wrap justify-content-between align-items-center">
+                    <div class="mb-2 mb-md-0">
+                        <h3 class="mb-1">
+                            <i class="fas fa-calendar-alt me-2"></i><span data-trans="leave_management">Leave Management</span>
+                        </h3>
+                        <p class="mb-0 opacity-75" data-trans="manage_track_leaves">Manage and track all leave requests</p>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="{% url 'create_leave' %}" class="btn btn-primary">
+                            <i class="fas fa-plus-circle me-2"></i><span data-trans="create_new_leave">Create New Leave</span>
+                        </a>
+                        <a href="{% url 'leave_reports' %}" class="btn btn-outline-light">
+                            <i class="fas fa-chart-bar me-2"></i><span data-trans="reports">Reports</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -144,7 +524,7 @@
 
     <!-- Statistics Cards -->
     <div class="row mb-4">
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6 mb-3">
             <div class="card stat-card bg-primary text-white">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -157,7 +537,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6 mb-3">
             <div class="card stat-card bg-warning text-white">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -170,7 +550,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6 mb-3">
             <div class="card stat-card bg-success text-white">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -183,7 +563,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6 mb-3">
             <div class="card stat-card bg-info text-white">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -203,7 +583,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-warning shadow">
-                <div class="card-header bg-warning text-white d-flex align-items-center">
+                <div class="card-header bg-warning text-white d-flex align-items-center flex-wrap">
                     <i class="fas fa-exclamation-circle me-2"></i>
                     <h5 class="mb-0" data-trans="pending_approvals">Pending Approvals For You</h5>
                     <span class="badge bg-light text-warning ms-3 rounded-pill">{{ pending_for_me|length }}</span>
@@ -225,8 +605,8 @@
                                 {% for leave in pending_for_me %}
                                 <tr>
                                     <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-circle bg-warning me-2">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="avatar-circle bg-warning">
                                                 {{ leave.student.name|first|upper }}
                                             </div>
                                             <div>
@@ -240,20 +620,31 @@
                                     <td>{{ leave.end_date|date:"d M Y" }}</td>
                                     <td><span class="badge bg-secondary">{{ leave.total_days }}</span></td>
                                     <td>
-                                        <span class="text-truncate" style="max-width: 150px; display: inline-block;" title="{{ leave.reason }}">
+                                        <span class="text-truncate d-inline-block" style="max-width: 150px;" title="{{ leave.reason }}">
                                             {{ leave.reason|truncatechars:30 }}
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="{% url 'approve_leave' leave.id %}" class="btn btn-success btn-sm" title="{% if LANGUAGE_CODE == 'ur' %}منظور کریں{% else %}Approve{% endif %}" onclick="return confirm('{% if LANGUAGE_CODE == 'ur' %}کیا آپ اس چھٹی کو منظور کرنا چاہتے ہیں؟{% else %}Are you sure you want to approve this leave?{% endif %}')">
-                                            <i class="fas fa-check"></i>
-                                        </a>
-                                        <a href="{% url 'reject_leave' leave.id %}" class="btn btn-danger btn-sm" title="{% if LANGUAGE_CODE == 'ur' %}مسترد کریں{% else %}Reject{% endif %}" onclick="return confirm('{% if LANGUAGE_CODE == 'ur' %}کیا آپ اس چھٹی کو مسترد کرنا چاہتے ہیں؟{% else %}Are you sure you want to reject this leave?{% endif %}')">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a href="{% url 'print_leave_slip' leave.id %}" class="btn btn-info btn-sm" title="{% if LANGUAGE_CODE == 'ur' %}پرنٹ{% else %}Print{% endif %}" target="_blank">
-                                            <i class="fas fa-print"></i>
-                                        </a>
+                                        <div class="btn-group-vertical btn-group-sm" role="group">
+                                            <a href="{% url 'approve_leave' leave.id %}" 
+                                               class="btn btn-success" 
+                                               title="{% if LANGUAGE_CODE == 'ur' %}منظور کریں{% else %}Approve{% endif %}" 
+                                               onclick="return confirm('{% if LANGUAGE_CODE == 'ur' %}کیا آپ اس چھٹی کو منظور کرنا چاہتے ہیں؟{% else %}Are you sure you want to approve this leave?{% endif %}')">
+                                                <i class="fas fa-check"></i>
+                                            </a>
+                                            <a href="{% url 'reject_leave' leave.id %}" 
+                                               class="btn btn-danger" 
+                                               title="{% if LANGUAGE_CODE == 'ur' %}مسترد کریں{% else %}Reject{% endif %}" 
+                                               onclick="return confirm('{% if LANGUAGE_CODE == 'ur' %}کیا آپ اس چھٹی کو مسترد کرنا چاہتے ہیں؟{% else %}Are you sure you want to reject this leave?{% endif %}')">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                            <a href="{% url 'print_leave_slip' leave.id %}" 
+                                               class="btn btn-info" 
+                                               title="{% if LANGUAGE_CODE == 'ur' %}پرنٹ{% else %}Print{% endif %}" 
+                                               target="_blank">
+                                                <i class="fas fa-print"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -271,14 +662,14 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-success shadow">
-                <div class="card-header bg-success text-white d-flex align-items-center">
+                <div class="card-header bg-success text-white d-flex align-items-center flex-wrap">
                     <i class="fas fa-calendar-day me-2"></i>
                     <h5 class="mb-0"><span data-trans="students_on_leave">Students On Leave Today</span> ({{ today|date:"d M Y" }})</h5>
                     <span class="badge bg-light text-success ms-3 rounded-pill">{{ today_approved|length }}</span>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
                                     <th data-trans="admission_no">Admission No</th>
@@ -300,8 +691,8 @@
                                         <span class="badge bg-secondary">{{ leave.student.admission_number }}</span>
                                     </td>
                                     <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-circle bg-success me-2">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="avatar-circle bg-success">
                                                 {{ leave.student.name|first|upper }}
                                             </div>
                                             {{ leave.student.name }}
@@ -317,25 +708,27 @@
                                     </td>
                                     <td>
                                         {% if leave.check_in_date %}
-                                            <span class="badge bg-success" data-trans="checked_in">Checked In</span>
+                                            <span class="status-badge status-checked_in" data-trans="checked_in">Checked In</span>
                                         {% else %}
-                                            <span class="badge bg-warning" data-trans="not_returned">Not Returned</span>
+                                            <span class="status-badge status-pending" data-trans="not_returned">Not Returned</span>
                                         {% endif %}
                                     </td>
                                     <td>
-                                        <a href="{% url 'print_leave_slip' leave.id %}" 
-                                           class="btn btn-sm btn-outline-primary" 
-                                           target="_blank"
-                                           title="{% if LANGUAGE_CODE == 'ur' %}پرنٹ{% else %}Print{% endif %}">
-                                            <i class="fas fa-print"></i>
-                                        </a>
-                                        {% if leave.status == "approved" and not leave.check_in_date %}
-                                        <a href="{% url 'checkin_leave' leave.id %}" 
-                                           class="btn btn-sm btn-outline-warning"
-                                           title="{% if LANGUAGE_CODE == 'ur' %}چیک ان{% else %}Check-in{% endif %}">
-                                            <i class="fas fa-sign-in-alt"></i>
-                                        </a>
-                                        {% endif %}
+                                        <div class="btn-group-vertical btn-group-sm" role="group">
+                                            <a href="{% url 'print_leave_slip' leave.id %}" 
+                                               class="btn btn-outline-primary" 
+                                               target="_blank"
+                                               title="{% if LANGUAGE_CODE == 'ur' %}پرنٹ{% else %}Print{% endif %}">
+                                                <i class="fas fa-print"></i>
+                                            </a>
+                                            {% if leave.status == "approved" and not leave.check_in_date %}
+                                            <a href="{% url 'checkin_leave' leave.id %}" 
+                                               class="btn btn-outline-warning"
+                                               title="{% if LANGUAGE_CODE == 'ur' %}چیک ان{% else %}Check-in{% endif %}">
+                                                <i class="fas fa-sign-in-alt"></i>
+                                            </a>
+                                            {% endif %}
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -380,7 +773,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 text-md-end mt-2 mt-md-0">
-                            <span class="text-muted"><span data-trans="total">Total</span>: {{ all_leaves|length }} <span data-trans="records">records</span></span>
+                            <span class="text-muted"><span data-trans="total">Total</span>: <span id="totalRecords">{{ all_leaves|length }}</span> <span data-trans="records">records</span></span>
                         </div>
                     </div>
 
@@ -403,8 +796,8 @@
                                 {% for leave in all_leaves %}
                                 <tr class="leave-row" data-status="{{ leave.status }}">
                                     <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-circle me-2" style="background-color: {% cycle '#007bff' '#28a745' '#dc3545' '#ffc107' '#17a2b8' %}">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="avatar-circle" style="background-color: {% cycle '#007bff' '#28a745' '#dc3545' '#ffc107' '#17a2b8' %}">
                                                 {{ leave.student.name|first|upper }}
                                             </div>
                                             <div>
@@ -532,12 +925,17 @@
 function filterTable(status) {
     const rows = document.querySelectorAll('.leave-row');
     const buttons = document.querySelectorAll('.filter-btn');
+    let visibleCount = 0;
     
     // Update active button
     buttons.forEach(btn => {
         btn.classList.remove('active');
-        if (btn.textContent.toLowerCase().includes(status) || 
-            (status === 'all' && btn.textContent.toLowerCase().includes('all'))) {
+        const btnText = btn.textContent.toLowerCase().trim();
+        if ((status === 'all' && btnText.includes('all')) ||
+            (status === 'pending' && btnText.includes('pending')) ||
+            (status === 'approved' && btnText.includes('approved')) ||
+            (status === 'rejected' && btnText.includes('rejected')) ||
+            (status === 'checked_in' && btnText.includes('checked'))) {
             btn.classList.add('active');
         }
     });
@@ -546,10 +944,17 @@ function filterTable(status) {
     rows.forEach(row => {
         if (status === 'all' || row.dataset.status === status) {
             row.style.display = '';
+            visibleCount++;
         } else {
             row.style.display = 'none';
         }
     });
+    
+    // Update total records count
+    const totalSpan = document.getElementById('totalRecords');
+    if (totalSpan) {
+        totalSpan.textContent = visibleCount;
+    }
 }
 
 // Search functionality
@@ -557,6 +962,7 @@ function searchTable() {
     const input = document.getElementById('searchInput');
     const filter = input.value.toUpperCase();
     const rows = document.querySelectorAll('.leave-row');
+    let visibleCount = 0;
     
     rows.forEach(row => {
         if (row.style.display !== 'none') {
@@ -565,11 +971,20 @@ function searchTable() {
             
             if (studentName.includes(filter) || admissionNo.includes(filter)) {
                 row.style.display = '';
+                visibleCount++;
             } else {
                 row.style.display = 'none';
             }
+        } else {
+            visibleCount++;
         }
     });
+    
+    // Update total records count
+    const totalSpan = document.getElementById('totalRecords');
+    if (totalSpan) {
+        totalSpan.textContent = visibleCount;
+    }
 }
 
 // Initialize tooltips and RTL adjustments
@@ -583,30 +998,36 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set active filter button
     filterTable('all');
     
-    // RTL adjustments for icons
-    const isRTL = document.documentElement.dir === 'rtl';
-    if (isRTL) {
-        document.querySelectorAll('.me-1, .me-2').forEach(el => {
-            el.classList.add('ms-1');
-            el.classList.remove('me-1');
+    // Add touch feedback for mobile
+    const touchElements = document.querySelectorAll('.btn, .stat-card, .filter-btn');
+    touchElements.forEach(el => {
+        el.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.98)';
         });
-    }
+        el.addEventListener('touchend', function() {
+            this.style.transform = '';
+        });
+        el.addEventListener('touchcancel', function() {
+            this.style.transform = '';
+        });
+    });
 });
 
-// Export to CSV functionality (optional)
+// Export to CSV functionality
 function exportToCSV() {
     const rows = document.querySelectorAll('.leave-row');
     const csv = [];
+    const isUrdu = document.documentElement.lang === 'ur';
     
     // Headers
     const headers = [
-        document.documentElement.lang === 'ur' ? 'طالب علم کا نام' : 'Student Name',
-        document.documentElement.lang === 'ur' ? 'داخلہ نمبر' : 'Admission No',
-        document.documentElement.lang === 'ur' ? 'آغاز کی تاریخ' : 'Start Date',
-        document.documentElement.lang === 'ur' ? 'اختتامی تاریخ' : 'End Date',
-        document.documentElement.lang === 'ur' ? 'دن' : 'Days',
-        document.documentElement.lang === 'ur' ? 'حالت' : 'Status',
-        document.documentElement.lang === 'ur' ? 'چیک ان' : 'Check-in'
+        isUrdu ? 'طالب علم کا نام' : 'Student Name',
+        isUrdu ? 'داخلہ نمبر' : 'Admission No',
+        isUrdu ? 'آغاز کی تاریخ' : 'Start Date',
+        isUrdu ? 'اختتامی تاریخ' : 'End Date',
+        isUrdu ? 'دن' : 'Days',
+        isUrdu ? 'حالت' : 'Status',
+        isUrdu ? 'چیک ان' : 'Check-in'
     ];
     csv.push(headers.join(','));
     
@@ -631,8 +1052,9 @@ function exportToCSV() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = document.documentElement.lang === 'ur' ? 'چھٹی_کی_درخواستیں.csv' : 'leave_requests.csv';
+    a.download = isUrdu ? 'چھٹی_کی_درخواستیں.csv' : 'leave_requests.csv';
     a.click();
+    window.URL.revokeObjectURL(url);
 }
 </script>
 {% endblock %}
